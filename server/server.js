@@ -3,7 +3,7 @@ const socketio = require('socket.io');
 const httpServer = http.createServer();
 const io = new socketio.Server(httpServer, {
     cors: {
-      origin: "https://uspectacle.github.io/Zamour_web/frontend/index.html",
+      origin: "https://uspectacle.github.io",
       allowedHeaders: ["my-custom-header"],
       credentials: true
     }
