@@ -23,19 +23,13 @@ io.on('connection', client => {
     client.on('newGame', handleNewGame);
     client.on('joinGame', handleJoinGame);
 
-    function handleJoinGame() {
-        const room = io.sockets.adapter.rooms[gameCode];
-
-        let allUsers;
-        if (room) {
-            allUsers = room.sockets;
-        }
-
+    function handleJoinGame(roomName) {
+        const room = io.sockets.adapter.rooms.get(roomName);
         let numClients = 0;
-        if (allUsers) {
-            numClients = Object.keys(allUsers).length;
+        if (room) {
+            numClients = room.size;
         }
-
+    
         if (numClients === 0) {
             client.emit('unknownGame');
             return;
@@ -43,14 +37,15 @@ io.on('connection', client => {
             client.emit('tooManyPlayers');
             return;
         }
-
-        clientRooms[client.id] = gameCode;
-
-        client.join(gameCode);
+    
+    
+        clientRooms[client.id] = roomName;
+    
+        client.join(roomName);
         client.number = 2;
         client.emit('init', 2);
-
-        startGameInterval(gameCode);
+    
+        startGameInterval(roomName);
     }
 
 
@@ -95,7 +90,7 @@ function startGameInterval(roomName) {
         if (!winner) {
             emitGameState(roomName, state[roomName]);
         } else {
-            emitGameState(roomName, winner);
+            emitGameOver(roomName, winner);
             state[roomName] = null;
             clearInterval(intervalId);
         }
@@ -109,7 +104,7 @@ function emitGameState(roomName, state) {
 
 function emitGameOver(roomName, winner) {
     io.sockets.in(roomName)
-        .emit('gameOver', JSON.stringify(winner));
+        .emit('gameOver', JSON.stringify({ winner }));
 }
 
 io.listen(3000);

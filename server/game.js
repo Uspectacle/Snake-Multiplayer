@@ -75,7 +75,7 @@ function gameLoop(state) {
             for (let other of state.players) {
                 for (let cell of other.snake) {
                     if (cell.x === player.pos.x && cell.y === player.pos.y) {
-                        return 1 + 2 - playerId;
+                        return 3 - playerId;
                     }
                 }
             }

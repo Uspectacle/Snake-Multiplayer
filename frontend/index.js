@@ -61,7 +61,6 @@ function init() {
 }
 
 function keydown(e) {
-    console.log(e.keyCode);
     socket.emit('keydown', e.keyCode)
 }
 
