@@ -2,9 +2,17 @@ const BG_COLOUR = '#231f20';
 const SNAKE_COLOUR = '#c2c2c2';
 const FOOD_COLOUR = '#e66916';
 
-const socket = io('http://localhost:3000');
 
-socket.on('init', handleInit);
+import { io } from "socket.io-client";
+
+const socket = io("http://localhost:3000", {
+  withCredentials: true,
+  extraHeaders: {
+    "my-custom-header": "abcd"
+  }
+});
+
+socket.on("init", handleInit);
 
 const gameScreen = document.getElementById('gameScreen');
 
