@@ -13,15 +13,44 @@
       crossorigin="anonymous"
     />
     <link rel="icon" type="image/x-icon" href="../Images/pumpkin.png" />
-    <title>Zamour</title>
+    <title>Multi Snake</title>
+    <style>
+      #gameScreen {
+        display: none;
+      }
+    </style>
   </head>
   <body>
     <section class="vh-100">
       <div class="container h-100">
+        <div id="initialScreen" class="h-100">
+          <div
+            class="d-flex flex-column align-items-center justify-content-center h-100"
+          >
+            <h1>Multiplayer Snake</h1>
+            <button type="submit" class="btn btn-success" id="newGameButton">
+              Create New Game
+            </button>
+            <div>OR</div>
+            <div class="form-group">
+              <input
+                type="text"
+                placeholder="Enter Game Code"
+                id="gameCodeInput"
+              />
+            </div>
+            <button type="submit" class="btn btn-success" id="joinGameButton">
+              Join Game
+            </button>
+          </div>
+        </div>
+
         <div id="gameScreen" class="h-100">
           <div
             class="d-flex flex-column align-items-center justify-content-center h-100"
           >
+            <h1>Your game code is: <span id="gameCodeDisplay"></span></h1>
+
             <canvas id="canvas"></canvas>
           </div>
         </div>
@@ -34,12 +63,6 @@
         }
       }
     </script>
-    <!-- <script type="module">
-      import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
-
-      const socket = io("http://localhost:3000");
-      socket.on("init", handleInit);
-    </script> -->
     <script type="module" src="index.js"></script>
   </body>
 </html>
