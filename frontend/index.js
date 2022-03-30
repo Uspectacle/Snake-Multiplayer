@@ -9,6 +9,10 @@ const BG_COLOUR = '#231f20';
 const SNAKE_COLOUR = '#c2c2c2';
 const SNAKE_COLOUR_2 = 'red';
 const FOOD_COLOUR = '#e66916';
+const color_dict = {
+    1: "green",
+    2: "red",
+};
 
 import { io } from "socket.io-client";
 
@@ -23,6 +27,7 @@ socket.on("init", handleInit);
 socket.on("gameState", handleGameState);
 socket.on("gameOver", handleGameOver);
 socket.on("gameCode", handleGameCode);
+socket.on("countDown", handleCountDown);
 socket.on("unknownGame", handleUnknownGame);
 socket.on("tooManyPlayers", handleTooManyPlayers);
 
@@ -30,11 +35,16 @@ const gameScreen = document.getElementById('gameScreen');
 const initialScreen = document.getElementById('initialScreen');
 const newGameBtn = document.getElementById('newGameButton');
 const joinGameBtn = document.getElementById('joinGameButton');
+const exitBtn = document.getElementById('exitButton');
+const restartBtn = document.getElementById('restartButton');
 const gameCodeInput = document.getElementById('gameCodeInput');
 const gameCodeDisplay = document.getElementById('gameCodeDisplay');
+const gameOverDisplay = document.getElementById('gameOverDisplay');
 
 newGameBtn.addEventListener('click', newGame);
 joinGameBtn.addEventListener('click', joinGame);
+exitBtn.addEventListener('click', exit);
+restartBtn.addEventListener('click', restart);
 
 function newGame() {
     socket.emit('newGame');
@@ -54,6 +64,7 @@ let gameActive = false;
 function init() {
     initialScreen.style.display = "none";
     gameScreen.style.display = "block";
+    gameOverDisplay.innerText = ""
 
     canvas = document.getElementById('canvas');
     ctx = canvas.getContext('2d');
@@ -68,6 +79,9 @@ function init() {
 }
 
 function keydown(e) {
+    if (!gameActive){
+        return;
+    }
     socket.emit('keydown', e.keyCode)
 }
 
@@ -115,9 +129,9 @@ function handleGameOver(data) {
     data = JSON.parse(data);
 
     if (data.winner === playerNumber) {
-        alert("GG! You win this one bruv")
+        gameOverDisplay.innerText = "GG! You win this one bruv";
     } else {
-        alert("You stinks");
+        gameOverDisplay.innerText = "You stinks";
     }
     gameActive = false;
 }
@@ -126,26 +140,36 @@ function handleGameCode(gameCode) {
     gameCodeDisplay.innerText = gameCode;
 }
 
+function handleCountDown(countDown) {
+    gameOverDisplay.innerText = "Game start in " + countDown;
+    if (countDown === 0) {
+        gameOverDisplay.innerText = "";
+        init();
+    }
+    gameOverDisplay.innerText += "\nYou are " + color_dict[playerNumber];
+}
+
 function handleUnknownGame() {
-    reset();
+    exit();
     alert("Unknown game code");
 }
 
 function handleTooManyPlayers() {
-    reset();
+    exit();
     alert("This game is already in progress");
 }
 
-function reset() {
+function restart() {
+    socket.emit('restartGame', gameCodeDisplay.innerText);
+}
+
+function exit() {
     playerNumber = null;
     gameCodeInput.value = "";
     gameCodeDisplay.innerText = "";
     initialScreen.style.display = "";
     gameScreen.style.display = "none";
-
 }
-
-
 
 
 

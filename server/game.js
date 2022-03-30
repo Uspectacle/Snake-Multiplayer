@@ -17,30 +17,30 @@ function createGameState() {
     return { players: [{
             pos: {
                 x: 3,
-                y: 10,
+                y: Math.floor(GRID_SIZE/4),
             },
             vel: {
                 x: 1,
                 y: 0,
             },
             snake: [
-                {x: 1, y: 10},
-                {x: 2, y: 10},
-                {x: 3, y: 10},
+                {x: 1, y: Math.floor(GRID_SIZE/4)},
+                {x: 2, y: Math.floor(GRID_SIZE/4)},
+                {x: 3, y: Math.floor(GRID_SIZE/4)},
             ],
         }, {
             pos: {
-                x: 18,
-                y: 10,
+                x: GRID_SIZE-4,
+                y: Math.floor(3*GRID_SIZE/4),
             },
             vel: {
-                x: 0,
+                x: -1,
                 y: 0,
             },
             snake: [
-                {x: 20, y: 10},
-                {x: 19, y: 10},
-                {x: 18, y: 10},
+                {x: GRID_SIZE-2, y: Math.floor(3*GRID_SIZE/4)},
+                {x: GRID_SIZE-3, y: Math.floor(3*GRID_SIZE/4)},
+                {x: GRID_SIZE-4, y: Math.floor(3*GRID_SIZE/4)},
             ],
         }],
         food: {},
@@ -60,7 +60,7 @@ function gameLoop(state) {
         player.pos.y += player.vel.y;
 
 
-        if (player.pos.x < 0 || player.pos.x > GRID_SIZE || player.pos.y < 0 || player.pos.y > GRID_SIZE) {
+        if (player.pos.x < 0 || player.pos.x > GRID_SIZE-1 || player.pos.y < 0 || player.pos.y > GRID_SIZE-1) {
             return 3 - playerId;
         }
 
