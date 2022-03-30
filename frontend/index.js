@@ -4,7 +4,7 @@ const SNAKE_COLOUR_2 = 'red';
 const FOOD_COLOUR = '#e66916';
 
 import { io } from "socket.io-client";
-
+// "http://localhost:3000"
 const socket = io("https://stormy-crag-12352.herokuapp.com/", {
   withCredentials: true,
   extraHeaders: {
