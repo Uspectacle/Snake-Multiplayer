@@ -1,18 +1,9 @@
-const LOCALHOST = false;
-
-let originCORS = "https://uspectacle.github.io";
-let listenCORS = process.env.PORT || 3000;
-if (LOCALHOST) {
-    originCORS = "https://127.0.0.1:5500";
-    listenCORS = 3000;
-}
-
 const http = require('http');
 const socketio = require('socket.io');
 const httpServer = http.createServer();
 const io = new socketio.Server(httpServer, {
     cors: {
-      origin: originCORS,
+      origin: ["https://uspectacle.github.io", "http://127.0.0.1:5500"],
       allowedHeaders: ["server-client"],
       credentials: true
     }
@@ -116,4 +107,4 @@ function emitGameOver(roomName, winner) {
         .emit('gameOver', JSON.stringify({ winner }));
 }
 
-io.listen(listenCORS);
+io.listen(process.env.PORT || 3000);
