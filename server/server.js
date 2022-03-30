@@ -4,7 +4,7 @@ const httpServer = http.createServer();
 const io = new socketio.Server(httpServer, {
     cors: {
       origin: "https://uspectacle.github.io",
-      allowedHeaders: ["my-custom-header"],
+      allowedHeaders: ["server-client"],
       credentials: true
     }
 });
@@ -107,4 +107,4 @@ function emitGameOver(roomName, winner) {
         .emit('gameOver', JSON.stringify({ winner }));
 }
 
-io.listen(3000);
+io.listen(process.env.PORT ||3000);

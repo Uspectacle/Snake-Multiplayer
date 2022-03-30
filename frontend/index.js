@@ -5,10 +5,10 @@ const FOOD_COLOUR = '#e66916';
 
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:3000", {
+const socket = io("https://stormy-crag-12352.herokuapp.com/", {
   withCredentials: true,
   extraHeaders: {
-    "my-custom-header": "abcd"
+    "server-client": "yey-ca-marche"
   }
 });
 
