@@ -1,11 +1,18 @@
+const LOCALHOST = false;
+
+let socketCORS = "https://stormy-crag-12352.herokuapp.com/";
+if (LOCALHOST) {
+    socketCORS = "http://localhost:3000";
+}
+
 const BG_COLOUR = '#231f20';
 const SNAKE_COLOUR = '#c2c2c2';
 const SNAKE_COLOUR_2 = 'red';
 const FOOD_COLOUR = '#e66916';
 
 import { io } from "socket.io-client";
-// "http://localhost:3000"
-const socket = io("https://stormy-crag-12352.herokuapp.com/", {
+
+const socket = io(socketCORS, {
   withCredentials: true,
   extraHeaders: {
     "server-client": "yey-ca-marche"
