@@ -1,4 +1,4 @@
-const FRAME_RATE = 1;
+const FRAME_RATE = 5;
 const GRID_SIZE = 20;
 
 module.exports = {
