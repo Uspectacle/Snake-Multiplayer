@@ -12,6 +12,7 @@
       integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
       crossorigin="anonymous"
     />
+    <link rel="stylesheet" href="style.css"></link>
     <link rel="icon" type="image/x-icon" href="../Images/pumpkin.png" />
     <title>Multi Snake</title>
     <style>
@@ -27,11 +28,11 @@
           <div
             class="d-flex flex-column align-items-center justify-content-center h-100"
           >
-            <h1>Multiplayer Snake</h1>
-            <button type="submit" class="btn btn-success" id="newGameButton">
+            <h1 class="text-green">Multiplayer Snake</h1>
+            <button type="submit" class="button-green" id="newGameButton">
               Create New Game
             </button>
-            <div>OR</div>
+            <div class="text-green">OR</div>
             <div class="form-group">
               <input
                 type="text"
@@ -39,8 +40,11 @@
                 id="gameCodeInput"
               />
             </div>
-            <button type="submit" class="btn btn-success" id="joinGameButton">
+            <button type="submit" class="button-green" id="joinGameButton">
               Join Game
+            </button>
+            <button type="submit" class="button-red" id="exitButton">
+              ➥ Exit
             </button>
           </div>
         </div>
@@ -49,9 +53,22 @@
           <div
             class="d-flex flex-column align-items-center justify-content-center h-100"
           >
-            <h1>Your game code is: <span id="gameCodeDisplay"></span></h1>
+            <h1 class="text-green">Your game code is: <span id="gameCodeDisplay"></span></h1>
 
             <canvas id="canvas"></canvas>
+            
+            <!-- <div id="endScreen" class="h-100">
+              <div class="d-flex flex-column align-items-center justify-content-center h-100">
+                <h1 class="text-green"><span id="gameOverDisplay"></span></h1>
+                <button type="submit" class="btn btn-success" id="restartButton">
+                  Play Again
+                </button>
+                <div class="text-green">OR</div>
+                <button type="submit" class="btn btn-success" id="exitButton">
+                  Exit This Game
+                </button>
+              </div>
+            </div> -->
           </div>
         </div>
       </div>
