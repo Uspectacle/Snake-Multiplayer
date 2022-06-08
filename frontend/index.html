@@ -16,46 +16,176 @@
     <link rel="icon" type="image/x-icon" href="../Images/pumpkin.png" />
     <title>Multi Snake</title>
     <style>
+      /* #initialScreen {
+        display: none;
+      } */
+      #roomScreen {
+        display: none;
+      }
       #gameScreen {
         display: none;
       }
     </style>
   </head>
+
+
+
   <body>
     <section class="vh-100">
-      <div class="container h-100">
-        <div id="initialScreen" class="h-100">
-          <div
-            class="d-flex flex-column align-items-center justify-content-center h-100"
-          >
-            <h1 class="text-green">Multiplayer Snake</h1>
-            <button type="submit" class="button-green" id="newGameButton">
-              Create New Game
-            </button>
-            <div class="text-green">OR</div>
-            <div class="form-group">
-              <input
-                type="text"
-                placeholder="Enter Game Code"
-                id="gameCodeInput"
-              />
+      <div class="container flex h-100">
+        <div id="initialScreen">
+
+          <div class="header">
+            <div id="titleContainer" class="container">
+              <h1 id="title" class="text-green">
+                🐍 Multiplayer Snake 🐍
+              </h1>
             </div>
-            <button type="submit" class="button-green" id="joinGameButton">
-              Join Game
-            </button>
+          </div>
+          
+          <div id="loginContainer" class="container boxed vertical">
+
+            <div id="playContainer" class="container">
+              <div id="joinContainer" class="container vertical">
+                <button type="submit" class="button green" id="newRoomButton">
+                  Create New Room
+                </button>
+              </div>
+
+              <h4 class="text-green">OR</h4>
+
+              <div id="joinContainer" class="container vertical">
+                <form id="joinRoomForm">
+                  <h5 class="text-red" id="errorRoomCode"></h5>
+                  <input class="form-control"
+                    type="text"
+                    placeholder="Enter Room Code"
+                    id="roomCodeInput"
+                    autocomplete="off"
+                    maxlength="5"
+                  >
+                  <button type="submit" class="button green" id="joinRoomButton">
+                    Join Room
+                  </button>
+                </form>
+
+
+              </div>
+            </div>
           </div>
         </div>
 
-        <div id="gameScreen" class="h-100">
-          <div
-            class="d-flex flex-column align-items-center justify-content-center h-100"
-          >
-            <h1 class="text-green">Your game code is: <span id="gameCodeDisplay"></span></h1>
 
-            <div class="game-container">
+
+        <div id="roomScreen">
+
+          <div class="header">
+            <div id="titleContainer" class="container">
+              <h1 id="title" class="text-green">
+                🐍 Multiplayer Snake 🐍
+              </h1>
+            </div>
+          </div>
+          
+          <div id="mainContainer" class="container">
+            <h2 class="text-green">Your room code is : <span id="roomCodeDisplay"></span></h2>
+
+            <div id="mainRoomContainer" class="container">
+              <div id="leftContainer" class="container vertical">
+
+
+                <div id="uperLeftContainer" class="container vertical">
+                  <div class="container">
+                    <input type="color" id="colorInput" name="My Color" value="#e66465">
+                    <input class="form-control"
+                      type="text"
+                      placeholder="My Name"
+                      id="nameInput"
+                      autocomplete="off"
+                      maxlength="12"
+                    >
+                  </div>
+
+                  <button type="submit" class="button green" id="readyButton">
+                    I'm Ready
+                  </button>
+                </div>
+
+                <!-- <div id="settingsContainer" class="container vertical boxed">
+
+                  <div class="container">
+                    <h3 class="text-green">Settings</h3>
+                  </div>
+
+                  <div class="container">
+                    <h5 class="text-green">Map Size :</h5>
+                    <select class="form-control small" id="mapSizeInput">
+                      <option>8</option>
+                      <option>16</option>
+                      <option>32</option>
+                      <option>64</option>
+                    </select>
+                  </div>
+
+                </div> -->
+              </div>
+
+              <div id="rightContainer" class="container vertical">
+                <div id="playersContainer" class="container">
+                  <h2 id="playersDisplay" class="playerNames">
+                </div>
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="button red" id="exitRoomButton">
+            🚪 Exit Room
+          </button>
+        </div>
+
+
+
+        <div id="gameScreen" class="h-100">
+
+          <div class="header" style="display: none">
+            <div id="titleContainer" class="container">
+              <h1 id="title" class="text-green">
+                🐍 Multiplayer Snake 🐍
+              </h1>
+            </div>
+          </div>
+          
+          <div id="mainGameContainer" class="container">
+            <div id="gameContainer" class="container">
+              <div >
+                <canvas id="backCanvas" width="900" height="900" 
+                  style="position: absolute; left: 0; top: 0; z-index: 0;">
+                </canvas>
+                <canvas id="frontCanvas" width="900" height="900" 
+                  style="position: absolute; left: 0; top: 0; z-index: 1;">
+                </canvas>
+              </div>
+            </div>
+              
+            <div id="rightGameContainer" class="container vertical" style="display: none">
+              <div id="scoreContainer" class="container boxed">
+                <h1 class="text-green">SCORE<br>456<span id="scoreDisplay"></span></h1>
+              </div>
+              <div id="playersGameContainer" class="container">
+                <h2 id="playersGameDisplay" class="playerNames">
+              </div>
+              <div id="roomOptionContainer" class="container vertical boxed">
+                <h5 class="text-green">Room code: <span id="roomCodeDisplay"></span></h5>
+                <button type="submit" class="button red" id="exitRoomButton">
+                  🚪 Back to Room
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+            <!-- <div class="game-container">
               <canvas id="canvas"></canvas>
               
-              <!-- <div id="endScreen" class="h-100">
+              <div id="endScreen" class="h-100">
                 <div class="d-flex flex-column align-items-center justify-content-center h-100">
                   <h1 class="text-green"><span id="gameOverDisplay"></span></h1>
                   <button type="submit" class="btn btn-success" id="restartButton">
@@ -66,7 +196,7 @@
                     Exit This Game
                   </button>
                 </div>
-              </div> -->
+              </div>
               <div class="data-container">
                 <button type="submit" class="button-red" id="restartButton">
                   ↺ Restart
@@ -77,8 +207,9 @@
                 <div class="text-green"><span id="gameOverDisplay"></span></div>
               </div>
             </div>
-          </div>
-        </div>
+          </div> -->
+
+
       </div>
     </section>
     <script type="importmap">

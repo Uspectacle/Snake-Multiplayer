@@ -1,4 +1,6 @@
 {
+  "type": "module",
+  "main": "server.js",
   "dependencies": {
     "socket.io": "^4.4.1"
   }
