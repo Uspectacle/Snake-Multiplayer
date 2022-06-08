@@ -15,6 +15,11 @@ const socket = io(socketCORS, {
 
 import { paintGame, initPaint } from './graphic.js';
 
+const sidebarButton = document.getElementById('sidebarButton');
+const roomMenu = document.getElementById('roomMenu');
+const initRoom = document.getElementById('initRoom');
+const Settings = document.getElementById('Settings');
+const room = document.getElementById('room');
 
 const initialScreen = document.getElementById('initialScreen');
 const newRoomButton = document.getElementById('newRoomButton');
@@ -48,6 +53,7 @@ roomCodeInput.addEventListener('input', removeErrorRoomCode);
 nameInput.addEventListener('input', updateName);
 colorInput.addEventListener('change', updateColor, false);
 readyButton.addEventListener('click', updateReady);
+sidebarButton.addEventListener('click', updateSidebar);
 exitRoomButton.addEventListener('click', exitRoom);
 document.addEventListener('keydown', keydown);
 
@@ -76,17 +82,21 @@ let alive = false;
 let playerName;
 let playerColor;
 let playerReady = false;
+let sideBar = true;
 
-
-function showScreen(screenName) {
-    initialScreen.style.display = "none";
-    roomScreen.style.display = "none";
-    gameScreen.style.display = "none";
-
-    screenName.style.display = "block";
+function updateSidebar() {
+    roomMenu.style.display = sideBar ? "none" : "block";
+    sideBar = !sideBar;
 }
 
 
+function showScreen(screenName) {
+    initRoom.style.display = "none";
+    Settings.style.display = "none";
+    room.style.display = "none";
+    screenName.style.display = "block";
+}
+showScreen(initRoom);
 
 function newRoom() {
     socket.emit('newRoom');
@@ -145,7 +155,7 @@ function handleRoomCode(roomCode) {
     roomCodeDisplay.innerText = roomCode;
     playerReady = true;
     updateReady();
-    showScreen(roomScreen);
+    showScreen(room);
 }
 
 function handleRoomComposition(players) {
@@ -169,13 +179,13 @@ function exitRoom() {
 
 
 function handleBeginGame(gameState) {
-    if (!inGame){return;}
+    if (inGame){return;}
     gameState = JSON.parse(gameState);
     updateReady();
     inGame = true;
     alive = true;
+    console.log('init paint')
     initPaint(backCanvas, frontCanvas, gameState);
-    showScreen(gameScreen);
 }
 
 function handleGameState(gameState) {

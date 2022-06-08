@@ -3,7 +3,6 @@ export  {
     initPaint,
 }
 
-let sprites = {};
 let spritesCanevas = document.createElement('canvas');
 let spritesCtx = spritesCanevas.getContext('2d');
 let spriteImg;
@@ -91,6 +90,9 @@ function initPaint(backCanvas, frontCanvas, state) {
 
     background = backCanvas.getContext('2d');
     ctx = frontCanvas.getContext('2d');
+    console.log(backCanvas.width, backCanvas.height);
+    console.log(frontCanvas.width, frontCanvas.height);
+
     background.imageSmoothingEnabled = false;
     ctx.imageSmoothingEnabled = false;
 
