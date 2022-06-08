@@ -63,7 +63,6 @@ socket.on("unknownRoom", handleUnknownRoom);
 socket.on("tooManyPlayers", handleTooManyPlayers);
 
 socket.on("roomComposition", handleRoomComposition);
-socket.on("playerNumber", handlePlayerNumber);
 socket.on("playerInitColor", handlePlayerInitColor);
 
 socket.on("beginGame", handleBeginGame);
@@ -96,6 +95,7 @@ function showScreen(screenName) {
     room.style.display = "none";
     screenName.style.display = "block";
 }
+
 showScreen(initRoom);
 
 function newRoom() {
