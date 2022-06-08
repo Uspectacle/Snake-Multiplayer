@@ -1,5 +1,5 @@
 import { LOCALHOST } from './local.js';
-let socketCORS = "https://stormy-crag-12352.herokuapp.com/";
+let socketCORS = "https://snake-multi-psl.herokuapp.com/";
 if (LOCALHOST) {
     socketCORS = "http://localhost:3000";
 }
