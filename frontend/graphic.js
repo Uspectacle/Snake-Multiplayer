@@ -5,6 +5,7 @@ export  {
 
 let spritesCanevas = document.createElement('canvas');
 let spritesCtx = spritesCanevas.getContext('2d');
+spritesCtx.imageSmoothingEnabled = false;
 let spriteImg;
 let spriteRGBA;
 let newSprite;
