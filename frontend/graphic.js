@@ -1,14 +1,37 @@
 export  {
     paintGame,
     initPaint,
+    colorPaletteDefault,
+    backgroundColorsDefault,
 }
+
+const colorPaletteDefault = {
+    "void": "#00000000",
+    "player": "#000000",
+    "food": "#ff3300",
+    "foodLight": "#ff6600",
+    "skull": "#999999",
+    "snake": "#00cc00",
+    "snakeLight": "#00ff0080",
+};
+const backgroundColorsDefault = ['#231f2050', '#002b1480'];
+let colorPalette = {...colorPaletteDefault};
+let backgroundColors = [...backgroundColorsDefault];
+
+const spritesSize = 10;
+const spritesSrc = "../Images/sprites.png";
 
 let spritesCanevas = document.createElement('canvas');
 let spritesCtx = spritesCanevas.getContext('2d');
 spritesCtx.imageSmoothingEnabled = false;
 let spriteImg;
-let spriteRGBA;
-let newSprite;
+let spriteKeys;
+
+let ctx;
+let background;
+let cellSize;
+
+
 
 function loadSprite(src, callback) {
     spriteImg = new Image();
@@ -16,35 +39,63 @@ function loadSprite(src, callback) {
     spriteImg.src = src;
 }
 
-loadSprite("../Images/sprites.png", function() {
-    let w = spriteImg.width;
-    let h = spriteImg.height;
+loadSprite(spritesSrc, function() {
+    const w = spriteImg.width;
+    const h = spriteImg.height;
+    const keys = Object.keys(colorPalette);
+
     spritesCanevas = document.createElement('canvas');
     spritesCtx = spritesCanevas.getContext('2d');
     spritesCanevas.width = w;
     spritesCanevas.height = h;
     spritesCtx.drawImage(spriteImg, 0, 0, w, h);
-    spriteRGBA = spritesCtx.getImageData(0, 0, w, h);
-    newSprite = spritesCtx.getImageData(0, 0, w, h);
+    let spritedata = spritesCtx.getImageData(0, 0, w, h).data;
+
+    spriteKeys = [];
+    for (var pixel = 0; pixel < spritedata.length; pixel += 4){
+        if (spritedata[pixel + 3] < 128) {
+            spriteKeys.push(keys[0]);
+        } else {
+            let key = 0;
+            for (var color = 0; color < 3; color++) {
+                key += spritedata[pixel + color];
+            }
+            key = Math.round((keys.length - 2) * (key / 3) / 255 );
+            spriteKeys.push(keys[key + 1]);
+        }
+    }
 });
 
+function hexToRGBA(hex){
+    let alpha = hex.slice(7, 9);
+    alpha = alpha.length ? parseInt(alpha, 16) : 255;
+    return [ 
+        parseInt(hex.slice(1, 3), 16),
+        parseInt(hex.slice(3, 5), 16),
+        parseInt(hex.slice(5, 7), 16),
+        alpha,
+    ];
+}
 
-const spritesSize = 10;
-let cellSize;
-const backgroundColors = ['#231f2050', '#002b1480'];
-let ctx;
-let background;
+function colorSprites(){
+    const w = spritesCanevas.width;
+    const h = spritesCanevas.height;
+    let coloredSprites = spritesCtx.getImageData(0, 0, w, h);
 
-function draw(context, spriteIdx, position, color) {
-    if (color) {    
-        newColor("#000000", color)
-        spritesCtx.clearRect(
-            0, 0, 
-            spritesCanevas.width, 
-            spritesCanevas.height
-            );
-        spritesCtx.putImageData(newSprite, 0, 0,);
-    }
+    spriteKeys.forEach( (key, pixel) => {
+        const color = hexToRGBA(colorPalette[key]);
+        color.forEach( (colorAmp, colorIdx) => {
+            coloredSprites.data[pixel*4 + colorIdx] = colorAmp;
+        });
+        if(key === "void"){
+            console.log(color);
+        }
+    });
+    spritesCtx.clearRect(0, 0, w, h);
+    spritesCtx.putImageData(coloredSprites, 0, 0);
+};
+
+function draw(context, spriteIdx, position) {
     context.drawImage(
         spritesCanevas, 
         spriteIdx[1] * spritesSize, 
@@ -58,44 +109,20 @@ function draw(context, spriteIdx, position, color) {
         );
 }
 
-function hexToRGBA(hex){
-    let alpha = parseInt(hex.slice(7, 9), 16);
-    return {r: parseInt(hex.slice(1, 3), 16),
-        g: parseInt(hex.slice(3, 5), 16),
-        b: parseInt(hex.slice(5, 7), 16),
-        a: alpha ? alpha : 255,
-    }
-}
 
-function newColor(oldColor, newColor){
-    oldColor = hexToRGBA(oldColor);
-    newColor = hexToRGBA(newColor);
-    for (var i = 0; i < spriteRGBA.data.length; i+=4){
-        if (!i) {
-        }
-        if(spriteRGBA.data[i] === oldColor.r &&
-            spriteRGBA.data[i+1] === oldColor.g &&
-            spriteRGBA.data[i+2] === oldColor.b &&
-            spriteRGBA.data[i+3] === oldColor.a
-        ){
-            newSprite.data[i] = newColor.r;
-            newSprite.data[i+1] = newColor.g;
-            newSprite.data[i+2] = newColor.b;
-            newSprite.data[i+3] = newColor.a;
-        }
-    }
-}
 
-function initPaint(backCanvas, frontCanvas, state) {
+function initPaint(backCanvas, frontCanvas, state, settings) {
     cellSize = backCanvas.height / (state.gridSize + 2);
 
     background = backCanvas.getContext('2d');
     ctx = frontCanvas.getContext('2d');
-    console.log(backCanvas.width, backCanvas.height);
-    console.log(frontCanvas.width, frontCanvas.height);
 
     background.imageSmoothingEnabled = false;
     ctx.imageSmoothingEnabled = false;
+
+    colorPalette = settings.colorPalette;
+    backgroundColors = settings.backgroundColors;
+    colorSprites();
 
     paintBackground(state.gridSize);
     paintBorder(state.gridSize);
@@ -109,12 +136,10 @@ function paintGame(state) {
     paintTime(state);
 }
 
-
-
 function paintBackground(gridSize) {
     for (let row = 0; row < (gridSize + 2); row++) {
         for (let col = 0; col < (gridSize + 2); col++) {
-            background.fillStyle = backgroundColors[(row+col) % 2];
+            background.fillStyle = backgroundColors[(row + col) % 2];
             background.fillRect(
                 row * cellSize, 
                 col * cellSize, 
@@ -158,11 +183,15 @@ function paintTime(state) {
 function paintPlayer(state) {
     state.players.forEach(player => {
         let context = player.alive ? ctx : background;
+        colorPalette["player"] = player.color;
+        colorSprites();
         player.snake.forEach((cell, idx) => {
-            draw(context, playerSprite(player, idx), cell, player.color);
+            draw(context, playerSprite(player, idx), cell);
         });
     });
 }
+
+
 
 function playerSprite(player, idx) {
     let row = player.snake[idx].food ? 1 : 0;

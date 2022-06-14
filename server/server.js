@@ -49,7 +49,7 @@ io.on('connection', client => {
             client.emit('tooManyPlayers');
             return;
         }
-        sendToRoom(roomName, numClients)
+        sendToRoom(roomName)
     }
 
     function handleNewRoom() {
@@ -63,13 +63,15 @@ io.on('connection', client => {
             numFood: 1,
             frameRate: 5,
         }
-        sendToRoom(roomName, 0);
+        sendToRoom(roomName);
     }
     
     function sendToRoom(roomName) {
         clientRooms[client.id] = roomName;
         client.name = client.name || "";
         client.color = client.color || defaultColor();
+        client.admin = false;
+        client.score = 0;
         client.ready = false;
         client.emit('playerInitColor', client.color);
         client.emit('settings', JSON.stringify(settings[roomName]));

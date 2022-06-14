@@ -62,16 +62,25 @@ canvas{
   display: flex;
   width: 90%;
   margin-top: 0.5em;
+  height: 1.5em;
 }
 
 .player h2{
   font-size: 1em;
   margin-left: 0.5em;
   width: 1em;
+  margin-top: auto;
+  margin-bottom: auto;
 }
 
 .player .name{
+  margin-left: 0.5em;
   width: auto;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+.player .form-control{
+  width: 8em;
 }
 
 .player .color{
@@ -81,6 +90,8 @@ canvas{
   margin-left: 0.5em;
   width: 1em;
   height: 1em;
+  margin-top: auto;
+  margin-bottom: auto;
 }
 .menu button {
   color:rgb(255, 255, 255);
