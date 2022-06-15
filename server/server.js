@@ -63,6 +63,7 @@ io.on('connection', client => {
             numFood: 1,
             frameRate: 5,
         }
+        client.admin = true;
         sendToRoom(roomName);
     }
     
@@ -70,7 +71,7 @@ io.on('connection', client => {
         clientRooms[client.id] = roomName;
         client.name = client.name || "";
         client.color = client.color || defaultColor();
-        client.admin = false;
+        client.admin = client.admin || false;
         client.score = 0;
         client.ready = false;
         client.emit('playerInitColor', client.color);

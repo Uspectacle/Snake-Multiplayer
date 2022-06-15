@@ -26,6 +26,7 @@ const initRoom = document.getElementById('initRoom');
 const Settings = document.getElementById('Settings');
 const room = document.getElementById('room');
 
+const title = document.getElementById('title');
 const initialScreen = document.getElementById('initialScreen');
 const newRoomButton = document.getElementById('newRoomButton');
 const roomCodeInput = document.getElementById('roomCodeInput');
@@ -59,7 +60,7 @@ nameInput.addEventListener('input', updateName);
 colorInput.addEventListener('change', updateColor, false);
 readyButton.addEventListener('click', updateReady);
 sidebarButton.addEventListener('click', updateSidebar);
-exitRoomButton.addEventListener('click', exitRoom);
+// exitRoomButton.addEventListener('click', exitRoom);
 document.addEventListener('keydown', keydown);
 
 
@@ -96,9 +97,17 @@ window.mobileCheck = function() {
 
 
 
+function winkTitle() {
+    setTimeout(function() {
+        title.classList.add('wink');
+        setTimeout(function() {
+            title.classList.remove('wink');
+            winkTitle()
+        }, 150);
+    }, 2000 + Math.floor(Math.random() * 8000));
+}
 
-
-
+winkTitle();
 
 function updateSidebar() {
     roomMenu.style.display = sideBar ? "none" : "block";
