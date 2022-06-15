@@ -58,7 +58,7 @@ io.on('connection', client => {
             roomName = makeid(5);
         }
         settings[roomName] = {
-            gridSize: 20, 
+            gridSize: 21, 
             snakeInitSize: 3, 
             numFood: 1,
             frameRate: 5,
@@ -77,6 +77,7 @@ io.on('connection', client => {
         client.emit('playerInitColor', client.color);
         client.emit('settings', JSON.stringify(settings[roomName]));
         client.emit('roomCode', roomName);
+        client.emit('id', client.id);
         client.join(roomName);
     }
     
@@ -168,21 +169,17 @@ function updateRoom(roomName) {
         });
     });
     io.sockets.in(roomName).emit('roomComposition', JSON.stringify(players));
+    state[roomName] = initGame(settings[roomName], players);
+    io.sockets.in(roomName)
+        .emit('beginGame', JSON.stringify(state[roomName]));
     if (allReady) {
         timeoutReady.roomName = setTimeout(() => {
-            beginGame(roomName, players);
+            startGameInterval(roomName);
         }, 3000);
     }
     else {
         clearTimeout(timeoutReady.roomName);
     }
-}
-
-function beginGame(roomName, players) {
-    state[roomName] = initGame(settings[roomName], players);
-    io.sockets.in(roomName)
-        .emit('beginGame', JSON.stringify(state[roomName]));
-    startGameInterval(roomName);
 }
 
 function startGameInterval(roomName) {

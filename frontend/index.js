@@ -27,6 +27,7 @@ const Settings = document.getElementById('Settings');
 const room = document.getElementById('room');
 
 const title = document.getElementById('title');
+const gameRoom = document.getElementById('gameRoom');
 const initialScreen = document.getElementById('initialScreen');
 const newRoomButton = document.getElementById('newRoomButton');
 const roomCodeInput = document.getElementById('roomCodeInput');
@@ -35,9 +36,11 @@ const errorRoomCode = document.getElementById('errorRoomCode');
 
 const roomScreen = document.getElementById('roomScreen');
 const roomCodeDisplay = document.getElementById('roomCodeDisplay');
+const copyButton = document.getElementById('copyButton');
 const colorInput = document.getElementById('colorInput');
 const nameInput = document.getElementById('nameInput');
 const readyButton = document.getElementById('readyButton');
+const playerOneDisplay = document.getElementById('playerOneDisplay');
 const playersDisplay = document.getElementById('playersDisplay');
 const exitRoomButton = document.getElementById('exitRoomButton');
 
@@ -60,11 +63,12 @@ nameInput.addEventListener('input', updateName);
 colorInput.addEventListener('change', updateColor, false);
 readyButton.addEventListener('click', updateReady);
 sidebarButton.addEventListener('click', updateSidebar);
-// exitRoomButton.addEventListener('click', exitRoom);
+copyButton.addEventListener('click', copyRoomCode);
 document.addEventListener('keydown', keydown);
 
 
 socket.on("roomCode", handleRoomCode);
+socket.on("id", handleId);
 socket.on("unknownRoom", handleUnknownRoom);
 socket.on("tooManyPlayers", handleTooManyPlayers);
 
@@ -75,13 +79,8 @@ socket.on("beginGame", handleBeginGame);
 socket.on("gameState", handleGameState);
 
 
-socket.on("alerting", alerting);
-
-function alerting(text) {
-    alert(text);
-}
-
-let playerNumber;
+let playerOne;
+let playerId;
 let inGame = false;
 let alive = false;
 let playerName;
@@ -95,19 +94,28 @@ window.mobileCheck = function() {
     return check;
 };
 
+function showScreen(screenName) {
+    initRoom.style.display = "none";
+    Settings.style.display = "none";
+    room.style.display = "none";
+    gameRoom.style.display = "none";
+    screenName.style.display = "block";
+}
+
+showScreen(initRoom);
 
 
-function winkTitle() {
+function blinkTitle() {
     setTimeout(function() {
-        title.classList.add('wink');
+        title.classList.add('blink');
         setTimeout(function() {
-            title.classList.remove('wink');
-            winkTitle()
+            title.classList.remove('blink');
+            blinkTitle()
         }, 150);
     }, 2000 + Math.floor(Math.random() * 8000));
 }
 
-winkTitle();
+blinkTitle();
 
 function updateSidebar() {
     roomMenu.style.display = sideBar ? "none" : "block";
@@ -115,14 +123,6 @@ function updateSidebar() {
 }
 
 
-function showScreen(screenName) {
-    initRoom.style.display = "none";
-    Settings.style.display = "none";
-    room.style.display = "none";
-    screenName.style.display = "block";
-}
-
-showScreen(initRoom);
 
 function newRoom() {
     socket.emit('newRoom');
@@ -163,12 +163,10 @@ function updateReady() {
     playerReady = !playerReady;
     socket.emit('playerReady', playerReady);
     if (playerReady) {
-        readyButton.classList.remove('green');
-        readyButton.classList.add('red');
+        readyButton.classList.add('redbutton');
         readyButton.innerText = "I'm NOT Ready";
     } else {
-        readyButton.classList.remove('red');
-        readyButton.classList.add('green');
+        readyButton.classList.remove('redbutton');
         readyButton.innerText = "I'm Ready";
     }
 }
@@ -184,12 +182,15 @@ function handleRoomCode(roomCode) {
     showScreen(room);
 }
 
+function handleId(id) {
+    playerId = id;
+}
+
 function handleRoomComposition(players) {
     players = JSON.parse(players);
     playersDisplay.replaceChildren();
     let maxScore = Math.max(...players.map(player => player.score));
     maxScore = maxScore ? maxScore : null;
-
     for (const player of players) {
         let playerDiv = document.createElement('div');
         let adminDiv = document.createElement('h2');
@@ -220,6 +221,12 @@ function handleRoomComposition(players) {
         playerDiv.append(nameDiv);
 
         playersDisplay.append(playerDiv);
+
+        if (player.id === playerId) {
+            playerOne = {...player};
+            playerOneDisplay.replaceChildren();
+            playerOneDisplay.append(playerDiv.cloneNode(true));
+        }
     }
 }
 
@@ -228,12 +235,9 @@ function exitRoom() {
     showScreen(initialScreen);
 }
 
-
-
 function handleBeginGame(gameState) {
     if (inGame){return;}
     gameState = JSON.parse(gameState);
-    updateReady();
     inGame = true;
     alive = true;
     console.log('init paint')
@@ -242,9 +246,15 @@ function handleBeginGame(gameState) {
         backgroundColors: backgroundColorsDefault, 
     }
     initPaint(backCanvas, frontCanvas, gameState, paintSettings);
+    requestAnimationFrame(() => paintGame(gameState));
+
+    showScreen(gameRoom);
 }
 
 function handleGameState(gameState) {
+    if (playerReady) {
+        updateReady();
+    }
     if (!inGame){return;}
     gameState = JSON.parse(gameState);
     requestAnimationFrame(() => paintGame(gameState));
@@ -254,4 +264,13 @@ function keydown(e) {
     if (!inGame){return;}
     if (!alive){return;}
     socket.emit('keydown', e.keyCode)
+}
+
+
+
+
+function copyRoomCode() {
+    let copyText = "Wesh bruv! Come play at https://uspectacle.github.io/Snake-Multiplayer/frontend/index.html \n\
+    My room code is:\n\n" + roomCodeDisplay.innerText;
+    navigator.clipboard.writeText(copyText);
 }

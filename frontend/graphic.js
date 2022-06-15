@@ -9,12 +9,12 @@ const colorPaletteDefault = {
     "void": "#00000000",
     "player": "#000000",
     "food": "#ff3300",
-    "foodLight": "#ff6600",
+    "foodLight": "#ff9933",
     "skull": "#999999",
     "snake": "#00cc00",
     "snakeLight": "#00ff0080",
 };
-const backgroundColorsDefault = ['#231f2050', '#002b1480'];
+const backgroundColorsDefault = ['#00660050', '#00660080'];
 let colorPalette = {...colorPaletteDefault};
 let backgroundColors = [...backgroundColorsDefault];
 
@@ -87,9 +87,6 @@ function colorSprites(){
         color.forEach( (colorAmp, colorIdx) => {
             coloredSprites.data[pixel*4 + colorIdx] = colorAmp;
         });
-        if(key === "void"){
-            console.log(color);
-        }
     });
     spritesCtx.clearRect(0, 0, w, h);
     spritesCtx.putImageData(coloredSprites, 0, 0);

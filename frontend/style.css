@@ -2,19 +2,73 @@
   box-sizing: border-box;
 }
 
+:root {
+  --very-dark-green: #002b00;
+  --dark-green: #006600;
+  --darker-green: #009900;
+  --green: #00cc00;
+  --light-green: #00ff00;
+
+  --very-dark-red: #531100;
+  --dark-red: #881b00;
+  --darker-red: #af2300;
+  --red: #ff3300;
+  --light-red: #ff9933;
+  --orange: #ff9933;
+}
 
 .screen {
   display: block;
   height: 100vh;
-  width: 100vw;
+  width: auto;
   text-align: center;
 
-  background-color: #002b14;
+  background-color: var(--very-dark-green);
   background-image: url("../Images/herbe-v2.jpg");
   background-size: cover;
   background-position: top top;
   background-color: none;
 }
+
+.boxed {
+  background-color: #00000070;
+  border-radius: 0.5em;
+}
+
+/* Button in general */
+button {
+  margin-bottom: 1em;
+  padding: 0.5em;
+  color:rgb(255, 255, 255);
+  width: auto;
+  border-radius: 0.5em;
+  font-size: 1.3em;
+  background-color: var(--dark-green);
+  border-color: var(--very-dark-green);
+}
+button:hover {background-color: var(--darker-green);}
+button:active {background-color: var(--green);}
+
+.redbutton {
+  background-color: var(--dark-red);
+  border-color: var(--very-dark-red);
+}
+
+.redbutton:hover {background-color: var(--darker-red);}
+.redbutton:active {background-color: var(--red);}
+  
+
+
+
+
+
+
+
+
+
+
+
+/* Reception : title & co*/
 
 .reception {
   display: block;
@@ -25,15 +79,20 @@
   transform: translate(-50%, -50%);
 }
 
+.reception .alert {
+  padding: 0;
+  color: var(--red);
+}
+
+/* Title*/
 .title {
-  background-image: url("../Images/title_hover.png");
-  background-image: url("../Images/title_wink.png");
   background-image: url("../Images/title.png");
-  background-size: contain;
+  background-position: 0 0;
+  background-size: cover;
   background-repeat: no-repeat;
   animation-name: move;
-  height: 15em;
-  width: 18em;
+  height: 16em;
+  width: 20em;
   animation-duration: 2s;
   animation-iteration-count: infinite;
   animation-direction: alternate;
@@ -42,80 +101,258 @@
   margin-left: auto;
   margin-right: auto;
 }
-
-.title:hover {
-  background-image: url("../Images/title_hover.png");
-}
-
-.wink {
-  background-image: url("../Images/title_wink.png");
-}
+.title:hover {background-position: 0 -32em;}
+.blink {background-position: 0 -16em;}
 
 @keyframes move {
   0% {transform: translateY(0.1em);}
   100% {transform: translateY(-0.1em);}
 }
 
-@keyframes flicker {
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
 
-.button {
-  margin-bottom: 1em;
-  padding: 0.5em;
-  color:rgb(255, 255, 255);
-  width: auto;
-  border-radius: 0.5em;
-  font-size: 1.3em;
-  background-color: #006d00;
-}
 
-canvas{
-  display: none;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  height: 100vmin;
-  width: 100vmin;
-  -webkit-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
-}
 
-.side{
-  display: none;
-  float: right;
+
+
+
+
+
+
+
+
+
+/* Game Room: Layers, game, controles & co */
+
+.gameRoom {display: none;}
+
+.layer {
   position: relative;
-  z-index:1;
+  display: flex;
+  height: calc((100vmax - 100vmin)/2);
 }
 
-.roomName{
+.quarter {
+  position: relative;
+  display: block;
+  width: 50%;
+  height: 100%;
+  margin: auto;
+}
+.quarter img{
+  width: 90%;
+  height: 90%;
+}
+
+/* .quarter button {
+  margin-top: 0;
+  margin-bottom: 0;
+  width: 90%;
+  height: 30%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+} */
+
+
+/* Room Code: Display and copie */
+
+.roomCode{
   padding: 0.2em;
+  width: 100%;
   font-size: 2em;
-  border-color: #000000;
-  background-color: rgba(0, 0, 0, 0.096);
+  text-align: center;
+  color: var(--green);
 }
-.roomName h2{
-  font-size: 1em;
-}
-.roomName button{
-  font-size: 1.3em;
+
+.copy{  
+  padding: 0;
+  width: 100%;
+  font-size: 2em;
   color:rgb(255, 255, 255);
   border-radius: 0.5em;
-  border: 0.2rem solid;
+  border: 0.2em solid;
   border-color: #00000000;
   background-color: #00000000;
 }
-
-.roomName button:hover{
+.copy:hover{
   border-color: #ffffff33;
+  background-color: #00000000;
 }
-.roomName button:active{
-  border-color: #ffffff80;
+.copy:hover span {display: none}
+.copy:hover:before {content: "🔗 Copy"}
+.copy:active:before {content: "🔗 Copied"}
+.copy:active{border-color: #ffffff80;}
+
+
+
+
+/* Game Screen */
+.game{
+  position: relative;
+  height: 96vmin;
+  width: 96vmin;
+  margin: 2vmin;
+  /* left: 50%;
+  top: 50%; */
+  /* margin-left: auto; */
+  /* margin-right: auto; */
+  /* -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%); */
+  /* position: absolute; */
+  /* left: 20%; */
+  /* top: 20%; */
+  /* margin-left: auto;
+  margin-right: auto; */
+  /* padding: 0 0 0 0;  */
+  /* position: 0 0 0 0; */
+  /* right: 0; */
+  /* height: 100vmin;
+  width: 100vmin; */
+  /* -webkit-transform: translate(-50%, -50%); */
+  /* transform: translate(-50%, -50%); */
+}
+
+.game canvas{
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+}
+
+
+
+
+
+
+/* Directional-buttons */
+.directional-buttons {
+  font-size: 0.4em;
+  margin-left: auto;
+  margin-right: auto;
+  background-image: none;
+  width: 32em;
+  height: 32em;
+  display: grid;
+  grid-gap: 0.5em;
+  grid-template-columns: 45fr 60fr 45fr;
+  grid-template-rows: 45fr 60fr 45fr;
+  grid-template-areas:
+    "....  up  ....."
+    "left  ..  right"
+    ".... down .....";
+}
+
+.direction-button {
+  font-size: 1em;
+  color: var(--green);
+  background: currentcolor;
+  border: none;
+  padding: 0 0 0 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  position: relative;
+}
+
+.direction-button:before {
+  display: block;
+  content: "";
+  position: absolute;
+  width: 8.8em;
+  height: 8.8em;
+  transform: rotate(45deg);
+  background: currentcolor;
+}
+
+.direction-button:after {
+  display: block;
+  content: "";
+  position: absolute;
+  border: 4em solid transparent;
+  color: rgba(255, 250, 250, 0.6);
+}
+
+.direction-button:hover {
+  color: var(--darker-green);
+}
+
+.direction-button:active {
+  color: var(--green);
+}
+
+.direction-button:active:after {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.up {
+  grid-area: up;
+  border-radius: 1em 1em 0 0;
+}
+.up:before {
+  left: calc(50% - 4.4em);
+  bottom: -4.4em;
+}
+.up:after {
+  border-bottom-color: currentcolor;
+  left: calc(50% - 4em);
+  top: -2em;
+}
+
+.left {
+  grid-area: left;
+  border-radius: 1em 0 0 1em;
+}
+.left:before {
+  right: -4.4em;
+  top: calc(50% - 4.4em);
+}
+.left:after {
+  border-right-color: currentcolor;
+  top: calc(50% - 4em);
+  left: -2em;
+}
+
+.right {
+  grid-area: right;
+  border-radius: 0 1em 1em 0;
+}
+.right:before {
+  left: -4.4em;
+  top: calc(50% - 4.4em);
+}
+.right:after {
+  border-left-color: currentcolor;
+  top: calc(50% - 4em);
+  right: -2em;
+}
+
+.down {
+  grid-area: down;
+  border-radius: 0 0 1em 1em;
+}
+.down:before {
+  left: calc(50% - 4.4em);
+  top: -4.4em;
+}
+.down:after {
+  border-top-color: currentcolor;
+  left: calc(50% - 4em);
+  bottom: -2em;
+}
+
+
+
+
+
+/* Player Display: Name, Color, Ready & co */
+.playersDisplay {
+  width: 95%;
+  /* height: 95%; */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .player {
@@ -126,6 +363,7 @@ canvas{
 }
 
 .player h2{
+  color: white;
   font-size: 1em;
   margin-left: 0.5em;
   width: 1em;
@@ -144,8 +382,8 @@ canvas{
 }
 
 .player .color{
-  background-color: #00ff00;
-  border-color: #00ff00;
+  background-color: var(--green);
+  border-color: var(--green);
   border-radius: 0.5em;
   margin-left: 0.5em;
   width: 1em;
@@ -153,6 +391,34 @@ canvas{
   margin-top: auto;
   margin-bottom: auto;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Other stuffs */
+
+.side{
+  display: none;
+  float: right;
+  position: relative;
+  z-index:1;
+}
+
 .menu button {
   color:rgb(255, 255, 255);
   width: auto;
@@ -241,3 +507,50 @@ img {
   height: 100%;
   width: 100%;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
