@@ -1,98 +1,28 @@
 export {
-    initGame,
+    createGameState,
     gameLoop,
+    scoresToRewards,
     updateVel,
 }
 
-let grid;
 
-function initGame(settings, players) {
-    const state = createGameState(settings, players);
-    grid = Array(state.gridSize*state.gridSize);
-    grid = Array.from(grid.keys());
-    grid = grid.map( (_, idx) => idxToPos(idx, state.gridSize));
-    randomFood(state);
-    return state;
-}
+
+// *** Utils Functions ***
 
 function same(vector1, vector2) {
     return (vector1.x == vector2.x && vector1.y == vector2.y);
 }
 
-
-
 function startingPos(slice) {
     let pos = [];
     for (let step = 0; step < slice+1; step++) {
-        pos.push({x: 0, y: step});
-        pos.push({x: slice, y: step});
         pos.push({x: step, y: 0});
+        pos.push({x: 0, y: step});
         pos.push({x: step, y: slice});
+        pos.push({x: slice, y: step});
     }
     pos = pos.filter(pos => (pos.x != pos.y && pos.x != slice - pos.y));
-    return pos.sort(() => 0.5 - Math.random());
-}
-
-function createGameState(settings, players) {
-    const slice = Math.ceil(players.length / 4) + 1;
-    const step = Math.floor(settings.gridSize/(slice + 2));
-    settings.snakeInitSize = Math.min(settings.snakeInitSize, step);
-    let startingPoints = startingPos(slice).slice(0, players.length);
-    players.forEach((players, playerID) => {
-        players.pos = {
-            x: step * (startingPoints[playerID].x + 1),
-            y: step * (startingPoints[playerID].y + 1)}
-        
-        players.vel = {
-            x: startingPoints[playerID].x ? 0 : 1,
-            y: startingPoints[playerID].y ? 0 : 1,
-            food: false,
-        }
-        players.vel.x = startingPoints[playerID].x - slice ? players.vel.x : -1;
-        players.vel.y = startingPoints[playerID].y - slice ? players.vel.y : -1;
-
-        players.snake = [];
-        for (let cell = 0; cell < settings.snakeInitSize + 1; cell++) {
-            players.snake.push({
-                x: players.pos.x - cell * players.vel.x, 
-                y: players.pos.y - cell * players.vel.y,
-                food: false,
-            });
-        }
-
-        players.nextVel = players.vel;
-        players.bufferVel = players.vel;
-        players.last = players.snake.pop();
-        players.alive = true;
-    });
-    return {
-        players: players, 
-        food: [],
-        numAlive: players.length,
-        numFood: settings.numFood,
-        gridSize: settings.gridSize,
-        time: - 5 * settings.frameRate - 1,
-        frameRate: settings.frameRate,
-        toKill: [],
-    };
-}
-
-
-
-function isFree(state, cell) {
-    for (let player of state.players) {
-        for (let wall of player.snake) {
-            if (same(cell, wall)) {
-                return false;
-            }
-        }
-    }
-    for (let wall of state.food) {
-        if (same(cell, wall)) {
-            return false;
-        }
-    }
-    return true;
+    return pos //.sort(() => 0.5 - Math.random());
 }
 
 function idxToPos(idx, gridSize) {
@@ -102,147 +32,208 @@ function idxToPos(idx, gridSize) {
     };
 }
 
-function randomFood(state) {
-    let foodToDo = state.numFood - state.food.length;
-    if (foodToDo <= 0) {return;}
-    let freeCells = grid.filter(cell => isFree(state, cell));
-    freeCells = freeCells.sort(() => 0.5 - Math.random());
-    freeCells = freeCells.slice(0, foodToDo);
-    state.food = state.food.concat(freeCells);
+
+
+// *** Initialisation ***
+
+function createGameState(settings, players) {
+    let snakes = JSON.parse(JSON.stringify(players));
+    const numSnakes = Object.keys(snakes).length;
+    const slice = Math.ceil(numSnakes / 4) + 1;
+    const step = Math.floor(settings.gridSize/(slice + 2));
+    let startingPoints = startingPos(slice);
+    settings.bodyInitSize = Math.min(settings.bodyInitSize, step);
+
+    Object.values(snakes).forEach( snake => {
+        const starting = startingPoints.pop();
+        snake.head = {
+            x: step * (starting.x + 1),
+            y: step * (starting.y + 1),
+        }
+        snake.vel = {
+            x: starting.x ? 0 : 1,
+            y: starting.y ? 0 : 1,
+            food: false,
+        }
+        snake.vel.x = starting.x - slice ? snake.vel.x : -1;
+        snake.vel.y = starting.y - slice ? snake.vel.y : -1;
+
+        snake.body = [];
+        for (let cell = 0; cell < settings.bodyInitSize + 1; cell++) {
+            snake.body.push({
+                x: snake.head.x - cell * snake.vel.x, 
+                y: snake.head.y - cell * snake.vel.y,
+                food: false,
+            });
+        }
+
+        snake.nextVel = snake.vel;
+        snake.bufferVel = snake.vel;
+        snake.last = snake.body.pop();
+        snake.alive = true;
+        snake.score = numSnakes;
+    });
+    return {
+        snakes: snakes, 
+        food: [],
+        numAlive: numSnakes,
+        numFood: settings.numFood,
+        gridSize: settings.gridSize,
+        time: - 5 * settings.frameRate,
+        maxTime: settings.maxTime,
+        frameRate: settings.frameRate,
+        toKill: [],
+        event: "init",
+    };
 }
 
 
 
-function keyToVel(keyCode) {
-    switch (keyCode) {
-        case 37: { // left
-            return { x: -1, y: 0 };
-        }
-        case 38: { // down
-            return { x: 0, y: -1 };
-        }
-        case 39: { // right
-            return { x: 1, y: 0 };
-        }
-        case 40: { // up
-            return { x: 0, y: 1 };
-        }
+// *** Loop Functions : Main ***
+
+function gameLoop(state) {
+    if (!state) {return true;}
+    if (state.event === "over") {return;}
+    // Update time
+    state.time ++;
+    if (state.event === "init") {
+        state.event = "start";
     }
-}
-
-function velCheck(vel, nextVel) {
-    return !(nextVel.x * vel.x || nextVel.y * vel.y);
-}
-
-function updateVel(player, keyCode) {
-    if (!player) {return;}
-    if (!player.alive) {return;}
-    let vel = keyToVel(keyCode)
-    if (!vel) {return;}
-    if (velCheck(player.vel, vel)) {
-        player.nextVel = {...vel};
-        player.bufferVel = {...vel};
-    } else if (velCheck(player.nextVel, vel)) {
-        player.bufferVel = {...vel};
+    if (state.event === "start") {
+        if (state.time < 0) {return;}
+        state.event = "loop";
     }
+    // Update score
+    Object.values(state.snakes).forEach( snake => {
+        if (snake.alive) {
+            snake.score = state.time + snake.body.length;
+        }
+    });
+    if (state.time > state.maxTime * state.frameRate) {
+        state.event = "over";
+        return;
+    }
+    // Update position and kill snakes
+    move(state);
+    state.toKill.forEach( playerKey => {
+        killSnake(state, state.snakes[playerKey]);
+    });
+    state.toKill = [];
+    checkDeathOutbound(state);
+    checkDeathHeadCollision(state);
+    checkDeathOverBody(state);
+    if (state.numAlive < 1) {
+        state.event = "over";
+        return;
+    }
+    // Update food
+    randomFood(state);
 }
+
+
+
+// *** Loop Functions : Move ***
 
 function move(state) {
-    state.players.forEach( player => {
-        if (!player.alive) {
-            player.snake = [];
+    Object.values(state.snakes).forEach( snake => {
+        if (!snake.alive) {
+            snake.body = [];
             return;
         }
 
         // loose tail if no food
-        player.last = player.snake.pop(); 
-        if (player.last.food) {
-            player.last.food = false;
-            player.snake.push({...player.last});
-            player.last.food = true;
+        snake.last = snake.body.pop(); 
+        if (snake.last.food) {
+            snake.last.food = false;
+            snake.body.push({...snake.last});
+            snake.last.food = true;
         }
 
         // move head
-        player.vel = {...player.nextVel};
-        player.nextVel = {...player.bufferVel};
-        player.pos.x += player.vel.x;
-        player.pos.y += player.vel.y;
-        player.pos.food = false;
+        snake.vel = {...snake.nextVel};
+        snake.nextVel = {...snake.bufferVel};
+        snake.head.x += snake.vel.x;
+        snake.head.y += snake.vel.y;
+        snake.head.food = false;
 
         // eat food
         state.food.forEach( (food, foodIdx) => {
-            if (same(food, player.pos)) {
-                player.pos.food = true;
+            if (same(food, snake.head)) {
+                snake.head.food = true;
                 state.food.splice(foodIdx, 1);
                 return;
             }
         });
         // add head to body
-        player.snake.unshift({...player.pos});
+        snake.body.unshift({...snake.head});
     });
 }
 
 
-function killSnake(state, player) {
-    if (!player) {return;}
-    if (!player.alive) {return;}
-    if (player.last.food) {
-        player.snake.pop();
+
+
+// *** Loop Functions : 3 ways of dying + deconnection ***
+
+function killSnake(state, snake) {
+    if (!snake) {return;}
+    if (!snake.alive) {return;}
+    if (snake.last.food) {
+        snake.body.pop();
     }
-    player.snake.push({...player.last});
-    player.snake.forEach( cell => {
+    snake.body.push({...snake.last});
+    snake.body.forEach( cell => {
         if (cell.food) {
             state.food.push({...cell})
         }
     });
-    player.pos = player.snake.shift();
-    player.alive = false;
+    snake.head = snake.body.shift();
+    snake.alive = false;
+    snake.score -= snake.body.length;
     state.numAlive -= 1;
 }
 
 function checkDeathOutbound(state) {
-    state.players.forEach( player => { 
-        if (!player.alive) {return;}
-        if (player.pos.x < 0 || 
-            player.pos.x > state.gridSize-1 || 
-            player.pos.y < 0 || 
-            player.pos.y > state.gridSize-1
+    Object.values(state.snakes).forEach( snake => { 
+        if (!snake.alive) {return;}
+        if (snake.head.x < 0 || 
+            snake.head.x > state.gridSize-1 || 
+            snake.head.y < 0 || 
+            snake.head.y > state.gridSize-1
             ) {
-            killSnake(state, player);
+            killSnake(state, snake);
         }
     });
 }
 
 function checkDeathHeadCollision(state) {
-    state.players.forEach( (player, playerID) => { 
-        if (!player.alive) {return;}
-        state.players.forEach( (other, otherID) => {
+    Object.values(state.snakes).forEach( (snake, snakeIndex) => { 
+        if (!snake.alive) {return;}
+        Object.values(state.snakes).forEach( (other, otherIndex) => {
             if (!other.alive) {return;}
-            if (otherID <= playerID) {return;}
-            if (same(other.pos, player.pos)) {
+            if (otherIndex <= snakeIndex) {return;}
+            if (same(other.head, snake.head)) {
                 killSnake(state, other);
-                if (player.alive) {
-                    killSnake(state, player);
+                if (snake.alive) {
+                    killSnake(state, snake);
                 }
             }
         });
     });
 }
 
-
 function checkDeathOverBody(state) {
     let check = true; 
     while (check) {
         check = false;
-        state.players.forEach( player => { 
-            if (!player.alive) {return;}
-            state.players.forEach( other => {
+        Object.values(state.snakes).forEach( snake => { 
+            if (!snake.alive) {return;}
+            Object.values(state.snakes).forEach( other => {
                 if (!other.alive) {return;}
-                if (!player.alive) {return;}
-                other.snake.forEach( (cell, cellidx) => {
+                if (!snake.alive) {return;}
+                other.body.forEach( (cell, cellidx) => {
                     if (!cellidx) {return;}
-                    if (same(cell, player.pos)) {
-                        killSnake(state, player);
+                    if (same(cell, snake.head)) {
+                        killSnake(state, snake);
                         check = true;
                         return;
                     }
@@ -253,17 +244,88 @@ function checkDeathOverBody(state) {
 }
 
 
-function gameLoop(state) {
-    if (!state){return;}
-    if (state.time < 0) {return;}
-    if (!state.players) {return;}
-    move(state);
-    state.toKill.forEach( player => {
-        killSnake(state, player);
-    });
-    state.toKill = [];
-    checkDeathOutbound(state);
-    checkDeathHeadCollision(state);
-    checkDeathOverBody(state);
-    randomFood(state);
+
+// *** Loop Functions : Placing Food ***
+
+function randomFood(state) {
+    let foodToDo = state.numFood - state.food.length;
+    if (foodToDo <= 0) {return;}
+    let grid = Array(state.gridSize * state.gridSize);
+    grid = Array.from(grid.keys());
+    grid = grid.map( (_, idx) => idxToPos(idx, state.gridSize));
+    let freeCells = grid.filter(cell => isFree(state, cell));
+    freeCells = freeCells.sort(() => 0.5 - Math.random());
+    freeCells = freeCells.slice(0, foodToDo);
+    state.food = state.food.concat(freeCells);
+}
+
+function isFree(state, cell) {
+    for (let snake of Object.values(state.snakes)) {
+        for (let snakeCell of snake.body) {
+            if (same(cell, snakeCell)) {return false;}
+        }
+    }
+    for (let foodCell of state.food) {
+        if (same(cell, foodCell)) {return false;}
+    }
+    return true;
+}
+
+
+
+// *** Handle Player Input ***
+
+function inputToVel(inputCode) {
+    switch (inputCode) {
+        case "left": {
+            return { x: -1, y: 0 };
+        }
+        case "up": {
+            return { x: 0, y: -1 };
+        }
+        case "right": {
+            return { x: 1, y: 0 };
+        }
+        case "down": {
+            return { x: 0, y: 1 };
+        }
+    }
+}
+
+function velCheck(vel, nextVel) {
+    return !(nextVel.x * vel.x || nextVel.y * vel.y);
+}
+
+function updateVel(snake, inputCode) {
+    if (!snake) {return;}
+    if (!snake.alive) {return;}
+    let vel = inputToVel(inputCode);
+    if (!vel) {return;}
+    if (velCheck(snake.vel, vel)) {
+        snake.nextVel = {...vel};
+        snake.bufferVel = {...vel};
+    } else if (velCheck(snake.nextVel, vel)) {
+        snake.bufferVel = {...vel};
+    }
+}
+
+
+
+// *** Compute Score ***
+
+function scoresToRewards(state) {
+    let scores = Object.entries(state.snakes).map( 
+        ([playerKey, snake]) => {
+            return [playerKey, snake.score];
+    })
+    scores.sort( (first, second) => {
+        return first[1] - second[1];
+    })
+    let reward;
+    let lastScore;
+    return scores.map( ([playerKey, score], scoreIndex) => {
+        reward = score === lastScore ? reward : scoreIndex;
+        lastScore = score;
+        return [playerKey, reward];
+    })
 }

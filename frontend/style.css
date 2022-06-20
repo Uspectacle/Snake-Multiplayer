@@ -15,6 +15,11 @@
   --red: #ff3300;
   --light-red: #ff9933;
   --orange: #ff9933;
+
+  --quarter-min: 10rem;
+  --game-size: min(calc(100vmax - 2*var(--quarter-min)), 100vmin);
+  --quarter-size: calc(50vmax - var(--game-size)/2);
+  --game-font: calc(min(var(--quarter-size), 50vmin) * 7/100);
 }
 
 .screen {
@@ -33,6 +38,15 @@
 .boxed {
   background-color: #00000070;
   border-radius: 0.5em;
+}
+
+.center{
+  position: absolute;
+  width: 100%;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 }
 
 /* Button in general */
@@ -56,21 +70,12 @@ button:active {background-color: var(--green);}
 
 .redbutton:hover {background-color: var(--darker-red);}
 .redbutton:active {background-color: var(--red);}
-  
 
 
 
+/* titleScreen : title & co*/
 
-
-
-
-
-
-
-
-/* Reception : title & co*/
-
-.reception {
+.titleScreen {
   display: block;
   position: absolute;
   left: 50%;
@@ -79,7 +84,8 @@ button:active {background-color: var(--green);}
   transform: translate(-50%, -50%);
 }
 
-.reception .alert {
+.alert {
+  font-size: 1em;
   padding: 0;
   color: var(--red);
 }
@@ -111,48 +117,50 @@ button:active {background-color: var(--green);}
 
 
 
-
-
-
-
-
-
-
-
-
-
 /* Game Room: Layers, game, controles & co */
 
-.gameRoom {display: none;}
-
-.layer {
-  position: relative;
+#gameScreen {display: none;}
+.gameScreen {
   display: flex;
-  height: calc((100vmax - 100vmin)/2);
+  font-size: var(--game-font);
+}
+
+.quarterContainer {
+  position: relative;
+  display: block;
+  height: 100vh;
+  width: var(--quarter-size);
 }
 
 .quarter {
+  width: 100%;
+  height: 50%;
   position: relative;
   display: block;
-  width: 50%;
-  height: 100%;
-  margin: auto;
+  /* margin: auto; */
 }
+
+/* For vertical browser's viewport */
+@media (max-width: 100vh) {
+  .gameScreen {display: block;}
+
+  .quarterContainer {
+    position: relative;
+    display: flex;
+    height: var(--quarter-size);
+    width: 100vw;
+  }
+  .quarter {
+    width: 50%;
+    height: 100%;
+  }
+}
+
 .quarter img{
   width: 90%;
   height: 90%;
 }
 
-/* .quarter button {
-  margin-top: 0;
-  margin-bottom: 0;
-  width: 90%;
-  height: 30%;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-} */
 
 
 /* Room Code: Display and copie */
@@ -188,29 +196,20 @@ button:active {background-color: var(--green);}
 
 
 /* Game Screen */
+.gameContainer{
+  display: block;
+  height: var(--game-size);
+  width: var(--game-size);
+}
+
 .game{
-  position: relative;
-  height: 96vmin;
-  width: 96vmin;
-  margin: 2vmin;
-  /* left: 50%;
-  top: 50%; */
-  /* margin-left: auto; */
-  /* margin-right: auto; */
-  /* -webkit-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%); */
-  /* position: absolute; */
-  /* left: 20%; */
-  /* top: 20%; */
-  /* margin-left: auto;
-  margin-right: auto; */
-  /* padding: 0 0 0 0;  */
-  /* position: 0 0 0 0; */
-  /* right: 0; */
-  /* height: 100vmin;
-  width: 100vmin; */
-  /* -webkit-transform: translate(-50%, -50%); */
-  /* transform: translate(-50%, -50%); */
+  position: absolute;
+  height: var(--game-size);
+  width: var(--game-size);
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 }
 
 .game canvas{
@@ -221,6 +220,14 @@ button:active {background-color: var(--green);}
   width: 100%;
 }
 
+.game button{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  opacity: 1;
+}
 
 
 
@@ -228,7 +235,7 @@ button:active {background-color: var(--green);}
 
 /* Directional-buttons */
 .directional-buttons {
-  font-size: 0.4em;
+  font-size: 0.3em;
   margin-left: auto;
   margin-right: auto;
   background-image: none;
@@ -391,14 +398,6 @@ button:active {background-color: var(--green);}
   margin-top: auto;
   margin-bottom: auto;
 }
-
-
-
-
-
-
-
-
 
 
 

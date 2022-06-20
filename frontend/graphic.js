@@ -1,9 +1,13 @@
 export  {
-    paintGame,
     initPaint,
+    paintGame,
     colorPaletteDefault,
     backgroundColorsDefault,
 }
+
+
+
+// *** Global Variables Declaration ***
 
 const colorPaletteDefault = {
     "void": "#00000000",
@@ -30,8 +34,10 @@ let spriteKeys;
 let ctx;
 let background;
 let cellSize;
+let canevasSize;
 
 
+// *** Open Sprite File ***
 
 function loadSprite(src, callback) {
     spriteImg = new Image();
@@ -65,6 +71,10 @@ loadSprite(spritesSrc, function() {
         }
     }
 });
+
+
+
+// *** Draw sprite on canevas with the proper color ***
 
 function hexToRGBA(hex){
     let alpha = hex.slice(7, 9);
@@ -108,11 +118,17 @@ function draw(context, spriteIdx, position) {
 
 
 
+// *** Initialisation ***
+
 function initPaint(backCanvas, frontCanvas, state, settings) {
     cellSize = backCanvas.height / (state.gridSize + 2);
+    canevasSize = (state.gridSize + 2) * cellSize;
 
     background = backCanvas.getContext('2d');
     ctx = frontCanvas.getContext('2d');
+
+    background.clearRect(0, 0, canevasSize, canevasSize);
+    ctx.clearRect(0, 0, canevasSize, canevasSize);
 
     background.imageSmoothingEnabled = false;
     ctx.imageSmoothingEnabled = false;
@@ -125,10 +141,13 @@ function initPaint(backCanvas, frontCanvas, state, settings) {
     paintBorder(state.gridSize);
 }
 
+
+
+// *** Paint Main Loop ***
+
 function paintGame(state) {
-    let canevasSize = (state.gridSize + 2) * cellSize;
     ctx.clearRect(0, 0, canevasSize, canevasSize);
-    paintPlayer(state);
+    paintSnake(state);
     paintFood(state);
     paintTime(state);
 }
@@ -167,61 +186,68 @@ function paintFood(state) {
 }
 
 function paintTime(state) {
-    if (state.time > 0) {return;}
-    if (state.time < -5*state.frameRate) {return;}
+    if (state.time > state.frameRate - 1) {return;}
+    if (state.time < -5 * state.frameRate + 1) {return;}
     let center = {
         x: Math.floor(state.gridSize / 2),
         y: Math.floor(state.gridSize / 2),
     }
-    let timeCol =  5 + Math.floor(state.time/state.frameRate);
+    let timeCol = 5 + Math.floor(state.time/state.frameRate);
     draw(ctx, [9, timeCol], center);
 }
 
-function paintPlayer(state) {
-    state.players.forEach(player => {
-        let context = player.alive ? ctx : background;
-        colorPalette["player"] = player.color;
+function paintSnake(state) {
+    Object.values(state.snakes).forEach( snake => {
+        let context = snake.alive ? ctx : background;
+        colorPalette["player"] = snake.color;
         colorSprites();
-        player.snake.forEach((cell, idx) => {
-            draw(context, playerSprite(player, idx), cell);
+        snake.body.forEach((cell, idx) => {
+            draw(context, snakeSprite(snake, idx), cell);
         });
     });
 }
 
 
 
-function playerSprite(player, idx) {
-    let row = player.snake[idx].food ? 1 : 0;
-    row = player.alive ? row : 2;
+// *** Select right snake sprite ***
+
+function snakeSprite(snake, idx) {
+    let row = snake.body[idx].food ? 1 : 0;
+    row = snake.alive ? row : 2;
     if (idx) {
         row += 3;
-        if (idx < (player.snake.length - 1)) {
+        if (idx < (snake.body.length - 1)) {
+            // Body
             row += 3;
             let curve = {
-                x: player.snake[idx-1].x - player.snake[idx+1].x,
-                y: player.snake[idx-1].y - player.snake[idx+1].y,
+                x: snake.body[idx-1].x - snake.body[idx+1].x,
+                y: snake.body[idx-1].y - snake.body[idx+1].y,
             };
             let vel = {
-                x: player.snake[idx-1].x - player.snake[idx].x,
-                y: player.snake[idx-1].y - player.snake[idx].y,
+                x: snake.body[idx-1].x - snake.body[idx].x,
+                y: snake.body[idx-1].y - snake.body[idx].y,
             };
             return [row, curvToCol(curve, vel)];
         } else {
+            // Tail
             let vel = {
-                x: player.snake.at(-2).x - player.snake.at(-1).x,
-                y: player.snake.at(-2).y - player.snake.at(-1).y,
+                x: snake.body.at(-2).x - snake.body.at(-1).x,
+                y: snake.body.at(-2).y - snake.body.at(-1).y,
             };
             return [row, velToCol(vel)];
         }
     } else {
-        return [row, velToCol(player.vel)];
+        // Head
+        return [row, velToCol(snake.vel)];
     }
 }
 
 function velToCol(vel) {
     if (vel.x) {
+        // > : <
         return vel.x > 0 ? 0 : 2;
     } else {
+        // ^ : v
         return vel.y > 0 ? 3 : 1;
     }
 }

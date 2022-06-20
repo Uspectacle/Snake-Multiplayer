@@ -14,7 +14,7 @@
     />
     <link rel="stylesheet" href="style.css"></link>
     <link rel="icon" type="image/x-icon" href="../Images/pumpkin.png" />
-    <title>Multi Snake</title>
+    <title>Snakes</title>
     <style>
     </style>
   </head>
@@ -33,22 +33,18 @@
 
 
     <div class="screen">
-
-
-
-
-
-
-
-
-
-
-      <div class="reception" id="initRoom">
-        <div class="title" id="title">
-        </div>
-        <!-- <button type="submit" class="button green" id="exitRoomButton">
+      <!-- One day I swear
+        <button type="submit" class="button green" id="exitRoomButton">
           🎮 Select other Games
-        </button> -->
+        </button> 
+      -->
+
+
+
+
+
+      <div class="titleScreen" id="titleScreen">
+        <div class="title" id="title"></div>
         <div>
           <button type="submit" id="newRoomButton">
             Create New Room
@@ -75,93 +71,69 @@
 
 
 
-
-
-
-
-
-
-
-      <div class="gameRoom" id="gameRoom">
-        <div class="layer" id="topLayer">
-
-          <div class="quarter" id="topLeft">
-            <div id="playerTwoDisplay" style="display: none;">
-              <h2>ERROR: player 2 display not working</h2>
+      <div id="gameScreen">
+        <div class="gameScreen">
+          <div id="Q1Q2" class="quarterContainer">
+            <div id="Q1" class="quarter">
+              <div class="center">
+                <div id="controllerPlayerTwo" style="display: none;">
+                  <div id="displayPlayerTwo"><h2>ERROR: displayPlayerTwo not working</h2></div>
+                  <div class="directional-buttons">
+                    <button id="upButtonTwo" class="direction-button up" role="button"/>
+                    <button id="leftButtonTwo" class="direction-button left" role="button"></button>
+                    <button id="rightButtonTwo" class="direction-button right" role="button"></button>
+                    <button id="downButtonTwo" class="direction-button down" role="button"></button>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="center">
+                <div id="roomCodeBox">
+                  <h2 class="roomCode">Room code</h2>
+                  <button id="copyButton" class="copy"><span id="roomCodeDisplay"></span></button>
+                  <button id="newPlayerButton" type="submit">➕ Add Local Player</button>
+                </div>
+              </div>
             </div>
-            <button type="submit" id="readyButtonPlayerTwo" style="display: none;">
-              I'm Ready
-            </button>
-            <h2 class="roomCode">Room code</h2>
-            <button class="copy" id="copyButton"><span id="roomCodeDisplay"></span></button>
-            <button type="submit" id="newPlayerButton">
-              ➕ Add Local Player
-            </button>
-            <div class="directional-buttons" style="display: none;">
-              <button class="direction-button up" role="button" id="up-button">
-                  <span class="visually-hidden"></span>
-              </button>
-              <button class="direction-button left" role="button" id="left-button">
-                  <span class="visually-hidden"></span>
-              </button>
-              <button class="direction-button right" role="button" id="right-button">
-                  <span class="visually-hidden"></span>
-              </button>
-              <button class="direction-button down" role="button" id="down-button">
-                  <span class="visually-hidden"></span>
-              </button>
+
+            <div id="Q2" class="quarter">
+              <div class="center">
+                <div id="playersDisplay" class="playersDisplay">
+                  <h2>ERROR: players display not working</h2>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div class="quarter boxed" id="topRigth">
-            <div class="playersDisplay" id="playersDisplay">
-              <h2>ERROR: players display not working</h2>
+
+          <div id="gameContainer" class="gameContainer">
+            <div id="game" class="game">
+              <canvas id="backCanvas" width="1000" height="1000"></canvas>
+              <canvas id="frontCanvas" width="1000" height="1000"></canvas>
+              <button id="readyButton" type="submit">I'm Ready</button>
             </div>
           </div>
-        </div>
 
 
-
-
-
-        <div class = "game" id = "game">
-          <canvas width="1000" height="1000" id="backCanvas" style="z-index: 0.1">
-          </canvas>
-          <canvas width="1000" height="1000" id="frontCanvas" style="z-index: 0.2">
-          </canvas>
-        </div>
-
-
-
-
-        <div class="layer" id="bottomLayer">
-
-          <div class="quarter" id="bottomLeft">
-            <button type="submit" id="settingsButton">
-              ⚙️ Settings
-            </button>
-          </div>
-
-          <div class="quarter" id="bottomLeft">
-            <div id="playerOneDisplay">
-              <h2>ERROR: player 1 display not working</h2>
+          <div id="Q3Q4" class="quarterContainer">
+            <div id="Q3" class="quarter">
+              <div class="center">
+                <button id="settingsButton" type="submit" >
+                  ⚙️ Settings
+                </button>
+              </div>
             </div>
-            <button type="submit" id="readyButton">
-              I'm Ready
-            </button>
-            <div class="directional-buttons" style="display: none;">
-              <button class="direction-button up" role="button" id="up-button">
-                  <span class="visually-hidden"></span>
-              </button>
-              <button class="direction-button left" role="button" id="left-button">
-                  <span class="visually-hidden"></span>
-              </button>
-              <button class="direction-button right" role="button" id="right-button">
-                  <span class="visually-hidden"></span>
-              </button>
-              <button class="direction-button down" role="button" id="down-button">
-                  <span class="visually-hidden"></span>
-              </button>
+
+            <div id="Q4" class="quarter">
+              <div id="controller" class="center">
+                <div id="displayPlayer"><h2 class="alert">ERROR: displayPlayer not working</h2></div>
+                <div class="directional-buttons">
+                  <button id="upButton" class="direction-button up" role="button"></button>
+                  <button id="leftButton" class="direction-button left" role="button"></button>
+                  <button id="rightButton" class="direction-button right" role="button"></button>
+                  <button id="downButton" class="direction-button down" role="button"></button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -171,26 +143,7 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <div class="menu side" id="roomMenu">        
+      <!-- <div class="menu side" id="roomMenu" style="display: none;">        
         <div id="Settings">
           <h5 class="text-green">Map Size :</h5>
           <select class="form-control small" id="mapSizeInput">
@@ -265,14 +218,15 @@
 
 
 
-      <div class="side bar">
+      <div class="side bar" style="display: none;">
         <button id="sidebarButton">
           😃
         </button>
-      </div>
+      </div> -->
+
+
+
     </div>
-
-
   </body>
 </html>
 

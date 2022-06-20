@@ -1,7 +1,7 @@
 export  {
    makeid,
-   defaultColor,
-   defaultName,
+   combineKeys,
+   splitKey,
 }
 
 function makeid(length) {
@@ -14,10 +14,46 @@ function makeid(length) {
    return result;
 }
 
-function defaultColor() {
-   return "#"+Math.floor(Math.random()*16777215).toString(16);
+function isPrime(num) {
+   const sqrt = Math.sqrt(num)
+   for (let divisor = 2; divisor <= sqrt; divisor++) {
+       if (num % divisor === 0) {return false;} 
+   }
+   return num > 1;
 }
 
-function defaultName(playerNumber) {
-   return `Player_${playerNumber + 1}`;
+function combineKeys(keys) {
+   let resultKey = 1;
+   let prime = 1;
+   keys.forEach( key => {
+      prime ++;
+      while (!isPrime(prime)) {
+         prime ++;
+      }
+      resultKey *= prime ** key;
+   });
+   return resultKey;
+}
+
+function splitKey(key) {
+   let resultKeys = [];
+   let remainder = Math.round(key);
+   let prime = 1;
+   while (remainder > 1) {
+      if (remainder < prime) {
+         console.log("error splitKey", key);
+         break;
+      }
+      prime ++;
+      while (!isPrime(prime)) {
+         prime ++;
+      }
+      let divisor = 0;
+      while (!(remainder % prime)) {
+         remainder = Math.floor(remainder / prime);
+         divisor ++;
+      }
+      resultKeys.push(divisor);
+   }
+   return resultKeys;
 }

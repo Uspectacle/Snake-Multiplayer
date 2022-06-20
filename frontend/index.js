@@ -1,3 +1,5 @@
+// *** Server-Client Initialisation ***
+
 import { LOCALHOST } from './local.js';
 let socketCORS = "https://snake-multi-psl.herokuapp.com/";
 if (LOCALHOST) {
@@ -5,13 +7,22 @@ if (LOCALHOST) {
 }
 
 import { io } from "socket.io-client";
-
 const socket = io(socketCORS, {
     withCredentials: true,
     extraHeaders: {
       "server-client": "yey-ca-marche"
     }
 });
+
+
+
+// *** Import function from other local scripts ***
+
+import { 
+    defaultColor, 
+    defaultName,
+    splitKey,
+} from './utils.js';
 
 import { 
     paintGame, 
@@ -20,90 +31,135 @@ import {
     backgroundColorsDefault, 
 } from './graphic.js';
 
-const sidebarButton = document.getElementById('sidebarButton');
-const roomMenu = document.getElementById('roomMenu');
-const initRoom = document.getElementById('initRoom');
-const Settings = document.getElementById('Settings');
-const room = document.getElementById('room');
 
+
+// *** Import element from the html document ***
+
+// * Title Screen *
+const titleScreen = document.getElementById('titleScreen');
 const title = document.getElementById('title');
-const gameRoom = document.getElementById('gameRoom');
-const initialScreen = document.getElementById('initialScreen');
 const newRoomButton = document.getElementById('newRoomButton');
-const roomCodeInput = document.getElementById('roomCodeInput');
 const joinRoomForm = document.getElementById('joinRoomForm');
 const errorRoomCode = document.getElementById('errorRoomCode');
+const roomCodeInput = document.getElementById('roomCodeInput');
 
-const roomScreen = document.getElementById('roomScreen');
+// * Game Screen *
+const gameScreen = document.getElementById('gameScreen');
+
+// * Game Screen : Controller Player Two *
+const controllerPlayerTwo = document.getElementById('controllerPlayerTwo');
+const displayPlayerTwo = document.getElementById('displayPlayerTwo');
+const upButtonTwo = document.getElementById('upButtonTwo');
+const leftButtonTwo = document.getElementById('leftButtonTwo');
+const rightButtonTwo = document.getElementById('rightButtonTwo');
+const downButtonTwo = document.getElementById('downButtonTwo');
+
+// * Game Screen : Room Code Box *
+const roomCodeBox = document.getElementById('roomCodeBox');
 const roomCodeDisplay = document.getElementById('roomCodeDisplay');
 const copyButton = document.getElementById('copyButton');
-const colorInput = document.getElementById('colorInput');
-const nameInput = document.getElementById('nameInput');
-const readyButton = document.getElementById('readyButton');
-const playerOneDisplay = document.getElementById('playerOneDisplay');
-const playersDisplay = document.getElementById('playersDisplay');
-const exitRoomButton = document.getElementById('exitRoomButton');
+const newPlayerButton = document.getElementById('newPlayerButton');
 
-const gameScreen = document.getElementById('gameScreen');
+// * Game Screen : Players Display *
+const playersDisplay = document.getElementById('playersDisplay');
+
+// * Game Screen : Game *
 const backCanvas = document.getElementById('backCanvas');
 const frontCanvas = document.getElementById('frontCanvas');
+const readyButton = document.getElementById('readyButton');
+
+// * Game Screen : Settings *
+const settingsButton = document.getElementById('settingsButton');
+
+// * Game Screen : Controller *
+const controller = document.getElementById('controller');
+const displayPlayer = document.getElementById('displayPlayer');
+const upButton = document.getElementById('upButton');
+const leftButton = document.getElementById('leftButton');
+const rightButton = document.getElementById('rightButton');
+const downButton = document.getElementById('downButton');
+
+// * Settings Screen *
+// const settingsScreen = document.getElementById('settingsScreen'); ONE DAY MORE
 
 
-const exitBtn = document.getElementById('exitButton');
-const restartBtn = document.getElementById('restartButton');
-const gameOverDisplay = document.getElementById('gameOverDisplay');
 
+// *** Event Listener ***
 
-
+// * Title Screen *
 newRoomButton.addEventListener('click', newRoom);
 joinRoomForm.addEventListener('submit', joinRoom);
 roomCodeInput.addEventListener('input', removeErrorRoomCode);
 
-nameInput.addEventListener('input', updateName);
-colorInput.addEventListener('change', updateColor, false);
-readyButton.addEventListener('click', updateReady);
-sidebarButton.addEventListener('click', updateSidebar);
+// * Game Screen : Controller Player Two *
+upButtonTwo.addEventListener('click', handleUpButtonTwo);
+leftButtonTwo.addEventListener('click', handleLeftButtonTwo);
+rightButtonTwo.addEventListener('click', handleRightButtonTwo);
+downButtonTwo.addEventListener('click', handleDownButtonTwo);
+
+// * Game Screen : Room Code Box *
 copyButton.addEventListener('click', copyRoomCode);
+newPlayerButton.addEventListener('click', handleNewPlayerButton);
+
+// * Game Screen : Game *
 document.addEventListener('keydown', keydown);
+readyButton.addEventListener('click', updateReady);
+
+// * Game Screen : Settings *
+// settingsButton.addEventListener('click', handleSettingsButton);
+
+// * Game Screen : Controller *
+upButton.addEventListener('click', handleUpButton);
+leftButton.addEventListener('click', handleLeftButton);
+rightButton.addEventListener('click', handleRightButton);
+downButton.addEventListener('click', handleDownButton);
+
+// * Settings Screen *
+// ONE DAY MORE
 
 
-socket.on("roomCode", handleRoomCode);
-socket.on("id", handleId);
+
+// *** Server Listener ***
+
 socket.on("unknownRoom", handleUnknownRoom);
 socket.on("tooManyPlayers", handleTooManyPlayers);
+socket.on("accessRestricted", handleAccessRestricted);
 
-socket.on("roomComposition", handleRoomComposition);
-socket.on("playerInitColor", handlePlayerInitColor);
+socket.on("wellcomePackage", handleWellcomePackage);
+socket.on("settings", handleSettings);
 
-socket.on("beginGame", handleBeginGame);
-socket.on("gameState", handleGameState);
+socket.on("roomPackage", handleRoomPackage);
 
 
-let playerOne;
-let playerId;
-let inGame = false;
-let alive = false;
-let playerName;
-let playerColor;
-let playerReady = false;
-let sideBar = true;
 
-window.mobileCheck = function() {
-    let check = false;
-    (function(a){if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4))) check = true;})(navigator.userAgent||navigator.vendor||window.opera);
-    return check;
-};
+// *** Global Variables Declaration ***
 
-function showScreen(screenName) {
-    initRoom.style.display = "none";
-    Settings.style.display = "none";
-    room.style.display = "none";
-    gameRoom.style.display = "none";
-    screenName.style.display = "block";
+let localPlayers = {};
+let localKeyCount = 1;
+let localSettings;
+let playerController = 1;
+let playerControllerTwo = 2;
+let ready = false;
+let clientKey;
+let keyController = {
+    37: {playerKey: 1, inputCode:"left"},
+    38: {playerKey: 1, inputCode:"up"},
+    39: {playerKey: 1, inputCode:"right"},
+    40: {playerKey: 1, inputCode:"down"},
+    81: {playerKey: 1, inputCode:"left"},
+    83: {playerKey: 1, inputCode:"down"},
+    68: {playerKey: 1, inputCode:"right"},
+    90: {playerKey: 1, inputCode:"up"},
 }
 
-showScreen(initRoom);
 
+// *** Initialisation ***
+
+function initialisation() {
+    blinkTitle();
+    newLocalPlayer();
+    showScreen(titleScreen);
+}
 
 function blinkTitle() {
     setTimeout(function() {
@@ -115,14 +171,26 @@ function blinkTitle() {
     }, 2000 + Math.floor(Math.random() * 8000));
 }
 
-blinkTitle();
+function newLocalPlayer() {
+    localPlayers[localKeyCount] = {
+        name: defaultName(),
+        color: defaultColor(),
+        alive: false,
+        score: 0,
+    };
+    localKeyCount ++;
+}
 
-function updateSidebar() {
-    roomMenu.style.display = sideBar ? "none" : "block";
-    sideBar = !sideBar;
+function showScreen(screenName) {
+    titleScreen.style.display = "none";
+    gameScreen.style.display = "none";
+    // settingsScreen.style.display = "none"; ONE DAY MORE
+    screenName.style.display = "block";
 }
 
 
+
+// *** Title Screen ***
 
 function newRoom() {
     socket.emit('newRoom');
@@ -143,26 +211,148 @@ function handleTooManyPlayers() {
     errorRoomCode.innerText = "Too many players in this Room";
 }
 
-function removeErrorRoomCode(e) {
+function handleAccessRestricted() {
+    errorRoomCode.innerText = "Access Restricted to this Room";
+}
+
+function removeErrorRoomCode() {
     errorRoomCode.innerText = "";
 }
 
 
 
-function updateName(e) {
-    playerName = e.target.value;
-    socket.emit('playerName', playerName);
+// *** Transition from Title to Game ***
+
+function handleWellcomePackage(wellcomePackage) {
+    let unpack = JSON.parse(wellcomePackage);
+    roomCodeDisplay.innerText = unpack.roomCode;
+    handleSettings(unpack.settings);
+    clientKey = unpack.clientKey;
+    ready = false;
+    updateReadyButton();
+    sendUpdate();
+    showScreen(gameScreen);
 }
 
-function updateColor(e) {
-    playerColor = e.target.value;
-    socket.emit('playerColor', playerColor);
+function handleSettings(settings) {
+    localSettings = settings;
+    // ONE DAY MORE
 }
+
+function sendUpdate() {
+    let updatePackage = {
+        players: localPlayers,
+        settings: localSettings,
+        ready: ready,
+    }
+    socket.emit('updatePackage', JSON.stringify(updatePackage));
+}
+
+
+
+// *** Game Screen ***
+
+function handleRoomPackage(roomPackage) {
+    let unpack = JSON.parse(roomPackage);
+    handleSettings(unpack.settings);
+    handlePlayers(unpack.players, unpack.readys);
+    handleGameState(unpack.gameState);
+}
+
+
+
+// *** Game Screen : Players Display ***
+
+function handlePlayers(players, readys) {
+    let scores = Object.entries(players).map( 
+        ([playerKey, player]) => {
+            return [playerKey, player.score];
+    });
+    scores.sort( (first, second) => {
+        return second[1] - first[1];
+    });
+    let maxScore = scores[0][1];
+    maxScore = maxScore ? maxScore : null;
+
+    playersDisplay.replaceChildren();
+    scores.forEach( ([playerKey, score]) => {
+        let player = players[playerKey];
+        let playerDiv = display(
+            player.admin, 
+            readys[playerKey], 
+            score === maxScore, 
+            player.color, 
+            player.name);
+        playersDisplay.append(playerDiv);
+
+        let keys = splitKey(playerKey);
+        let localKey = keys[0] === clientKey ? keys[1] : null;
+        if (playerController === localKey) {
+            displayPlayer.replaceChildren();
+            displayPlayer.append(playerDiv.cloneNode(true));
+        }
+        if (playerControllerTwo === localKey) {
+            displayPlayerTwo.replaceChildren();
+            displayPlayerTwo.append(playerDiv.cloneNode(true));
+        }
+    });
+}
+
+function display(admin, ready, score, color, name) {
+    let playerDiv = document.createElement('div');
+    let adminDiv = document.createElement('h2');
+    let readyDiv = document.createElement('h2');
+    let scoreDiv = document.createElement('h2');
+    let colorDiv = document.createElement('input');
+    let nameDiv = document.createElement('h2');
+
+    playerDiv.classList.add('player');
+    adminDiv.classList.add('admin');
+    readyDiv.classList.add('ready');
+    scoreDiv.classList.add('score');
+    colorDiv.classList.add('color');
+    colorDiv.setAttribute("type", "color");
+    colorDiv.disabled = true;
+    nameDiv.classList.add('name');
+
+    adminDiv.innerHTML = admin ? "🛠️" : "";
+    readyDiv.innerHTML = ready  ? "✔️" : "";
+    scoreDiv.innerHTML = score ? "👑" : "";
+    colorDiv.value = color;
+    nameDiv.innerHTML = name;
+
+    playerDiv.append(adminDiv);
+    playerDiv.append(readyDiv);
+    playerDiv.append(scoreDiv);
+    playerDiv.append(colorDiv);
+    playerDiv.append(nameDiv);
+
+    return playerDiv;
+}
+
+
+
+// * Game Screen : Room Code Box *
+
+function copyRoomCode() {
+    let copyText = "Wesh bruv! Come play at \
+    https://uspectacle.github.io/Snake-Multiplayer/frontend/index.html \n\
+    My room code is: \n\n" + roomCodeDisplay.innerText;
+    navigator.clipboard.writeText(copyText);
+}
+
+
+
+// *** Game Screen : Ready Button ***
 
 function updateReady() {
-    playerReady = !playerReady;
-    socket.emit('playerReady', playerReady);
-    if (playerReady) {
+    ready = !ready;
+    updateReadyButton();
+    sendUpdate();
+}
+
+function updateReadyButton() {
+    if (ready) {
         readyButton.classList.add('redbutton');
         readyButton.innerText = "I'm NOT Ready";
     } else {
@@ -171,106 +361,145 @@ function updateReady() {
     }
 }
 
-function handlePlayerInitColor(color) {
-    colorInput.value = color;
-}
 
-function handleRoomCode(roomCode) {
-    roomCodeDisplay.innerText = roomCode;
-    playerReady = true;
-    updateReady();
-    showScreen(room);
-}
 
-function handleId(id) {
-    playerId = id;
-}
-
-function handleRoomComposition(players) {
-    players = JSON.parse(players);
-    playersDisplay.replaceChildren();
-    let maxScore = Math.max(...players.map(player => player.score));
-    maxScore = maxScore ? maxScore : null;
-    for (const player of players) {
-        let playerDiv = document.createElement('div');
-        let adminDiv = document.createElement('h2');
-        let scoreDiv = document.createElement('h2');
-        let readyDiv = document.createElement('h2');
-        let colorDiv = document.createElement('input');
-        let nameDiv = document.createElement('h2');
-
-        playerDiv.classList.add('player');
-        adminDiv.classList.add('admin');
-        scoreDiv.classList.add('score');
-        readyDiv.classList.add('ready');
-        colorDiv.classList.add('color');
-        colorDiv.setAttribute("type", "color");
-        colorDiv.disabled = true;
-        nameDiv.classList.add('name');
-
-        adminDiv.innerHTML = player.admin ? "🛠️" : "";
-        scoreDiv.innerHTML = player.score === maxScore ? "👑" : "";
-        readyDiv.innerHTML = player.ready ? "✔️" : "";
-        colorDiv.value = player.color;
-        nameDiv.innerHTML = player.name;
-
-        playerDiv.append(adminDiv);
-        playerDiv.append(scoreDiv);
-        playerDiv.append(readyDiv);
-        playerDiv.append(colorDiv);
-        playerDiv.append(nameDiv);
-
-        playersDisplay.append(playerDiv);
-
-        if (player.id === playerId) {
-            playerOne = {...player};
-            playerOneDisplay.replaceChildren();
-            playerOneDisplay.append(playerDiv.cloneNode(true));
-        }
-    }
-}
-
-function exitRoom() {
-    socket.emit('exitRoom');
-    showScreen(initialScreen);
-}
-
-function handleBeginGame(gameState) {
-    if (inGame){return;}
-    gameState = JSON.parse(gameState);
-    inGame = true;
-    alive = true;
-    console.log('init paint')
-    let paintSettings = {
-        colorPalette: colorPaletteDefault, 
-        backgroundColors: backgroundColorsDefault, 
-    }
-    initPaint(backCanvas, frontCanvas, gameState, paintSettings);
-    requestAnimationFrame(() => paintGame(gameState));
-
-    showScreen(gameRoom);
-}
+// * Game Screen : Game State *
 
 function handleGameState(gameState) {
-    if (playerReady) {
-        updateReady();
+    if (gameState.event === "init") {
+        let paintSettings = {
+            colorPalette: colorPaletteDefault, 
+            backgroundColors: backgroundColorsDefault, 
+        }
+        initPaint(backCanvas, frontCanvas, gameState, paintSettings);
+        readyButton.style.opacity = 1;
+        readyButton.style.display = "block";
     }
-    if (!inGame){return;}
-    gameState = JSON.parse(gameState);
+    if (gameState.event === "start") {
+        readyButton.style.opacity = -(gameState.time/gameState.frameRate)/5;
+    }
+    if (gameState.time === 0) {
+        readyButton.style.display = "none";
+        ready = false;
+        updateReadyButton();
+    }
+    if (gameState.event === "after") {
+        readyButton.style.opacity = 1;
+        readyButton.style.display = "block";
+    }
     requestAnimationFrame(() => paintGame(gameState));
+}
+
+
+
+// * Game Screen : Controller *
+
+
+function handleNewPlayerButton() {
+    newLocalPlayer();
+    sendUpdate();
+    roomCodeBox.style.display = "none";
+    controllerPlayerTwo.style.display = "block";
 }
 
 function keydown(e) {
-    if (!inGame){return;}
-    if (!alive){return;}
-    socket.emit('keydown', e.keyCode)
+    let controllerInput = keyController[e.keyCode]
+    if (!controllerInput) {return;};
+    socket.emit('controllerInput', JSON.stringify(controllerInput));
+}
+
+function handleUpButton() {
+    let controllerInput = {playerKey: playerController, inputCode:"up"};
+    socket.emit('controllerInput', JSON.stringify(controllerInput));
+}
+function handleLeftButton() {
+    let controllerInput = {playerKey: playerController, inputCode:"left"};
+    socket.emit('controllerInput', JSON.stringify(controllerInput));
+}
+function handleRightButton() {
+    let controllerInput = {playerKey: playerController, inputCode:"right"};
+    socket.emit('controllerInput', JSON.stringify(controllerInput));
+}
+function handleDownButton() {
+    let controllerInput = {playerKey: playerController, inputCode:"down"};
+    socket.emit('controllerInput', JSON.stringify(controllerInput));
+}
+function handleUpButtonTwo() {
+    let controllerInput = {playerKey: playerControllerTwo, inputCode:"up"};
+    socket.emit('controllerInput', JSON.stringify(controllerInput));
+}
+function handleLeftButtonTwo() {
+    let controllerInput = {playerKey: playerControllerTwo, inputCode:"left"};
+    socket.emit('controllerInput', JSON.stringify(controllerInput));
+}
+function handleRightButtonTwo() {
+    let controllerInput = {playerKey: playerControllerTwo, inputCode:"right"};
+    socket.emit('controllerInput', JSON.stringify(controllerInput));
+}
+function handleDownButtonTwo() {
+    let controllerInput = {playerKey: playerControllerTwo, inputCode:"down"};
+    socket.emit('controllerInput', JSON.stringify(controllerInput));
 }
 
 
 
+// *** Initialisation ***
 
-function copyRoomCode() {
-    let copyText = "Wesh bruv! Come play at https://uspectacle.github.io/Snake-Multiplayer/frontend/index.html \n\
-    My room code is:\n\n" + roomCodeDisplay.innerText;
-    navigator.clipboard.writeText(copyText);
-}
+initialisation();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// function updateName(e) { // TODO: adapt to localPlayers
+//     playerName = e.target.value;
+//     socket.emit('playerName', playerName);
+// }
+
+// function updateColor(e) { // TODO: adapt to localPlayers
+//     playerColor = e.target.value;
+//     socket.emit('playerColor', playerColor);
+// }
+
+
+
+
+// function handlePlayerInitColor(color) { // TODO: adapt to localPlayers
+//     colorInput.value = color;
+// }
+
+
+
+// function exitRoom() {
+//     socket.emit('exitRoom');
+//     showScreen(initialScreen);
+// }
+
+
+// function updateSidebar() {
+//     roomMenu.style.display = sideBar ? "none" : "block";
+//     sideBar = !sideBar;
+// }

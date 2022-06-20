@@ -1,6 +1,7 @@
+// *** Server-Client Initialisation ***
+
 // Remmember to launch the server localy with the command:
 // npx nodemon server/server.js
-
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 
@@ -13,194 +14,284 @@ const io = new Server(httpServer, {
     }
 });
 
-import { initGame, gameLoop, updateVel } from './game.js';
-import { numClientsMax } from './constants.js';
-import { makeid, defaultColor, defaultName } from './utils.js';
+io.listen(process.env.PORT || 3000);
 
 
 
-let state = {};
-let settings = {};
-let clientRooms = {};
-let timeoutReady = {}; 
-let gameClock = {}; 
+// *** Import function from other local scripts ***
+
+import { 
+    createGameState,
+    gameLoop, 
+    updateVel,
+    scoresToRewards,
+} from './game.js';
+
+import { 
+    makeid, 
+    combineKeys,
+    splitKey,
+} from './utils.js';
+
+
+
+// *** Global Variables Declaration ***
+
+let getRoomCode = {};
+let activeRooms = {};
+
+
+
+// *** Client Listener ***
 
 io.on('connection', client => {
 
     client.on('newRoom', handleNewRoom);
     client.on('joinRoom', handleJoinRoom);
-    client.on('disconnect', handleDisconnect);
+
+    client.on('updatePackage', handleUpdatePackage);
     
-    client.on('playerName', handlePlayerName);
-    client.on('playerColor', handlePlayerColor);
-    client.on('playerReady', handlePlayerReady);
-    client.on('exitRoom', handleExitRoom);
+    client.on('controllerInput', handleControllerInput); // change to action playerKey updownleftright
 
-    client.on('keydown', handleKeydown);
+    // client.on('playerName', handlePlayerName);
+    // client.on('playerColor', handlePlayerColor);
+    // client.on('exitRoom', handleExitRoom);
+    // ONE DAY MORE
+
+    client.on('disconnect', handleDisconnect);
 
 
-    function handleJoinRoom(roomName) {
-        const room = io.sockets.adapter.rooms.get(roomName);
-        let numClients = room ? room.size : 0;
-        if (numClients === 0) {
+
+    // *** Transition from Title to Game ***
+
+    function handleNewRoom() {
+        let roomCode = makeid(5);
+        while (activeRooms[roomCode]) {
+            roomCode = makeid(5);
+        }
+        activeRooms[roomCode] = {
+            players: {},
+            clients: {},
+            clientKeyCount: 1,
+            gameClock: null,
+            settings: {
+                gridSize: 21, 
+                bodyInitSize: 3, 
+                numFood: 1,
+                frameRate: 5,
+                maxTime: 60*60*1000,
+                numPlayerMax: 3,
+                restricteAccess: false,
+                admin: [0],
+            },
+            gameState: null,
+        }
+        sendToRoom(roomCode);
+    }
+
+    function handleJoinRoom(roomCode) {
+        let room = activeRooms[roomCode];
+        if (!room) {
             client.emit('unknownRoom');
             return;
-        } else if (numClients >= numClientsMax) {
+        }
+        if (room.settings.restricteAccess) {
+            client.emit('accessRestricted');
+            return;
+        }
+        let numPlayer = Object.keys(room.players).length;
+        if (numPlayer >= room.settings.numPlayerMax) {
             client.emit('tooManyPlayers');
             return;
         }
-        sendToRoom(roomName)
+        sendToRoom(roomCode);
     }
 
-    function handleNewRoom() {
-        let roomName = makeid(5);
-        while (io.sockets.adapter.rooms.get(roomName)) {
-            roomName = makeid(5);
+    function sendToRoom(roomCode) {
+        client.join(roomCode);
+        getRoomCode[client.id] = roomCode;
+        let room = activeRooms[roomCode];
+        const newKey = room.clientKeyCount;
+        room.clientKeyCount ++;
+        room.clients[client.id] = {
+            key: newKey,
+            ready: false,
+        };
+        let wellcomePackage = {
+            roomCode: roomCode,
+            defaultSettings: room.settings,
+            clientKey: newKey,
         }
-        settings[roomName] = {
-            gridSize: 21, 
-            snakeInitSize: 3, 
-            numFood: 1,
-            frameRate: 5,
-        }
-        client.admin = true;
-        sendToRoom(roomName);
-    }
-    
-    function sendToRoom(roomName) {
-        clientRooms[client.id] = roomName;
-        client.name = client.name || "";
-        client.color = client.color || defaultColor();
-        client.admin = client.admin || false;
-        client.score = 0;
-        client.ready = false;
-        client.emit('playerInitColor', client.color);
-        client.emit('settings', JSON.stringify(settings[roomName]));
-        client.emit('roomCode', roomName);
-        client.emit('id', client.id);
-        client.join(roomName);
+        client.emit('wellcomePackage', JSON.stringify(wellcomePackage));
     }
     
 
 
-    function handleExitRoom() {
-        const roomName = clientRooms[client.id];
-        client.leave(roomName);
-        updateRoom(roomName);
+    // *** Update Room ***
+
+    function handleUpdatePackage(updatePackage) {
+        const roomCode = getRoomCode[client.id];
+        let room = activeRooms[roomCode];
+        let unpack = JSON.parse(updatePackage);
+        getPlayers(roomCode, room.clients[client.id]).forEach( playerKey => {
+            removePlayer(roomCode, playerKey);
+        });
+
+        Object.entries(unpack.players).forEach( ([localKey, player]) => {
+            let key = combineKeys([room.clients[client.id].key, localKey]);
+            player.ready = unpack.ready;
+            room.players[key] = player;
+        })
+        // room.settings = unpack.settings;
+        room.clients[client.id].ready = unpack.ready;
+
+        updateRoom(roomCode);
     }
 
     function handleDisconnect() {
-        const roomName = clientRooms[client.id];
-        if (state[roomName]) {
-            let player = state[roomName].players.splice(client.id, 1);
-            state[roomName].players.push(player);
-            state[roomName].toKill.push(player);
-        }
-        updateRoom(roomName);
-    }
-
-    function handlePlayerName(playerName) {
-        const roomName = clientRooms[client.id];
-        client.name = playerName;
-        updateRoom(roomName);
-        if (state) {return;}
-        if (state[roomName]) {return;}
-        getPlayer(roomName, client.id).name = playerName;
-    }
-
-    function handlePlayerColor(playerColor) {
-        const roomName = clientRooms[client.id];
-        client.color = playerColor;
-        updateRoom(roomName);
-        if (state) {return;}
-        if (state[roomName]) {return;}
-        getPlayer(roomName, client.id).color = playerName;
-    }
-
-    function handlePlayerReady(playerReady) {
-        client.ready = playerReady;
-        updateRoom(clientRooms[client.id]);
-    }
-
-
-
-    function handleKeydown(keyCode) {
-        const roomName = clientRooms[client.id];
-        if (!state) {return;}
-        if (!state[roomName]) {return;}
-        try {
-            keyCode = parseInt(keyCode);
-        } catch(e) {
-            console.error(e);
+        const roomCode = getRoomCode[client.id];
+        let room = activeRooms[roomCode];
+        if (!room) {
             return;
         }
-        updateVel(getPlayer(roomName, client.id), keyCode);
+        getPlayers(roomCode, room.clients[client.id]).forEach( playerKey => {
+            removePlayer(roomCode, playerKey);
+        });
+        updateRoom(roomCode);
+    }
+    
+
+
+    // *** Game Inputs ***
+
+    function handleControllerInput(controllerInput) {
+        const roomCode = getRoomCode[client.id];
+        let room = activeRooms[roomCode];
+        if (!room) {return;}
+        if (!room.gameState) {return;}
+        let unpack = JSON.parse(controllerInput);
+        let playerKey = combineKeys([room.clients[client.id].key, unpack.playerKey]);
+        let snake = room.gameState.snakes[playerKey];
+        if (!snake) {return;}
+        updateVel(snake, unpack.inputCode);
     }
 });
 
 
-function getPlayer(roomName, id) {
-    let out;
-    state[roomName].players.forEach( player => {
-          if (player.id === id) {
-             out = player;
-             return;
-          }
-    });
-    return out;
- }
 
+// *** Update room, lauch game and send package ***
 
-function updateRoom(roomName) {
-    const room = io.sockets.adapter.rooms.get(roomName);
-    let numClients = room ? room.size : 0;
-    if (numClients === 0) {return;}
-    const players = [];
+function updateRoom(roomCode) {
+    let room = activeRooms[roomCode];
+    if (!room) {return;}
+    if (!Object.keys(room.clients).length) {
+        closeRoom(roomCode);
+        return;
+    }
+
+    let readys = {};
     let allReady = true;
-    room.forEach(clientId => {
-        const player = io.sockets.sockets.get(clientId);
-        allReady = allReady && player.ready;
-
-        players.push({
-            name : player.name || defaultName(players.length),
-            color : player.color,
-            ready : player.ready,
-            id: player.id,
+    Object.values(room.clients).forEach( client => {
+        getPlayers(roomCode, client.key).forEach( playerKey => {
+            readys[playerKey] = client.ready;
+            allReady = allReady && client.ready;
         });
     });
-    io.sockets.in(roomName).emit('roomComposition', JSON.stringify(players));
-    state[roomName] = initGame(settings[roomName], players);
-    io.sockets.in(roomName)
-        .emit('beginGame', JSON.stringify(state[roomName]));
-    if (allReady) {
-        timeoutReady.roomName = setTimeout(() => {
-            startGameInterval(roomName);
-        }, 3000);
-    }
-    else {
-        clearTimeout(timeoutReady.roomName);
-    }
-}
 
-function startGameInterval(roomName) {
-    gameClock.roomName = setInterval(() => {
-        if (!state) {return;}
-        if (!state[roomName]) {return;}
-        state[roomName].time ++;
-        gameLoop(state[roomName]);
-        emitGameState(roomName);
-
-        if (!state[roomName].numAlive) {
-            console.log('GAME OVER');
-            state[roomName] = null;
-            clearInterval(gameClock.roomName);
+    let init = true;
+    console.log("-------")
+    if (room.gameState) {
+        console.log(room.gameState.event)
+        if (allReady || 
+            room.gameState.event === "loop") {
+            init = false;   
         }
-    }, 1000 / settings[roomName].frameRate);
+        if (room.gameState.event === "after") {
+            init = true;   
+        }
+        if (room.gameState.event === "over") {
+            room.gameState.event = "after";
+            init = false;   
+        }
+    }
+    if (init) {
+        clearInterval(room.gameClock);
+        room.gameClock = null;
+        room.gameState = createGameState(room.settings, room.players);
+    }
+
+    let start = false;
+    if (room.gameState) {
+        if (allReady &&
+            room.gameState.event === "init") {
+            start = true;
+        }
+    }
+
+    if (start) {
+        room.gameClock = setInterval(() => {
+            gameLoop(room.gameState);
+            scoresToRewards(room.gameState).forEach( ([playerKey, reward]) =>{
+                let player = room.players[playerKey];
+                if (!player) {return;}
+                player.score = reward;
+            })
+            if (room.gameState.time === 0) {
+                Object.values(room.clients).forEach( client => {
+                    client.ready = false;
+                });
+            }
+            if (room.gameState.event === "over") {
+                console.log("IT S NOT OVER YET")
+                clearInterval(room.gameClock);
+                room.gameClock = null;
+            }
+            updateRoom(roomCode);   
+        }, 1000 / room.gameState.frameRate);
+    }
+
+    let roomPackage = {
+        settings: room.settings,
+        players: room.players,
+        gameState: room.gameState,
+        readys: readys,
+    }
+    io.sockets.in(roomCode).emit('roomPackage', JSON.stringify(roomPackage));
 }
 
-function emitGameState(roomName) {
-    io.sockets.in(roomName)
-        .emit('gameState', JSON.stringify(state[roomName]));
+
+
+// *** Remover Functions ***
+
+function getPlayers(roomCode, clientKey) {
+    let room = activeRooms[roomCode];
+    return Object.keys(room.players).filter( playerKey => {
+        if (splitKey(playerKey)[0] === clientKey) {
+            return playerKey;
+        }
+    });
 }
 
-io.listen(process.env.PORT || 3000);
+function removePlayer(roomCode, playerKey) {
+    let room = activeRooms[roomCode];
+    if (room.gameState) {
+        room.gameState.toKill.push(playerKey);
+    }
+    delete room.players[playerKey];
+}
+
+function closeRoom(roomCode) {
+    delete activeRooms[roomCode];
+}
+
+
+
+// *** ONE DAY MORE ***
+
+// function handleExitRoom() {
+//     const roomCode = getRoomCode[client.id];
+//     client.leave(roomCode);
+//     updateRoom(roomCode);
+// }
+
+
