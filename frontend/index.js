@@ -21,6 +21,7 @@ const socket = io(socketCORS, {
 import { 
     defaultColor, 
     defaultName,
+    mobileCheck,
     splitKey,
 } from './utils.js';
 
@@ -58,7 +59,6 @@ const downButtonTwo = document.getElementById('downButtonTwo');
 const roomCodeBox = document.getElementById('roomCodeBox');
 const roomCodeDisplay = document.getElementById('roomCodeDisplay');
 const copyButton = document.getElementById('copyButton');
-const newPlayerButton = document.getElementById('newPlayerButton');
 
 // * Game Screen : Players Display *
 const playersDisplay = document.getElementById('playersDisplay');
@@ -72,19 +72,43 @@ const readyButton = document.getElementById('readyButton');
 const settingsButton = document.getElementById('settingsButton');
 
 // * Game Screen : Controller *
-const controller = document.getElementById('controller');
+const controllerPlayer = document.getElementById('controllerPlayer');
 const displayPlayer = document.getElementById('displayPlayer');
 const upButton = document.getElementById('upButton');
 const leftButton = document.getElementById('leftButton');
 const rightButton = document.getElementById('rightButton');
 const downButton = document.getElementById('downButton');
 
+// * SetPlayer Screen *
+const setPlayerScreen = document.getElementById('setPlayerScreen');
+const colorInput = document.getElementById('colorInput');
+const nameInput = document.getElementById('nameInput');
+const useController = document.getElementById('useController');
+const errorMapKey = document.getElementById('errorMapKey');
+const controllerMap = document.getElementById('controllerMap');
+const upButtonMap = document.getElementById('upButtonMap');
+const leftButtonMap = document.getElementById('leftButtonMap');
+const rightButtonMap = document.getElementById('rightButtonMap');
+const downButtonMap = document.getElementById('downButtonMap');
+const setPlayerExit = document.getElementById('setPlayerExit');
+
 // * Settings Screen *
-// const settingsScreen = document.getElementById('settingsScreen'); ONE DAY MORE
+const settingsScreen = document.getElementById('settingsScreen');
+const exitSettingsButton = document.getElementById('exitSettingsButton');
+const localPlayersSettings = document.getElementById('localPlayersSettings');
+const newPlayerButton = document.getElementById('localPlayersSettings');
+const adminSettings = document.getElementById('adminSettings');
+const clientsSettings = document.getElementById('clientsSettings');
+const colorSettings = document.getElementById('colorSettings');
+const gameplaySettings = document.getElementById('gameplaySettings');
+const exitRoom = document.getElementById('exitRoom');
 
 
 
 // *** Event Listener ***
+
+document.addEventListener('keydown', keydown);
+document.addEventListener('click', endMapKey);
 
 // * Title Screen *
 newRoomButton.addEventListener('click', newRoom);
@@ -92,30 +116,56 @@ joinRoomForm.addEventListener('submit', joinRoom);
 roomCodeInput.addEventListener('input', removeErrorRoomCode);
 
 // * Game Screen : Controller Player Two *
-upButtonTwo.addEventListener('click', handleUpButtonTwo);
-leftButtonTwo.addEventListener('click', handleLeftButtonTwo);
-rightButtonTwo.addEventListener('click', handleRightButtonTwo);
-downButtonTwo.addEventListener('click', handleDownButtonTwo);
+upButtonTwo.addEventListener('click', handleDirectionButton);
+upButton.inputCode = "up";
+upButton.playerTwo = true;
+leftButtonTwo.addEventListener('click', handleDirectionButton);
+leftButtonTwo.inputCode = "left";
+leftButtonTwo.playerTwo = true;
+rightButtonTwo.addEventListener('click', handleDirectionButton);
+rightButtonTwo.inputCode = "right";
+rightButtonTwo.playerTwo = true;
+downButtonTwo.addEventListener('click', handleDirectionButton);
+downButtonTwo.inputCode = "down";
+downButtonTwo.playerTwo = true;
 
 // * Game Screen : Room Code Box *
 copyButton.addEventListener('click', copyRoomCode);
-newPlayerButton.addEventListener('click', handleNewPlayerButton);
+newPlayerButton.addEventListener('click', handleNewPlayer);
 
 // * Game Screen : Game *
-document.addEventListener('keydown', keydown);
 readyButton.addEventListener('click', updateReady);
 
 // * Game Screen : Settings *
-// settingsButton.addEventListener('click', handleSettingsButton);
+settingsButton.addEventListener('click', handleSettingsButton);
 
 // * Game Screen : Controller *
-upButton.addEventListener('click', handleUpButton);
-leftButton.addEventListener('click', handleLeftButton);
-rightButton.addEventListener('click', handleRightButton);
-downButton.addEventListener('click', handleDownButton);
+upButton.addEventListener('click', handleDirectionButton);
+upButton.inputCode = "up";
+leftButton.addEventListener('click', handleDirectionButton);
+leftButton.inputCode = "left";
+rightButton.addEventListener('click', handleDirectionButton);
+rightButton.inputCode = "right";
+downButton.addEventListener('click', handleDirectionButton);
+downButton.inputCode = "down";
+
+// * SetPlayer Screen *
+colorInput.addEventListener('change', updateColor, false);
+nameInput.addEventListener('input', updateName);
+useController.addEventListener('click', handleUseController);
+upButtonMap.addEventListener('click', handleButtonMap);
+upButtonMap.inputCode = "up";
+leftButtonMap.addEventListener('click', handleButtonMap);
+leftButtonMap.inputCode = "left";
+rightButtonMap.addEventListener('click', handleButtonMap);
+rightButtonMap.inputCode = "right";
+downButtonMap.addEventListener('click', handleButtonMap);
+downButtonMap.inputCode = "down";
+setPlayerExit.addEventListener('click', handleSetPlayerExit);
 
 // * Settings Screen *
-// ONE DAY MORE
+exitSettingsButton.addEventListener('click', handleExitSettingsButton);
+exitRoom.addEventListener('click', handleExitRoom);
 
 
 
@@ -136,10 +186,14 @@ socket.on("onlyGameState", handleOnlyGameState);
 // *** Global Variables Declaration ***
 
 let localPlayers = {};
-let localKeyCount = 1;
+let localKeyCount = 0;
 let localSettings;
-let playerController = 1;
-let playerControllerTwo = 2;
+let setPlayerKey;
+let setPlayer;
+let playerController;
+let playerControllerTwo;
+let waitForKey;
+
 let ready = false;
 let clientKey;
 let keyController = {
@@ -158,7 +212,6 @@ let keyController = {
 
 function initialisation() {
     blinkTitle();
-    newLocalPlayer();
     showScreen(titleScreen);
 }
 
@@ -172,20 +225,11 @@ function blinkTitle() {
     }, 2000 + Math.floor(Math.random() * 8000));
 }
 
-function newLocalPlayer() {
-    localPlayers[localKeyCount] = {
-        name: defaultName(),
-        color: defaultColor(),
-        alive: false,
-        score: 0,
-    };
-    localKeyCount ++;
-}
-
 function showScreen(screenName) {
     titleScreen.style.display = "none";
     gameScreen.style.display = "none";
-    // settingsScreen.style.display = "none"; ONE DAY MORE
+    settingsScreen.style.display = "none";
+    setPlayerScreen.style.display = "none";
     screenName.style.display = "block";
 }
 
@@ -232,7 +276,17 @@ function handleWellcomePackage(wellcomePackage) {
     ready = false;
     updateReadyButton();
     sendUpdate();
+    if (!Object.keys(localPlayers).length) {
+        handleNewPlayer()
+        return;
+    }
     showScreen(gameScreen);
+}
+
+function handleNewPlayer() {
+    initSetPlayerScreen();
+    console.log("handleNewPlayer()");
+    showScreen(setPlayerScreen);
 }
 
 function handleSettings(settings) {
@@ -249,6 +303,222 @@ function sendUpdate() {
     socket.emit('updatePackage', JSON.stringify(updatePackage));
 }
 
+
+
+// *** Set Player Screen ***
+
+function initSetPlayerScreen() {
+    if (localPlayers[setPlayerKey]) {
+        setPlayer = {...localPlayers[setPlayerKey]}
+    } else {
+        localKeyCount ++;
+        setPlayerKey = localKeyCount;
+        setPlayer = {
+            color: defaultColor(),
+            name: defaultName(),
+            score: 0,
+        };
+    }
+    colorInput.value = setPlayer.color;
+    nameInput.placeholder = setPlayer.name;
+    if (mobileCheck()) {
+        if (!Object.keys(localPlayers).length) {
+            controllerPlayer.style.display = "block";
+            playerController = setPlayerKey;
+        } else {
+            newPlayerButton.display = "none";
+            roomCodeBox.style.display = "none";
+            controllerPlayerTwo.style.display = "block";
+            playerControllerTwo = setPlayerKey;
+        }
+        useController.style.display = "none";
+        controllerMap.style.display = "none";
+    } else if (playerController && playerController !== setPlayerKey) {
+        useController.style.display = "none";
+        controllerMap.style.display = "block";
+    } else {
+        useController.style.display = "block";
+        controllerMap.style.display = "block";
+        updateUseControllerButton();
+    }
+    Object.entries(keyController).forEach( ([keyCode, value]) => {
+        if (value.playerKey !== setPlayerKey) {return;}
+        let buttonsMap = [upButtonMap, leftButtonMap, rightButtonMap, downButtonMap];
+        buttonsMap.forEach( buttonMap =>{
+            if (value.inputCode === buttonMap.inputCode) {
+                buttonMap.innerText = String.fromCharCode(keyCode);
+            }
+        });
+    });
+}
+
+function updateName(e) {setPlayer.name = e.target.value;}
+function updateColor(e) {setPlayer.color = e.target.value;}
+
+function handleUseController() {
+    if (playerController === setPlayerKey) {
+        playerController = null;
+        controllerPlayer.style.display = "none";
+    } else {
+        playerController = setPlayerKey;
+        controllerPlayer.style.display = "block";
+        keyController = Object.fromEntries(Object.entries(keyController).filter(([key, value]) => {
+            return value.playerKey !== setPlayerKey;
+        }));
+    }
+    updateUseControllerButton();
+}
+
+function updateUseControllerButton() {
+    if (playerController === setPlayerKey) {
+        useController.classList.add('redbutton');
+        useController.innerText = "🖱️ STOP Using Mouse";
+    } else {
+        useController.classList.remove('redbutton');
+        useController.innerText = "🖱️ Use Mouse";
+    }
+}
+
+function handleButtonMap(e) {
+    errorMapKey.style.display = "block";
+    e.target.classList.add('redbutton');
+    waitForKey = e;
+}
+
+function endMapKey() {
+    if (!waitForKey) {return;}
+    waitForKey.target.classList.remove('redbutton');
+    waitForKey = null;
+}
+
+function mapKey(keyCode) {
+    if (!waitForKey) {return;}
+    if (keyController[keyCode]) {
+        let keyUser = keyController[keyCode].playerKey;
+        if (keyUser !== setPlayer) {
+            if (localPlayers[keyUser]) {
+                errorMapKey.innerText = "Already used by "+ localPlayers[keyUser].name;
+            } else {
+                errorMapKey.innerText = "ERROR: Key used by an none player "+ keyUser;;
+            }
+            errorMapKey.style.display = "block";
+        } 
+    } else {
+        Object.entries(keyController).forEach( ([key, value]) => {
+            if (value.playerKey === setPlayerKey &&
+                value.inputCode === waitForKey.target.inputCode) {
+                    delete keyController[key];
+                }
+        });
+        keyController[keyCode] = {
+            playerKey: setPlayerKey, 
+            inputCode: waitForKey.target.inputCode
+        }
+        waitForKey.target.innerText = String.fromCharCode(keyCode);
+    }
+    endMapKey();
+}
+
+function handleSetPlayerExit() {
+    localPlayers[setPlayerKey] = {...setPlayer};
+    sendUpdate();
+    buildSettings();
+    showScreen(settingsScreen);
+}
+
+
+// *** Settings Screen ***
+
+function handleSettingsButton() {
+    buildSettings();
+    showScreen(settingsScreen);
+}
+
+function handleExitSettingsButton() {
+    showScreen(gameScreen);
+}
+
+function buildSettings() {
+    localPlayersSettings.replaceChildren();
+    Object.entries(localPlayers).forEach( ([playerKey, player]) => {
+        newLocalPlayerSettings(playerKey, player);
+    });
+    
+    if (mobileCheck() && Object.keys(localPlayers).length > 1) {
+        newPlayerButton.style.display = "none";
+    } else {
+        newPlayerButton.style.display = "block";
+    }
+}
+
+function handleSetPlayerButton(e) {
+    console.log("handleSetPlayerButton(e)");
+    initSetPlayerScreen(e.target.playerKey);
+    showScreen(setPlayerScreen);
+}
+
+function newLocalPlayerSettings(playerKey, player) {
+    let localDiv = document.createElement('div');
+    let setPlayerButton = document.createElement('button');
+    let removeLocalPlayer = document.createElement('button');
+    let playerDiv = display( 
+        "not show",
+        "not show", 
+        "not show", 
+        player.color, 
+        player.name);
+
+    localDiv.playerKey = playerKey;
+    setPlayerButton.playerKey = playerKey;
+    removeLocalPlayer.playerKey = playerKey;
+
+    setPlayerButton.innerText = "✏️ Edit & 🕹️ Set Controls";
+    setPlayerButton.addEventListener('click', handleSetPlayerButton);
+
+    removeLocalPlayer.innerText = "➖ Remove Local Player";
+    removeLocalPlayer.classList.add('redbutton');
+    setPlayerButton.addEventListener('click', updateRemoveLocalPlayer);
+
+    localDiv.append(playerDiv);
+    localDiv.append(setPlayerButton);
+    if (Object.keys(localPlayers).length > 1) {
+        localDiv.append(removeLocalPlayer);
+    }
+
+    localPlayersSettings.append(localDiv);
+}
+
+
+function updateRemoveLocalPlayer(e) {
+    if (!localPlayers[e.target.playerKey]) {return;}
+    delete localPlayers[e.target.playerKey];
+
+    if (playerControllerTwo === e.target.playerKey) {
+        playerControllerTwo = null;
+        roomCodeBox.style.display = "block";
+        controllerPlayerTwo.style.display = "none";
+    } else if (playerController === e.target.playerKey) {
+        if (playerControllerTwo) {
+            playerController = playerControllerTwo;
+            playerControllerTwo = null;
+            roomCodeBox.style.display = "block";
+            controllerPlayerTwo.style.display = "none";
+        } else {
+            playerController = null;
+            controllerPlayer.style.display = "none";
+        }
+    }
+    keyController = Object.fromEntries(Object.entries(keyController).filter(([key, value]) => {
+        return value.playerKey !== e.target.playerKey;
+    }));
+    buildSettings();
+    sendUpdate();
+}
+
+function handleExitRoom() {
+    socket.emit('exitRoom');
+    showScreen(initialScreen);
+}
 
 
 // *** Game Screen ***
@@ -274,6 +544,7 @@ function handlePlayers(players, readys) {
         ([playerKey, player]) => {
             return [playerKey, player.score];
     });
+    if (!scores.length) {return;}
     scores.sort( (first, second) => {
         return second[1] - first[1];
     });
@@ -327,12 +598,11 @@ function display(admin, ready, score, color, name) {
     colorDiv.value = color;
     nameDiv.innerHTML = name;
 
-    playerDiv.append(adminDiv);
-    playerDiv.append(readyDiv);
-    playerDiv.append(scoreDiv);
-    playerDiv.append(colorDiv);
-    playerDiv.append(nameDiv);
-
+    if (admin !== "not show") {playerDiv.append(adminDiv);}
+    if (ready !== "not show") {playerDiv.append(readyDiv);}
+    if (score !== "not show") {playerDiv.append(scoreDiv);}
+    if (color !== "not show") {playerDiv.append(colorDiv);}
+    if (name !== "not show") {playerDiv.append(nameDiv);}
     return playerDiv;
 }
 
@@ -369,6 +639,7 @@ function updateReadyButton() {
 
 
 
+
 // * Game Screen : Game State *
 
 function handleGameState(gameState) {
@@ -400,50 +671,19 @@ function handleGameState(gameState) {
 
 // * Game Screen : Controller *
 
-
-function handleNewPlayerButton() {
-    newLocalPlayer();
-    sendUpdate();
-    roomCodeBox.style.display = "none";
-    controllerPlayerTwo.style.display = "block";
-}
-
 function keydown(e) {
-    let controllerInput = keyController[e.keyCode]
+    if (waitForKey) {
+        mapKey(e.keyCode);
+        return;
+    }
+    let controllerInput = keyController[e.keyCode];
     if (!controllerInput) {return;};
     socket.emit('controllerInput', JSON.stringify(controllerInput));
 }
 
-function handleUpButton() {
-    let controllerInput = {playerKey: playerController, inputCode:"up"};
-    socket.emit('controllerInput', JSON.stringify(controllerInput));
-}
-function handleLeftButton() {
-    let controllerInput = {playerKey: playerController, inputCode:"left"};
-    socket.emit('controllerInput', JSON.stringify(controllerInput));
-}
-function handleRightButton() {
-    let controllerInput = {playerKey: playerController, inputCode:"right"};
-    socket.emit('controllerInput', JSON.stringify(controllerInput));
-}
-function handleDownButton() {
-    let controllerInput = {playerKey: playerController, inputCode:"down"};
-    socket.emit('controllerInput', JSON.stringify(controllerInput));
-}
-function handleUpButtonTwo() {
-    let controllerInput = {playerKey: playerControllerTwo, inputCode:"up"};
-    socket.emit('controllerInput', JSON.stringify(controllerInput));
-}
-function handleLeftButtonTwo() {
-    let controllerInput = {playerKey: playerControllerTwo, inputCode:"left"};
-    socket.emit('controllerInput', JSON.stringify(controllerInput));
-}
-function handleRightButtonTwo() {
-    let controllerInput = {playerKey: playerControllerTwo, inputCode:"right"};
-    socket.emit('controllerInput', JSON.stringify(controllerInput));
-}
-function handleDownButtonTwo() {
-    let controllerInput = {playerKey: playerControllerTwo, inputCode:"down"};
+function handleDirectionButton(e) {
+    let playerKey = e.target.playerTwo ? playerControllerTwo : playerController
+    let controllerInput = {playerKey: playerKey, inputCode: e.target.inputCode};
     socket.emit('controllerInput', JSON.stringify(controllerInput));
 }
 
@@ -454,58 +694,3 @@ function handleDownButtonTwo() {
 initialisation();
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// function updateName(e) { // TODO: adapt to localPlayers
-//     playerName = e.target.value;
-//     socket.emit('playerName', playerName);
-// }
-
-// function updateColor(e) { // TODO: adapt to localPlayers
-//     playerColor = e.target.value;
-//     socket.emit('playerColor', playerColor);
-// }
-
-
-
-
-// function handlePlayerInitColor(color) { // TODO: adapt to localPlayers
-//     colorInput.value = color;
-// }
-
-
-
-// function exitRoom() {
-//     socket.emit('exitRoom');
-//     showScreen(initialScreen);
-// }
-
-
-// function updateSidebar() {
-//     roomMenu.style.display = sideBar ? "none" : "block";
-//     sideBar = !sideBar;
-// }

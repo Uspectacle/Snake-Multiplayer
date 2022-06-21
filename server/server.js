@@ -124,7 +124,7 @@ io.on('connection', client => {
         }
         client.emit('wellcomePackage', JSON.stringify(wellcomePackage));
     }
-    
+
 
 
     // *** Update Room ***
@@ -141,9 +141,9 @@ io.on('connection', client => {
         });
 
         Object.entries(unpack.players).forEach( ([localKey, player]) => {
-            let key = combineKeys([room.clients[client.id].key, localKey]);
+            let playerKey = combineKeys([room.clients[client.id].key, localKey]);
             player.ready = unpack.ready;
-            room.players[key] = player;
+            room.players[playerKey] = player;
         })
         // room.settings = unpack.settings;
         room.clients[client.id].ready = unpack.ready;
@@ -231,6 +231,13 @@ function updateRoom(roomCode) {
 
     if (start) {
         room.gameClock = setInterval(() => {
+            if (room.gameState) {
+                Object.keys(room.gameState.snakes).forEach( snakeKey =>{
+                    if (!room.players[snakeKey]) {
+                        room.gameState.toKill.push(snakeKey);
+                    }
+                });
+            }
             gameLoop(room.gameState);
             if (room.gameState.time === 0) {
                 Object.values(room.clients).forEach( client => {
@@ -279,9 +286,6 @@ function getPlayers(roomCode, clientKey) {
 
 function removePlayer(roomCode, playerKey) {
     let room = activeRooms[roomCode];
-    if (room.gameState) {
-        room.gameState.toKill.push(playerKey);
-    }
     delete room.players[playerKey];
 }
 

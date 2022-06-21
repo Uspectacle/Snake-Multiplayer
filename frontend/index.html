@@ -70,6 +70,97 @@
 
 
 
+      <div id="setPlayerScreen" style="display: none;">
+        <div class="setPlayerScreen">
+          <div class="center">
+            <input type="color" id="colorInput" value="#024601" class="color">
+            <input class="form-control name"
+              type="text"
+              placeholder="Urbain Fabre"
+              id="nameInput"
+              autocomplete="off"
+              maxlength="12"
+            >
+            <button id="useController">🖱️ Use the Mouse</button>
+            <h5 class="alert" id="errorMapKey"></h5>
+            <div id="controllerMap">
+              <div class="directional-buttons">
+                <button id="upButtonMap" class="direction-button up" role="button"/>
+                <button id="leftButtonMap" class="direction-button left" role="button"></button>
+                <button id="rightButtonMap" class="direction-button right" role="button"></button>
+                <button id="downButtonMap" class="direction-button down" role="button"></button>
+              </div>
+            </div>
+            <button id="setPlayerExit">Save</button>
+          </div>
+        </div>
+      </div>
+
+
+
+      <div id="settingsScreen" style="display: none;">
+        <div class="settingsScreen">
+          <div id="roomCodeBox">
+            <h2 class="roomCode">Room code</h2>
+            <button id="copyButton" class="copy"><span id="roomCodeDisplay"></span></button>
+          </div>
+          <button id="exitRoom">
+            🚪 Exit Room
+          </button>
+          <div id="localPlayersSettings">
+            <div id="displayPlayer">
+              <h2 class="alert">ERROR: displayPlayer not working</h2>
+            </div>
+            <button id="setPlayerButton" type="submit">
+              ✏️ Edit & 🕹️ Set Controls
+            </button>
+            <button id="removeLocalPlayer" type="submit">
+              ➖ Remove
+            </button>
+          </div>
+          <button id="newPlayerButton" type="submit">➕ Add Local Player</button>
+          <div id="adminSettings">
+            <div id="clientsSettings">
+              <div id="displayPlayer">
+                <h2 class="alert">ERROR: displayPlayer not working</h2>
+              </div>
+              <button id="removeLocalPlayer" type="submit">
+                🛠️ Make Admin
+              </button>
+              <button id="removeLocalPlayer" type="submit">
+                ➖ Remove
+              </button>
+            </div>
+            <div id="colorSettings">
+              <input type="color" id="colorInputBackground" value="#024601" class="color">
+              <input type="color" id="colorInputBackground2" value="#024601" class="color">
+              <input type="color" id="colorInputFood" value="#024601" class="color">
+              <input type="color" id="colorInputSnake" value="#024601" class="color">
+            </div>
+            <div id="gameplaySettings">
+              <input class="form-control"
+                type="text"
+                placeholder="32"
+                id="MapSize"
+                autocomplete="off"
+                maxlength="3"
+              >
+              <input class="form-control"
+                type="text"
+                placeholder="32"
+                id="numFood"
+                autocomplete="off"
+                maxlength="3"
+              >
+            </div>
+          </div>
+          <button id="exitSettingsButton" type="submit">
+            ⚙️ Exit Settings
+          </button>
+        </div>
+      </div>
+
+
 
       <div id="gameScreen">
         <div class="gameScreen">
@@ -91,7 +182,6 @@
                 <div id="roomCodeBox">
                   <h2 class="roomCode">Room code</h2>
                   <button id="copyButton" class="copy"><span id="roomCodeDisplay"></span></button>
-                  <button id="newPlayerButton" type="submit">➕ Add Local Player</button>
                 </div>
               </div>
             </div>
@@ -125,107 +215,21 @@
             </div>
 
             <div id="Q4" class="quarter">
-              <div id="controller" class="center">
-                <div id="displayPlayer"><h2 class="alert">ERROR: displayPlayer not working</h2></div>
-                <div class="directional-buttons">
-                  <button id="upButton" class="direction-button up" role="button"></button>
-                  <button id="leftButton" class="direction-button left" role="button"></button>
-                  <button id="rightButton" class="direction-button right" role="button"></button>
-                  <button id="downButton" class="direction-button down" role="button"></button>
+              <div class="center">
+                <div id="controllerPlayer" style="display: none;">
+                  <div id="displayPlayer"><h2 class="alert">ERROR: displayPlayer not working</h2></div>
+                  <div class="directional-buttons">
+                    <button id="upButton" class="direction-button up" role="button"></button>
+                    <button id="leftButton" class="direction-button left" role="button"></button>
+                    <button id="rightButton" class="direction-button right" role="button"></button>
+                    <button id="downButton" class="direction-button down" role="button"></button>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-
-
-
-
-      <!-- <div class="menu side" id="roomMenu" style="display: none;">        
-        <div id="Settings">
-          <h5 class="text-green">Map Size :</h5>
-          <select class="form-control small" id="mapSizeInput">
-            <option>8</option>
-            <option>16</option>
-            <option>32</option>
-            <option>64</option>
-          </select>
-        </div>
-
-        <div id="room">
-          <div class="roomName">
-            <h2>Room code</h2>
-            <button><span id="roomCodeDisplay"></span></button>
-          </div>
-          <div class="player">
-            <h2 class="admin"></h2>
-            <h2 class="score">👑</h2>
-            <h2 class="ready">✔️</h2>
-            <input type="color" disabled class="color" value="#00FFFF">
-            <h2 class="name">Best</h2>
-          </div>
-          <div class="player">
-            <h2 class="admin">🛠️</h2>
-            <h2 class="score"></h2>
-            <h2 class="ready"></h2>
-            <input type="color" disabled class="color" value="#000000">
-            <h2 class="name">Admin</h2>
-          </div>
-          <div class="player">
-            <h2 class="admin"></h2>
-            <h2 class="score"></h2>
-            <h2 class="ready">✔️</h2>
-            <input type="color" disabled class="color" value="#ff0000">
-            <h2 class="name">Johnny</h2>
-          </div>
-          <div class="player">
-            <h2 class="admin"></h2>
-            <h2 class="score"></h2>
-            <h2 class="ready">✔️</h2>
-            <input type="color" class="color" value="#FFFF00">
-            <h2 class="name">My Name</h2>
-          </div>
-          <div id="playersDisplay">
-            <h2>ERROR: players display not working</h2>
-          </div>
-          
-          <div class="player">
-            <h2 class="admin"></h2>
-            <h2 class="score"></h2>
-            <h2 class="ready">✔️</h2>
-            <input type="color" id="colorInput" name="My Color" value="#e66465" class="color">
-            <input class="form-control name"
-              type="text"
-              placeholder="My Name"
-              id="nameInput"
-              autocomplete="off"
-              maxlength="12"
-            >
-          </div>
-          <button type="submit" id="readyButton">
-            I'm Ready
-          </button>
-          <button class="NewPlayer">
-            ➕ Player
-          </button>
-          <button class="ExitRoom">
-            🚪 Exit Room
-          </button>
-        </div>
-      </div>
-
-
-
-      <div class="side bar" style="display: none;">
-        <button id="sidebarButton">
-          😃
-        </button>
-      </div> -->
-
-
-
     </div>
   </body>
 </html>
