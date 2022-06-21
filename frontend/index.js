@@ -129,6 +129,7 @@ socket.on("wellcomePackage", handleWellcomePackage);
 socket.on("settings", handleSettings);
 
 socket.on("roomPackage", handleRoomPackage);
+socket.on("onlyGameState", handleOnlyGameState);
 
 
 
@@ -257,6 +258,11 @@ function handleRoomPackage(roomPackage) {
     handleSettings(unpack.settings);
     handlePlayers(unpack.players, unpack.readys);
     handleGameState(unpack.gameState);
+}
+
+
+function handleOnlyGameState(gameState) {
+    handleGameState(JSON.parse(gameState));
 }
 
 

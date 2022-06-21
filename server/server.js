@@ -133,6 +133,9 @@ io.on('connection', client => {
         const roomCode = getRoomCode[client.id];
         let room = activeRooms[roomCode];
         let unpack = JSON.parse(updatePackage);
+        if (!room) {return;}
+        if (!room.clients) {return;}
+        if (!room.clients[client.id]) {return;}
         getPlayers(roomCode, room.clients[client.id]).forEach( playerKey => {
             removePlayer(roomCode, playerKey);
         });
@@ -151,9 +154,9 @@ io.on('connection', client => {
     function handleDisconnect() {
         const roomCode = getRoomCode[client.id];
         let room = activeRooms[roomCode];
-        if (!room) {
-            return;
-        }
+        if (!room) {return;}
+        if (!room.clients) {return;}
+        if (!room.clients[client.id]) {return;}
         getPlayers(roomCode, room.clients[client.id]).forEach( playerKey => {
             removePlayer(roomCode, playerKey);
         });
@@ -199,9 +202,7 @@ function updateRoom(roomCode) {
     });
 
     let init = true;
-    console.log("-------")
     if (room.gameState) {
-        console.log(room.gameState.event)
         if (allReady || 
             room.gameState.event === "loop") {
             init = false;   
@@ -231,23 +232,27 @@ function updateRoom(roomCode) {
     if (start) {
         room.gameClock = setInterval(() => {
             gameLoop(room.gameState);
-            scoresToRewards(room.gameState).forEach( ([playerKey, reward]) =>{
-                let player = room.players[playerKey];
-                if (!player) {return;}
-                player.score = reward;
-            })
             if (room.gameState.time === 0) {
                 Object.values(room.clients).forEach( client => {
                     client.ready = false;
                 });
             }
             if (room.gameState.event === "over") {
-                console.log("IT S NOT OVER YET")
                 clearInterval(room.gameClock);
                 room.gameClock = null;
+                updateRoom(roomCode); 
+                return;
             }
-            updateRoom(roomCode);   
+            io.sockets.in(roomCode).emit('onlyGameState', JSON.stringify(room.gameState));
         }, 1000 / room.gameState.frameRate);
+    }
+
+    if (room.gameState) {
+        scoresToRewards(room.gameState).forEach( ([playerKey, reward]) =>{
+            let player = room.players[playerKey];
+            if (!player) {return;}
+            player.score = reward;
+        })
     }
 
     let roomPackage = {
