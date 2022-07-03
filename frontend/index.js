@@ -108,7 +108,7 @@ const exitRoom = document.getElementById('exitRoom');
 // *** Event Listener ***
 
 document.addEventListener('keydown', keydown);
-document.addEventListener('click', endMapKey);
+document.addEventListener('click', handleClick);
 
 // * Title Screen *
 newRoomButton.addEventListener('click', newRoom);
@@ -190,6 +190,7 @@ let localKeyCount = 0;
 let localSettings;
 let setPlayerKey;
 let setPlayer;
+let setPlayerControls;
 let playerController;
 let playerControllerTwo;
 let waitForKey;
@@ -197,14 +198,14 @@ let waitForKey;
 let ready = false;
 let clientKey;
 let keyController = {
-    37: {playerKey: 1, inputCode:"left"},
-    38: {playerKey: 1, inputCode:"up"},
-    39: {playerKey: 1, inputCode:"right"},
-    40: {playerKey: 1, inputCode:"down"},
-    81: {playerKey: 1, inputCode:"left"},
-    83: {playerKey: 1, inputCode:"down"},
-    68: {playerKey: 1, inputCode:"right"},
-    90: {playerKey: 1, inputCode:"up"},
+    37: {playerKey: 0, inputCode:"left"},
+    38: {playerKey: 0, inputCode:"up"},
+    39: {playerKey: 0, inputCode:"right"},
+    40: {playerKey: 0, inputCode:"down"},
+    81: {playerKey: 0, inputCode:"left"},
+    83: {playerKey: 0, inputCode:"down"},
+    68: {playerKey: 0, inputCode:"right"},
+    90: {playerKey: 0, inputCode:"up"},
 }
 
 
@@ -285,7 +286,6 @@ function handleWellcomePackage(wellcomePackage) {
 
 function handleNewPlayer() {
     initSetPlayerScreen();
-    console.log("handleNewPlayer()");
     showScreen(setPlayerScreen);
 }
 
@@ -321,7 +321,19 @@ function initSetPlayerScreen() {
     }
     colorInput.value = setPlayer.color;
     nameInput.placeholder = setPlayer.name;
+    setPlayerControls = {
+        "up": false,
+        "left": false,
+        "right": false,
+        "down": false,
+    }
     if (mobileCheck()) {
+        setPlayerControls = {
+            "up": true,
+            "left": true,
+            "right": true,
+            "down": true,
+        }
         if (!Object.keys(localPlayers).length) {
             controllerPlayer.style.display = "block";
             playerController = setPlayerKey;
@@ -333,20 +345,53 @@ function initSetPlayerScreen() {
         }
         useController.style.display = "none";
         controllerMap.style.display = "none";
-    } else if (playerController && playerController !== setPlayerKey) {
-        useController.style.display = "none";
-        controllerMap.style.display = "block";
+    } else if (playerController) {
+        if(playerController === setPlayerKey) {
+            setPlayerControls = {
+                "up": true,
+                "left": true,
+                "right": true,
+                "down": true,
+            }
+            useController.style.display = "block";
+            controllerMap.style.display = "none";
+        } else {
+            initMapKey();
+            useController.style.display = "none";
+            controllerMap.style.display = "block";
+        }
     } else {
+        initMapKey();
         useController.style.display = "block";
         controllerMap.style.display = "block";
         updateUseControllerButton();
     }
-    Object.entries(keyController).forEach( ([keyCode, value]) => {
-        if (value.playerKey !== setPlayerKey) {return;}
-        let buttonsMap = [upButtonMap, leftButtonMap, rightButtonMap, downButtonMap];
-        buttonsMap.forEach( buttonMap =>{
+}
+
+function initMapKey() {
+    let buttonsMap = [upButtonMap, leftButtonMap, rightButtonMap, downButtonMap];
+    buttonsMap.forEach( buttonMap => {
+        buttonMap.classList.remove("map");
+        buttonMap.classList.add("mapping");
+        Object.entries(keyController).forEach( ([keyCode, value]) => {
+            if (value.playerKey !== setPlayerKey) {return;}
             if (value.inputCode === buttonMap.inputCode) {
-                buttonMap.innerText = String.fromCharCode(keyCode);
+                buttonMap.classList.add("map");
+                buttonMap.classList.remove("mapping");
+                buttonMap.setAttribute('data-content', stringFromKeyCode(keyCode));
+                setPlayerControls[buttonMap.inputCode] = true;
+            }
+        });
+        if (setPlayerControls[buttonMap.inputCode]) {return;}
+        Object.entries(keyController).forEach( ([keyCode, value]) => {
+            if (value.playerKey) {return;} // playerKey 0 is a default buffer
+            if (setPlayerControls[buttonMap.inputCode]) {return;}
+            if (value.inputCode === buttonMap.inputCode) {
+                value.playerKey = setPlayerKey;
+                buttonMap.classList.add("map");
+                buttonMap.classList.remove("mapping");
+                buttonMap.setAttribute('data-content', stringFromKeyCode(keyCode));
+                setPlayerControls[buttonMap.inputCode] = true;
             }
         });
     });
@@ -355,75 +400,119 @@ function initSetPlayerScreen() {
 function updateName(e) {setPlayer.name = e.target.value;}
 function updateColor(e) {setPlayer.color = e.target.value;}
 
+function handleSetPlayerExit() {
+    for (let inputCode in setPlayerControls) {
+        if (!setPlayerControls[inputCode]) {
+            errorMapKey.innerText = "No key as been registered for " + inputCode;
+            errorMapKey.style.display = "block";
+            return;
+        }
+    }
+    localPlayers[setPlayerKey] = {...setPlayer};
+    sendUpdate();
+    buildSettings();
+    showScreen(settingsScreen);
+}
+
 function handleUseController() {
     if (playerController === setPlayerKey) {
         playerController = null;
+        controllerMap.style.display = "block";
         controllerPlayer.style.display = "none";
+        setPlayerControls = {
+            "up": false,
+            "left": false,
+            "right": false,
+            "down": false,
+        }
+        initMapKey();
     } else {
         playerController = setPlayerKey;
+        setPlayerControls = {
+            "up": true,
+            "left": true,
+            "right": true,
+            "down": true,
+        }
+        controllerMap.style.display = "none";
         controllerPlayer.style.display = "block";
-        keyController = Object.fromEntries(Object.entries(keyController).filter(([key, value]) => {
-            return value.playerKey !== setPlayerKey;
-        }));
+        Object.values(keyController).map( value => {
+            if (value.playerKey === setPlayerKey) {
+                value.playerKey = 0;
+            };
+        });
     }
     updateUseControllerButton();
 }
 
 function updateUseControllerButton() {
     if (playerController === setPlayerKey) {
-        useController.classList.add('redbutton');
-        useController.innerText = "🖱️ STOP Using Mouse";
+        useController.innerText = "🎹 Use Keyboard";
     } else {
-        useController.classList.remove('redbutton');
         useController.innerText = "🖱️ Use Mouse";
     }
 }
 
+
 function handleButtonMap(e) {
-    errorMapKey.style.display = "block";
-    e.target.classList.add('redbutton');
+    if (waitForKey) {endMapKey();}
+    errorMapKey.style.display = "none";
+    e.target.classList.add('mapping');
+    e.target.classList.remove('map');
     waitForKey = e;
 }
 
-function endMapKey() {
+function handleClick(e) {
     if (!waitForKey) {return;}
-    waitForKey.target.classList.remove('redbutton');
-    waitForKey = null;
-}
-
-function mapKey(keyCode) {
-    if (!waitForKey) {return;}
-    if (keyController[keyCode]) {
-        let keyUser = keyController[keyCode].playerKey;
-        if (keyUser !== setPlayer) {
-            if (localPlayers[keyUser]) {
-                errorMapKey.innerText = "Already used by "+ localPlayers[keyUser].name;
-            } else {
-                errorMapKey.innerText = "ERROR: Key used by an none player "+ keyUser;;
-            }
-            errorMapKey.style.display = "block";
-        } 
-    } else {
-        Object.entries(keyController).forEach( ([key, value]) => {
-            if (value.playerKey === setPlayerKey &&
-                value.inputCode === waitForKey.target.inputCode) {
-                    delete keyController[key];
-                }
-        });
-        keyController[keyCode] = {
-            playerKey: setPlayerKey, 
-            inputCode: waitForKey.target.inputCode
-        }
-        waitForKey.target.innerText = String.fromCharCode(keyCode);
+    if (e.target.classList.contains("direction-button")) {
+        return;
     }
     endMapKey();
 }
 
-function handleSetPlayerExit() {
-    localPlayers[setPlayerKey] = {...setPlayer};
-    sendUpdate();
-    buildSettings();
-    showScreen(settingsScreen);
+function endMapKey() {
+    waitForKey.target.classList.add('map');
+    waitForKey.target.classList.remove('mapping');
+    waitForKey = null;
+}
+
+function mapKey(keyCode) {
+    if (keyController[keyCode]) {
+        let keyUser = keyController[keyCode].playerKey;
+        if (keyUser) {
+            if (keyUser === setPlayerKey) {
+                errorMapKey.innerText = "You already use this key";
+            } else if (localPlayers[keyUser]) {
+                errorMapKey.innerText = "Key already used by "+ localPlayers[keyUser].name;
+            } else {
+                errorMapKey.innerText = "ERROR: Key used by an none player "+ keyUser;
+            }
+            errorMapKey.style.display = "block";
+            endMapKey();
+            return;
+        }
+    }
+    Object.entries(keyController).forEach( ([key, value]) => {
+        if (value.playerKey === setPlayerKey &&
+            value.inputCode === waitForKey.target.inputCode) {
+                delete keyController[key];
+            }
+    });
+    keyController[keyCode] = {
+        playerKey: setPlayerKey, 
+        inputCode: waitForKey.target.inputCode,
+    }
+    setPlayerControls[waitForKey.target.inputCode] = true;
+    waitForKey.target.setAttribute('data-content', stringFromKeyCode(keyCode));
+    endMapKey();
+}
+
+function stringFromKeyCode(keyCode) {
+    if (parseInt(keyCode) === 37) {return "🠜";}
+    if (parseInt(keyCode) === 38) {return "🠝";}
+    if (parseInt(keyCode) === 39) {return "🠞";}
+    if (parseInt(keyCode) === 40) {return "🠟";}
+    return String.fromCharCode(parseInt(keyCode));
 }
 
 
@@ -452,7 +541,6 @@ function buildSettings() {
 }
 
 function handleSetPlayerButton(e) {
-    console.log("handleSetPlayerButton(e)");
     initSetPlayerScreen(e.target.playerKey);
     showScreen(setPlayerScreen);
 }
@@ -473,11 +561,11 @@ function newLocalPlayerSettings(playerKey, player) {
     removeLocalPlayer.playerKey = playerKey;
 
     setPlayerButton.innerText = "✏️ Edit & 🕹️ Set Controls";
-    setPlayerButton.addEventListener('click', handleSetPlayerButton);
+    // setPlayerButton.addEventListener('click', handleSetPlayerButton);
 
     removeLocalPlayer.innerText = "➖ Remove Local Player";
     removeLocalPlayer.classList.add('redbutton');
-    setPlayerButton.addEventListener('click', updateRemoveLocalPlayer);
+    removeLocalPlayer.addEventListener('click', updateRemoveLocalPlayer);
 
     localDiv.append(playerDiv);
     localDiv.append(setPlayerButton);
@@ -517,7 +605,7 @@ function updateRemoveLocalPlayer(e) {
 
 function handleExitRoom() {
     socket.emit('exitRoom');
-    showScreen(initialScreen);
+    showScreen(titleScreen);
 }
 
 

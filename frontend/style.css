@@ -22,17 +22,24 @@
   --game-font: calc(min(var(--quarter-size), 50vmin) * 7/100);
 }
 
-.screen {
-  display: block;
-  height: 100vh;
-  width: auto;
+body{
   text-align: center;
-
   background-color: var(--very-dark-green);
   background-image: url("../Images/herbe-v2.jpg");
   background-size: cover;
   background-position: top top;
   background-color: none;
+  height: 100vh;
+  width: 100vw;
+}
+
+.screen {
+  display: none;
+  color: #00000000;
+  background-color: #00000000;
+  height: 100vh;
+  width: 100vw;
+  text-align: center;
 }
 
 .boxed {
@@ -40,21 +47,18 @@
   border-radius: 0.5em;
 }
 
-.center{
+/* .center{
   position: absolute;
-  width: 100%;
   left: 50%;
   top: 50%;
   -webkit-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
-}
+} */
 
 /* Button in general */
 button {
-  margin-bottom: 1em;
   padding: 0.5em;
   color:rgb(255, 255, 255);
-  width: auto;
   border-radius: 0.5em;
   font-size: 1.3em;
   background-color: var(--dark-green);
@@ -67,7 +71,6 @@ button:active {background-color: var(--green);}
   background-color: var(--dark-red);
   border-color: var(--very-dark-red);
 }
-
 .redbutton:hover {background-color: var(--darker-red);}
 .redbutton:active {background-color: var(--red);}
 
@@ -76,12 +79,16 @@ button:active {background-color: var(--green);}
 /* titleScreen : title & co*/
 
 .titleScreen {
-  display: block;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  -webkit-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .alert {
@@ -103,9 +110,6 @@ button:active {background-color: var(--green);}
   animation-iteration-count: infinite;
   animation-direction: alternate;
   image-rendering: pixelated;
-  margin-bottom: 5em;
-  margin-left: auto;
-  margin-right: auto;
 }
 .title:hover {background-position: 0 -32em;}
 .blink {background-position: 0 -16em;}
@@ -165,17 +169,20 @@ button:active {background-color: var(--green);}
 
 /* Room Code: Display and copie */
 
+.roomCodeBox{
+  display: flex;
+  flex-direction:  column;
+}
+
 .roomCode{
   padding: 0.2em;
-  width: 100%;
   font-size: 2em;
   text-align: center;
   color: var(--green);
 }
 
 .copy{  
-  padding: 0;
-  width: 100%;
+  padding: 0.3em;
   font-size: 2em;
   color:rgb(255, 255, 255);
   border-radius: 0.5em;
@@ -235,16 +242,22 @@ button:active {background-color: var(--green);}
 
 /* Directional-buttons */
 .directional-buttons {
-  font-size: 0.3em;
+  font-size: 1em;
   margin-left: auto;
   margin-right: auto;
   background-image: none;
-  width: 32em;
-  height: 32em;
+  --main-length: 5em;
+  --gap-length: calc(var(--main-length) / 10);
+  --border-length: calc(var(--main-length) / 3);
+  --test-length: calc(var(--main-length) / 6);
+  --radius-length: calc(var(--gap-length) / 2);
+  width: calc(2* (var(--main-length) + var(--gap-length)));
+  height: calc(2* (var(--main-length) + var(--gap-length)));
+  --width: calc(var(--main-length) / 1.4142);
   display: grid;
-  grid-gap: 0.5em;
-  grid-template-columns: 45fr 60fr 45fr;
-  grid-template-rows: 45fr 60fr 45fr;
+  grid-gap: var(--gap-length);
+  grid-template-columns: 25fr 50fr 25fr;
+  grid-template-rows: 25fr 50fr 25fr;
   grid-template-areas:
     "....  up  ....."
     "left  ..  right"
@@ -257,116 +270,131 @@ button:active {background-color: var(--green);}
   background: currentcolor;
   border: none;
   padding: 0 0 0 0;
-  margin-top: 0;
-  margin-bottom: 0;
+  margin: 0;
   position: relative;
 }
 
+.direction-button:focus {
+  border: none;
+  outline: none;
+}
+
 .direction-button:before {
+  font-size: 1em;
   display: block;
   content: "";
   position: absolute;
-  width: 8.8em;
-  height: 8.8em;
   transform: rotate(45deg);
+  width: var(--width);
+  height: var(--width);
   background: currentcolor;
 }
 
 .direction-button:after {
   display: block;
-  content: "";
   position: absolute;
-  border: 4em solid transparent;
+  border: var(--border-length) solid transparent;
   color: rgba(255, 250, 250, 0.6);
+  content: "";
 }
 
-.direction-button:hover {
-  color: var(--darker-green);
-}
-
-.direction-button:active {
-  color: var(--green);
-}
-
-.direction-button:active:after {
-  color: rgba(0, 0, 0, 0.6);
-}
-
+.direction-button:hover {color: var(--darker-green);}
+.direction-button:active {color: var(--green);}
+.direction-button:active:after {color: rgba(0, 0, 0, 0.6);}
 .up {
   grid-area: up;
-  border-radius: 1em 1em 0 0;
+  border-radius: var(--radius-length) var(--radius-length) 0 0;
 }
 .up:before {
-  left: calc(50% - 4.4em);
-  bottom: -4.4em;
+  left: calc(50% - var(--width)/2);
+  top: calc(100% - var(--width)/2);
 }
 .up:after {
   border-bottom-color: currentcolor;
-  left: calc(50% - 4em);
-  top: -2em;
+  left: calc(50% - var(--border-length));
+  top: calc(50% - var(--border-length)*3/2);
 }
 
 .left {
   grid-area: left;
-  border-radius: 1em 0 0 1em;
+  border-radius: var(--radius-length) 0 0 var(--radius-length);
 }
 .left:before {
-  right: -4.4em;
-  top: calc(50% - 4.4em);
+  left: calc(100% - var(--width)/2);
+  top: calc(50% - var(--width)/2);
 }
 .left:after {
   border-right-color: currentcolor;
-  top: calc(50% - 4em);
-  left: -2em;
+  left: calc(50% - var(--border-length)*3/2);
+  top: calc(50% - var(--border-length));
 }
 
 .right {
   grid-area: right;
-  border-radius: 0 1em 1em 0;
+  border-radius: 0 var(--radius-length) var(--radius-length) 0;
 }
 .right:before {
-  left: -4.4em;
-  top: calc(50% - 4.4em);
+  right: calc(100% - var(--width)/2);
+  top: calc(50% - var(--width)/2);
 }
 .right:after {
   border-left-color: currentcolor;
-  top: calc(50% - 4em);
-  right: -2em;
+  right: calc(50% - var(--border-length)*3/2);
+  top: calc(50% - var(--border-length));
 }
 
 .down {
   grid-area: down;
-  border-radius: 0 0 1em 1em;
+  border-radius: 0 0 var(--radius-length) var(--radius-length);
 }
 .down:before {
-  left: calc(50% - 4.4em);
-  top: -4.4em;
+  left: calc(50% - var(--width)/2);
+  bottom: calc(100% - var(--width)/2);
 }
 .down:after {
   border-top-color: currentcolor;
-  left: calc(50% - 4em);
-  bottom: -2em;
+  left: calc(50% - var(--border-length));
+  bottom: calc(50% - var(--border-length)*3/2);
 }
 
+.map:after {
+  content: attr(data-content);
+  border: none;
+  font-size: 2em;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
 
+.mapping {background: var(--red);}
+.mapping:before {background: var(--red);}
+.mapping:hover {background: var(--darker-red);}
+.mapping:hover:before {background: var(--darker-red);}
+.mapping:before:hover {background: var(--darker-red);}
+.mapping:active {background: var(--red);}
+.mapping:before:active {background: var(--red);}
+.mapping:active:before {background: var(--red);}
 
 
 
 /* Player Display: Name, Color, Ready & co */
 .playersDisplay {
+  /* display: flex;
+  flex-direction: column;
   width: 95%;
-  /* height: 95%; */
+  height: 95%;
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%); */
 }
 
 .player {
-  display: flex;
-  width: 90%;
+  display: table-row;
+  /* width: 90%;
   margin-top: 0.5em;
-  height: 1.5em;
+  height: 1.5em; */
 }
 
 .player h2{
@@ -410,17 +438,16 @@ button:active {background-color: var(--green);}
 
 
 
-
 /* Settings Screen */
+
+.setPlayerScreen {
+  display: flex;
+  flex-direction: column;
+}
 
 #settingsScreen {display: none;}
 
 .form-control{
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 20px;
-  margin-bottom: 20px;
-  width: auto;
   font-size: 18px;
 }
 
@@ -429,12 +456,31 @@ img {
   width: 100%;
 }
 
+.color{
+  background-color: var(--green);
+  border-color: var(--green);
+  border-radius: 1em;
+  width: 3em;
+  height: 3em;
+}
+
+.color::-webkit-color-swatch {
+  border: none;
+  border-radius: 1em;
+}
 
 
+h4 {
+  font-size: 2em;
+  padding: 0;
+  color: var(--green);
+}
 
-
-
-
+.line{
+  width: auto;
+  display: flex ;
+  justify-content: space-evenly;
+}
 
 
 
