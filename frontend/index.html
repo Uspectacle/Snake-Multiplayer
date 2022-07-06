@@ -4,238 +4,53 @@
     <meta charset="utf-8" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=0.5, maximum-scale=0.5, user-scalable=no"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
-      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
-      crossorigin="anonymous"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
     />
     <link rel="stylesheet" href="style.css"></link>
     <link rel="icon" type="image/x-icon" href="../Images/pumpkin.png" />
     <title>Snakes</title>
-    <style>
-    </style>
   </head>
-
-
-
   <body>
-    <script type="importmap">
-      {
-        "imports": {
-          "socket.io-client": "https://cdn.socket.io/4.4.1/socket.io.esm.min.js"
+    <div class="container">
+      <script type="importmap">
+        {
+          "imports": {
+            "socket.io-client": "https://cdn.socket.io/4.4.1/socket.io.esm.min.js"
+          }
         }
-      }
-    </script>
-    <script type="module" src="index.js"></script>
-
-    <!-- One day I swear
-      <button type="submit" class="button green" id="exitRoomButton">
-        🎮 Select other Games
-      </button> 
-    -->
-
-    <div class="screen" id="titleScreen">
-      <div class="titleScreen center" >
-        <div class="title" id="title"></div>
-        <div>
-          <button type="submit" id="newRoomButton">
-            Create New Room
-          </button>
-        </div>
-        <form id="joinRoomForm">
-          <div>
-            <h5 class="alert" id="errorRoomCode"></h5>
-          </div>
-          <div>
-            <input class="form-control"
-              type="text"
-              placeholder="Enter Room Code"
-              id="roomCodeInput"
-              autocomplete="off"
-              maxlength="5"
-            >
-          </div>
-          <div>
-            <button type="submit" id="joinRoomButton">
-              Join Room
-            </button>
-          </div>
-        </form>
+      </script>
+      <script type="module" src="index.js"></script>
+      
+      <div id="nav-latteral" class="nav-latteral">
+        <button id="nav-close" class="navButton">X</button>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="game.html">Game</a></li>
+          <li><a href="players.html">Players</a></li>
+          <li><a href="settings.html">Settings</a></li>
+          <li><a href="about.html">About</a></li>
+        </ul>
       </div>
-    </div>
-
-
-
-
-    <div class="screen" id="setPlayerScreen">
-      <div class="setPlayerScreen">
-        <div class="center">
-          <h4>Edit Color & Nickname</h4>
-          <div class="line">
-            <input type="color" id="colorInput" value="#024601" class="color">
-            <input class="form-control name"
-              type="text"
-              placeholder="Urbain Fabre"
-              id="nameInput"
-              autocomplete="off"
-              maxlength="12"
-            >
-          </div>
-          <h4><br>Edit Controls</h4>
-          <h5 class="alert" id="errorMapKey"></h5>
-          <div class="line">
-            <button id="useController">🖱️ Use the Mouse</button>
-            <div id="controllerMap">
-              <div class="directional-buttons">
-                <button id="upButtonMap" class="direction-button up" role="button"/>
-                <button id="leftButtonMap" class="direction-button left" role="button"></button>
-                <button id="rightButtonMap" class="direction-button right" role="button"></button>
-                <button id="downButtonMap" class="direction-button down" role="button"></button>
-              </div>
-            </div>
-          </div>
-          <h4><br></h4>
-          <button id="setPlayerExit">Save</button>
-        </div>
-      </div>
-    </div>
-
-
-
-    <div class="screen" id="settingsScreen">
-      <div class="settingsScreen">
-        <div id="roomCodeBox" class="roomCodeBox boxed">
-          <h2 class="roomCode">Room code</h2>
-          <button id="copyButton" class="copy"><span id="roomCodeDisplay"></span></button>
-          <button id="exitRoom" class="redbutton">🚪 Exit Room</button>
-        </div>
-        <div id="localPlayersSettings" class="displayPlayer" style="display:flex">
-          <div id="displayPlayer" class="displayPlayer">
-            <h2 class="alert">ERROR: displayPlayer not working</h2>
-          </div>
-          <button id="setPlayerButton" type="submit">
-            ✏️ Edit & 🕹️ Set Controls
-          </button>
-          <button id="removeLocalPlayer" type="submit">
-            ➖ Remove
-          </button>
-        </div>
-        <button id="newPlayerButton" type="submit">➕ Add Local Player</button>
-        <div id="adminSettings">
-          <div id="clientsSettings">
-            <div id="displayPlayer">
-              <h2 class="alert">ERROR: displayPlayer not working</h2>
-            </div>
-            <button id="removeLocalPlayer" type="submit">
-              🛠️ Make Admin
-            </button>
-            <button id="removeLocalPlayer" type="submit">
-              ➖ Remove
-            </button>
-          </div>
-          <div id="colorSettings">
-            <input type="color" id="colorInputBackground" value="#024601" class="color">
-            <input type="color" id="colorInputBackground2" value="#024601" class="color">
-            <input type="color" id="colorInputFood" value="#024601" class="color">
-            <input type="color" id="colorInputSnake" value="#024601" class="color">
-          </div>
-          <div id="gameplaySettings">
-            <input class="form-control"
-              type="text"
-              placeholder="32"
-              id="MapSize"
-              autocomplete="off"
-              maxlength="3"
-            >
-            <input class="form-control"
-              type="text"
-              placeholder="32"
-              id="numFood"
-              autocomplete="off"
-              maxlength="3"
-            >
-          </div>
-        </div>
-        <button id="exitSettingsButton" type="submit">
-          ⚙️ Exit Settings
+      <div id="nav-wrapper"></div>
+      <button id="nav-open" class="navButton">≡</button>
+      <button id="fullScreen" class="fullButton">⛶</button>
+      <div class="title" id="title"></div>
+      <button type="submit" id="newRoomButton">
+        Create New Room
+      </button>
+      <form id="joinRoomForm">
+        <p class="alert" id="errorRoomCode"></p>
+        <input class="form-control"
+          type="text"
+          placeholder="Enter Room Code"
+          id="roomCodeInput"
+          autocomplete="off"
+          maxlength="5"
+        >
+        <button type="submit" id="joinRoomButton">
+          Join Room
         </button>
-      </div>
-    </div>
-
-
-
-    <div class="screen" id="gameScreen">
-      <div class="gameScreen">
-        <div id="Q1Q2" class="quarterContainer">
-          <div id="Q1" class="quarter">
-            <div class="center">
-              <div id="controllerPlayerTwo" style="display: none;">
-                <div id="displayPlayerTwo"><h2>ERROR: displayPlayerTwo not working</h2></div>
-                <div class="directional-buttons">
-                  <button id="upButtonTwo" class="direction-button up" role="button"/>
-                  <button id="leftButtonTwo" class="direction-button left" role="button"></button>
-                  <button id="rightButtonTwo" class="direction-button right" role="button"></button>
-                  <button id="downButtonTwo" class="direction-button down" role="button"></button>
-                </div>
-              </div>
-            </div>
-            
-            <div class="center">
-              <div id="roomCodeBox">
-                <h2 class="roomCode">Room code</h2>
-                <button id="copyButton" class="copy"><span id="roomCodeDisplay"></span></button>
-              </div>
-            </div>
-          </div>
-
-          <div id="Q2" class="quarter">
-            <div class="center">
-              <div id="playersDisplay" class="playersDisplay">
-                <h2>ERROR: players display not working</h2>
-              </div>
-            </div>
-          </div>
-        </div>
-
-
-        <div id="gameContainer" class="gameContainer">
-          <div id="game" class="game">
-            <canvas id="backCanvas" width="1000" height="1000"></canvas>
-            <canvas id="frontCanvas" width="1000" height="1000"></canvas>
-            <button id="readyButton" type="submit">I'm Ready</button>
-          </div>
-        </div>
-
-
-        <div id="Q3Q4" class="quarterContainer">
-          <div id="Q3" class="quarter">
-            <div class="center">
-              <button id="settingsButton" type="submit" >
-                ⚙️ Settings
-              </button>
-            </div>
-          </div>
-
-          <div id="Q4" class="quarter">
-            <div class="center">
-              <div id="controllerPlayer" style="display: none;">
-                <div id="displayPlayer"><h2 class="alert">ERROR: displayPlayer not working</h2></div>
-                <div class="directional-buttons">
-                  <button id="upButton" class="direction-button up" role="button"></button>
-                  <button id="leftButton" class="direction-button left" role="button"></button>
-                  <button id="rightButton" class="direction-button right" role="button"></button>
-                  <button id="downButton" class="direction-button down" role="button"></button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      </form>
     </div>
   </body>
 </html>
-
-<!-- 😃⚙️❌↺✔️  -->

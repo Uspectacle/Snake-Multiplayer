@@ -1,0 +1,60 @@
+/* Button in general */
+button {
+    cursor: pointer;
+    text-align: center;
+    padding: 0.5em;
+    color:rgb(255, 255, 255);
+    border-radius: 0.5em;
+    font-size: 1.3em;
+    background-color: var(--dark-green);
+    border-color: var(--very-dark-green);
+}
+button:hover {background-color: var(--darker-green);}
+button:active {background-color: var(--green);}
+
+.redbutton {
+    background-color: var(--dark-red);
+    border-color: var(--very-dark-red);
+}
+.redbutton:hover {background-color: var(--darker-red);}
+.redbutton:active {background-color: var(--red);}
+
+.navButton {
+    border: none;
+    padding: 0;
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    height: 40px;
+    width: 40px;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+.navButton:hover {
+    transform: translate(-50%, -50%) scale(1.5);
+    transition: transform 0.5s;
+}
+.navButton:active {
+    transform: translate(-50%, -50%) scale(1.4);
+    color: rgb(185, 185, 185);
+}
+
+.fullButton {
+    border: none;
+    padding: 0;
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    height: 40px;
+    width: 40px;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(50%, -50%);
+}
+.fullButton:hover {
+    transform: translate(50%, -50%) scale(1.5);
+    transition: transform 0.5s;
+}
+.fullButton:active {
+    transform: translate(50%, -50%) scale(1.4);
+    color: rgb(185, 185, 185);
+}

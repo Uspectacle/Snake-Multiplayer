@@ -1,0 +1,24 @@
+body{
+    // text-align: center
+    // position: absolute;
+    // background-color: var(--very-dark-green);
+    background: url("../Images/herbe-v2.jpg") no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    // width: calc(100vw - (100vw - 100%));
+    // height: calc(100vh - (100vh - 100%));
+
+    // background-position: top top;
+    // background-color: none;
+    // height: 100vh;
+    // width: 100vw;
+    margin:0;
+    height: 100%;
+    width: 100%;
+}
+html{
+    height: 100%;
+    width: 100%;
+}

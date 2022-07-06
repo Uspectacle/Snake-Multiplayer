@@ -1,0 +1,20 @@
+* {
+    box-sizing: border-box;
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+:root{
+    --very-dark-red: #531100;
+    --dark-red: #881b00;
+    --darker-red: #af2300;
+    --red: #ff3300;
+    --light-red: #ff9933;
+    --orange: #ff9933;
+  
+    --quarter-min: 10rem;
+    --game-size: min(calc(100vmax - 2*var(--quarter-min)), 100vmin);
+    --quarter-size: calc(50vmax - var(--game-size)/2);
+    --game-font: calc(min(var(--quarter-size), 50vmin) * 7/100);
+  }

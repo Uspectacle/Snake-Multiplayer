@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
+    <link rel="stylesheet" href="style.css"></link>
+    <link rel="icon" type="image/x-icon" href="../Images/pumpkin.png" />
+    <title>Snakes</title>
+  </head>
+  <body>
+    <script type="importmap">
+      {
+        "imports": {
+          "socket.io-client": "https://cdn.socket.io/4.4.1/socket.io.esm.min.js"
+        }
+      }
+    </script>
+    <script type="module" src="index.js"></script>
+
+    <div class="screen" id="settingsScreen">
+      <div class="settingsScreen">
+        <div id="adminSettings">
+          <div id="clientsSettings">
+            <button id="removeLocalPlayer" type="submit">
+              🛠️ Make Admin
+            </button>
+          </div>
+          <div id="colorSettings">
+            <input type="color" id="colorInputBackground" value="#024601" class="color">
+            <input type="color" id="colorInputBackground2" value="#024601" class="color">
+            <input type="color" id="colorInputFood" value="#024601" class="color">
+            <input type="color" id="colorInputSnake" value="#024601" class="color">
+          </div>
+          <div id="gameplaySettings">
+            <input class="form-control"
+              type="text"
+              placeholder="32"
+              id="MapSize"
+              autocomplete="off"
+              maxlength="3"
+            >
+            <input class="form-control"
+              type="text"
+              placeholder="32"
+              id="numFood"
+              autocomplete="off"
+              maxlength="3"
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+
+<!-- 😃⚙️❌↺✔️  -->
