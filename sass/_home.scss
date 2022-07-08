@@ -1,10 +1,4 @@
-/* titleScreen : title & co*/
-
-// .alert {
-//     font-size: 1em;
-//     padding: 0;
-//     color: var(--red);
-// }
+@import "variable";
 
 .container {
     height: 100%;
@@ -29,8 +23,8 @@
     animation-direction: alternate;
     animation-timing-function: cubic-bezier(0.13,-0.13, 0.2, 1);
     image-rendering: pixelated;
+    & :hover {background-position: 0 -32em;}
 }
-.title:hover {background-position: 0 -32em;}
 .blink {background-position: 0 -16em;}
 
 @keyframes move {
@@ -38,3 +32,24 @@
     100% {transform: translateY(-0.2em);}
 }
 
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+.text-input {
+    text-align: center;
+    padding: 0.5em;
+    color:rgb(255, 255, 255);
+    background-color: rgba(0, 0, 0, 0);
+    border-color: $dark-green;
+    border-radius: 0.5em;
+    font-size: 1.3em;
+    width: 10em;
+}
+
+.alert {
+    font-size: 1em;
+    padding: 0;
+    color: $red;
+}

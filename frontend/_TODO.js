@@ -700,7 +700,7 @@ function display(admin, ready, score, color, name) {
 
 function copyRoomCode() {
     let copyText = "Wesh bruv! Come play at \
-    https://uspectacle.github.io/Snake-Multiplayer/frontend/index.html \n\
+    https://psl.institute/frontend/index.html \n\
     My room code is: \n\n" + roomCodeDisplay.innerText;
     navigator.clipboard.writeText(copyText);
 }

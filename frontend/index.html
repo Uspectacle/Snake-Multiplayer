@@ -20,9 +20,10 @@
         }
       </script>
       <script type="module" src="index.js"></script>
-      
+
+      <!-- Navigation & Full Screen -->
       <div id="nav-latteral" class="nav-latteral">
-        <button id="nav-close" class="navButton">X</button>
+        <button id="nav-close" class="button-icon top-left">X</button>
         <ul class="nav-links">
           <li><a href="index.html">Home</a></li>
           <li><a href="game.html">Game</a></li>
@@ -32,22 +33,24 @@
         </ul>
       </div>
       <div id="nav-wrapper"></div>
-      <button id="nav-open" class="navButton">≡</button>
-      <button id="fullScreen" class="fullButton">⛶</button>
+      <button id="nav-open" class="button-icon top-left">≡</button>
+      <button id="fullScreen" class="button-icon top-right">⛶</button>
+
+      <!-- Title Screen -->
       <div class="title" id="title"></div>
-      <button type="submit" id="newRoomButton">
+      <button type="submit" id="newRoomButton" class="button-green">
         Create New Room
       </button>
       <form id="joinRoomForm">
         <p class="alert" id="errorRoomCode"></p>
-        <input class="form-control"
+        <input class="text-input"
           type="text"
           placeholder="Enter Room Code"
           id="roomCodeInput"
           autocomplete="off"
           maxlength="5"
         >
-        <button type="submit" id="joinRoomButton">
+        <button type="submit" id="joinRoomButton" class="button-green">
           Join Room
         </button>
       </form>

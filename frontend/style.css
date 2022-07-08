@@ -5,19 +5,6 @@
   padding: 0;
 }
 
-:root {
-  --very-dark-red: #531100;
-  --dark-red: #881b00;
-  --darker-red: #af2300;
-  --red: #ff3300;
-  --light-red: #ff9933;
-  --orange: #ff9933;
-  --quarter-min: 10rem;
-  --game-size: min(calc(100vmax - 2*var(--quarter-min)), 100vmin);
-  --quarter-size: calc(50vmax - var(--game-size)/2);
-  --game-font: calc(min(var(--quarter-size), 50vmin) * 7/100);
-}
-
 body {
   background: url("../Images/herbe-v2.jpg") no-repeat center center fixed;
   -webkit-background-size: cover;
@@ -34,79 +21,79 @@ html {
   width: 100%;
 }
 
-/* Button in general */
+* {
+  box-sizing: border-box;
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
 button {
   cursor: pointer;
   text-align: center;
   padding: 0.5em;
   color: rgb(255, 255, 255);
+  background-color: rgba(0, 0, 0, 0);
   border-radius: 0.5em;
   font-size: 1.3em;
-  background-color: var(--dark-green);
-  border-color: var(--very-dark-green);
 }
 
-button:hover {
-  background-color: var(--darker-green);
+.button-green {
+  background-color: #006600;
+  border-color: #002b00;
+}
+.button-green:hover {
+  background-color: #009900;
+}
+.button-green:active {
+  background-color: #00cc00;
 }
 
-button:active {
-  background-color: var(--green);
+.button-red {
+  background-color: #881b00;
+  border-color: #531100;
+}
+.button-red:hover {
+  background-color: #af2300;
+}
+.button-red:active {
+  background-color: #ff3300;
 }
 
-.redbutton {
-  background-color: var(--dark-red);
-  border-color: var(--very-dark-red);
-}
-
-.redbutton:hover {
-  background-color: var(--darker-red);
-}
-
-.redbutton:active {
-  background-color: var(--red);
-}
-
-.navButton {
+.button-icon {
   border: none;
   padding: 0;
   position: absolute;
-  top: 30px;
-  left: 30px;
   height: 40px;
   width: 40px;
+}
+
+.top-left {
+  top: 30px;
+  left: 30px;
   -webkit-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
 }
-
-.navButton:hover {
+.top-left:hover {
   transform: translate(-50%, -50%) scale(1.5);
   transition: transform 0.5s;
 }
-
-.navButton:active {
+.top-left:active {
   transform: translate(-50%, -50%) scale(1.4);
   color: rgb(185, 185, 185);
 }
 
-.fullButton {
-  border: none;
-  padding: 0;
-  position: absolute;
+.top-right {
   top: 30px;
   right: 30px;
-  height: 40px;
-  width: 40px;
-  -webkit-transform: translate(-50%, -50%);
+  -webkit-transform: translate(50%, -50%);
   transform: translate(50%, -50%);
 }
-
-.fullButton:hover {
+.top-right:hover {
   transform: translate(50%, -50%) scale(1.5);
   transition: transform 0.5s;
 }
-
-.fullButton:active {
+.top-right:active {
   transform: translate(50%, -50%) scale(1.4);
   color: rgb(185, 185, 185);
 }
@@ -210,7 +197,13 @@ nav {
   background-color: #dedede;
 }
 
-/* titleScreen : title & co*/
+* {
+  box-sizing: border-box;
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
 .container {
   height: 100%;
   width: 100%;
@@ -235,8 +228,7 @@ nav {
   animation-timing-function: cubic-bezier(0.13, -0.13, 0.2, 1);
   image-rendering: pixelated;
 }
-
-.title:hover {
+.title :hover {
   background-position: 0 -32em;
 }
 
@@ -251,6 +243,27 @@ nav {
   100% {
     transform: translateY(-0.2em);
   }
+}
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+.text-input {
+  text-align: center;
+  padding: 0.5em;
+  color: rgb(255, 255, 255);
+  background-color: rgba(0, 0, 0, 0);
+  border-color: #006600;
+  border-radius: 0.5em;
+  font-size: 1.3em;
+  width: 10em;
+}
+
+.alert {
+  font-size: 1em;
+  padding: 0;
+  color: #ff3300;
 }
 
 /*# sourceMappingURL=style.css.map */

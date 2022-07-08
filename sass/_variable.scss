@@ -5,16 +5,28 @@
     padding: 0;
 }
 
-:root{
-    --very-dark-red: #531100;
-    --dark-red: #881b00;
-    --darker-red: #af2300;
-    --red: #ff3300;
-    --light-red: #ff9933;
-    --orange: #ff9933;
-  
-    --quarter-min: 10rem;
-    --game-size: min(calc(100vmax - 2*var(--quarter-min)), 100vmin);
-    --quarter-size: calc(50vmax - var(--game-size)/2);
-    --game-font: calc(min(var(--quarter-size), 50vmin) * 7/100);
-  }
+$very-dark-green: #002b00;
+$dark-green: #006600;
+$darker-green: #009900;
+$green: #00cc00;
+$light-green: #00ff00;
+
+$very-dark-red: #531100;
+$dark-red: #881b00;
+$darker-red: #af2300;
+$red: #ff3300;
+$light-red: #ff9933;
+$orange: #ff9933;
+
+$quarter-min: 10rem;
+
+
+$medium: 768px!default;
+$large: 1000px!default;
+
+$medium-up: "only screen and (min-width: #{$medium})";
+$medium-down: "only screen and (max-width: #{$medium})";
+
+// $game-size: min(100vmax - 2*$quarter-min, 100vmin);
+// $quarter-size: 50vmax - $game-size/2;
+// $game-font: min($quarter-size, 50vmin) * 7/100;

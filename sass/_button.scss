@@ -1,60 +1,72 @@
-/* Button in general */
+@import "variable";
+
 button {
     cursor: pointer;
     text-align: center;
     padding: 0.5em;
     color:rgb(255, 255, 255);
+    background-color: rgba(0, 0, 0, 0);
     border-radius: 0.5em;
     font-size: 1.3em;
-    background-color: var(--dark-green);
-    border-color: var(--very-dark-green);
 }
-button:hover {background-color: var(--darker-green);}
-button:active {background-color: var(--green);}
 
-.redbutton {
-    background-color: var(--dark-red);
-    border-color: var(--very-dark-red);
+.button-green {
+    background-color: $dark-green;
+    border-color: $very-dark-green;
+    &:hover {
+        background-color: $darker-green;
+    }
+    &:active {
+        background-color: $green;
+    }
+
 }
-.redbutton:hover {background-color: var(--darker-red);}
-.redbutton:active {background-color: var(--red);}
 
-.navButton {
+.button-red {
+    background-color: $dark-red;
+    border-color: $very-dark-red;
+    &:hover {
+        background-color: $darker-red;
+    }
+    &:active {
+        background-color: $red;
+    }
+}
+
+.button-icon {
     border: none;
     padding: 0;
     position: absolute;
+    height: 40px;
+    width: 40px;
+}
+
+.top-left {
     top: 30px;
     left: 30px;
-    height: 40px;
-    width: 40px;
     -webkit-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
-}
-.navButton:hover {
-    transform: translate(-50%, -50%) scale(1.5);
-    transition: transform 0.5s;
-}
-.navButton:active {
-    transform: translate(-50%, -50%) scale(1.4);
-    color: rgb(185, 185, 185);
+    &:hover {
+        transform: translate(-50%, -50%) scale(1.5);
+        transition: transform 0.5s;
+    }
+    &:active {
+        transform: translate(-50%, -50%) scale(1.4);
+        color: rgb(185, 185, 185);
+    }
 }
 
-.fullButton {
-    border: none;
-    padding: 0;
-    position: absolute;
+.top-right {
     top: 30px;
     right: 30px;
-    height: 40px;
-    width: 40px;
-    -webkit-transform: translate(-50%, -50%);
+    -webkit-transform: translate(50%, -50%);
     transform: translate(50%, -50%);
-}
-.fullButton:hover {
-    transform: translate(50%, -50%) scale(1.5);
-    transition: transform 0.5s;
-}
-.fullButton:active {
-    transform: translate(50%, -50%) scale(1.4);
-    color: rgb(185, 185, 185);
+    &:hover {
+        transform: translate(50%, -50%) scale(1.5);
+        transition: transform 0.5s;
+    }
+    &:active {
+        transform: translate(50%, -50%) scale(1.4);
+        color: rgb(185, 185, 185);
+    }
 }

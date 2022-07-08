@@ -8,7 +8,7 @@ import { Server } from 'socket.io';
 const httpServer = createServer();
 const io = new Server(httpServer, {
     cors: {
-      origin: ["https://uspectacle.github.io", "http://127.0.0.1:5500"],
+      origin: ["https://uspectacle.github.io", "http://127.0.0.1:5500", "https://psl.institute"],
       allowedHeaders: ["server-client"],
       credentials: true
     }
