@@ -11,78 +11,190 @@
     <title>Snakes</title>
   </head>
   <body>
-    <script type="importmap">
-      {
-        "imports": {
-          "socket.io-client": "https://cdn.socket.io/4.4.1/socket.io.esm.min.js"
+    <div class="container">
+      <script type="importmap">
+        {
+          "imports": {
+            "socket.io-client": "https://cdn.socket.io/4.4.1/socket.io.esm.min.js"
+          }
         }
-      }
-    </script>
-    <script type="module" src="index.js"></script>
+      </script>
+      <script type="module" src="players.js"></script>
 
-    <div class="screen" id="setPlayerScreen">
-      <div class="setPlayerScreen">
-        <div class="center">
-          <h4>Edit Color & Nickname</h4>
-          <div class="line">
-            <input type="color" id="colorInput" value="#024601" class="color">
-            <input class="form-control name"
-              type="text"
-              placeholder="Urbain Fabre"
-              id="nameInput"
-              autocomplete="off"
-              maxlength="12"
-            >
+      <!-- Navigation & Full Screen -->
+      <div id="nav-latteral" class="nav-latteral">
+        <button id="nav-close" class="button-icon top-left">X</button>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="game.html">Game</a></li>
+          <li><a href="players.html">Players</a></li>
+          <li><a href="settings.html">Settings</a></li>
+          <li><a href="about.html">About</a></li>
+        </ul>
+      </div>
+      <div id="nav-wrapper"></div>
+      <button id="nav-open" class="button-icon top-left">≡</button>
+      <button id="fullScreen" class="button-icon top-right">⛶</button>
+
+      <!-- Players Screen -->
+      <!-- <h4>Edit Color & Nickname</h4>
+      <div class="line">
+        <input type="color" id="colorInput" value="#024601" class="color">
+        <input class="form-control name"
+          type="text"
+          placeholder="Urbain Fabre"
+          id="nameInput"
+          autocomplete="off"
+          maxlength="12"
+        >
+      </div>
+      <h4><br>Edit Controls</h4>
+      <h5 class="alert" id="errorMapKey"></h5>
+      <div class="line">
+        <button id="useController">🖱️ Use the Mouse</button>
+        <div id="controllerMap">
+          <div class="directional-buttons">
+            <button id="upButtonMap" class="direction-button up" role="button"/>
+            <button id="leftButtonMap" class="direction-button left" role="button"></button>
+            <button id="rightButtonMap" class="direction-button right" role="button"></button>
+            <button id="downButtonMap" class="direction-button down" role="button"></button>
           </div>
-          <h4><br>Edit Controls</h4>
-          <h5 class="alert" id="errorMapKey"></h5>
-          <div class="line">
-            <button id="useController">🖱️ Use the Mouse</button>
-            <div id="controllerMap">
-              <div class="directional-buttons">
-                <button id="upButtonMap" class="direction-button up" role="button"/>
-                <button id="leftButtonMap" class="direction-button left" role="button"></button>
-                <button id="rightButtonMap" class="direction-button right" role="button"></button>
-                <button id="downButtonMap" class="direction-button down" role="button"></button>
-              </div>
-            </div>
-          </div>
-          <h4><br></h4>
-          <button id="setPlayerExit">Save</button>
         </div>
       </div>
-    </div>
+      <h4><br></h4>
+      <button id="setPlayerExit">Save</button> -->
 
-    <div class="screen" id="settingsScreen">
-      <div class="settingsScreen">
-        <div id="roomCodeBox" class="roomCodeBox boxed">
-          <h2 class="roomCode">Room code</h2>
-          <button id="copyButton" class="copy"><span id="roomCodeDisplay"></span></button>
-          <button id="exitRoom" class="redbutton">🚪 Exit Room</button>
+      <button id="newPlayerButton" class="button-green">➕ New Player</button>
+      <h2>Local Players<br>
+        <ul id="localPlayers" class="stack">
+          <li>
+            <h3>Effzef</h3>
+            <button class="button-green">✏️ Edit</button>
+            <button class="button-red">➖ Remove</button>
+          </li>
+          <li>
+            <h3>Berggggnardette</h3>
+            <button class="button-green">✏️ Edit</button>
+            <button class="button-red">➖ Remove</button>
+          </li>
+          <li>
+            <h3>Bernardette</h3>
+            <button class="button-green">✏️ Edit</button>
+            <button class="button-red">➖ Remove</button>
+          </li>
+          <li>
+            <h3>Edwardo</h3>
+            <button class="button-green">✏️ Edit</button>
+            <button class="button-red">➖ Remove</button>
+          </li>
+          <li>
+            <h3>Effzef</h3>
+            <button class="button-green">✏️ Edit</button>
+            <button class="button-red">➖ Remove</button>
+          </li>
+          <li>
+            <h3>Berggggnardette</h3>
+            <button class="button-green">✏️ Edit</button>
+            <button class="button-red">➖ Remove</button>
+          </li>
+          <li>
+            <h3>Bernardette</h3>
+            <button class="button-green">✏️ Edit</button>
+            <button class="button-red">➖ Remove</button>
+          </li>
+          <li>
+            <h3>Edwardo</h3>
+            <button class="button-green">✏️ Edit</button>
+            <button class="button-red">➖ Remove</button>
+          </li>
+          <li>
+            <h3>Effzef</h3>
+            <button class="button-green">✏️ Edit</button>
+            <button class="button-red">➖ Remove</button>
+          </li>
+          <li>
+            <h3>Berggggnardette</h3>
+            <button class="button-green">✏️ Edit</button>
+            <button class="button-red">➖ Remove</button>
+          </li>
+          <li>
+            <h3>Bernardette</h3>
+            <button class="button-green">✏️ Edit</button>
+            <button class="button-red">➖ Remove</button>
+          </li>
+          <li>
+            <h3>Edwardo</h3>
+            <button class="button-green">✏️ Edit</button>
+            <button class="button-red">➖ Remove</button>
+          </li>
+        </ul>
+      </h2>
+      <h2>Remote Players
+        <ul id="remotePlayers" class="stack">
+          <li>
+            <h3>Edwardo</h3>
+          </li>
+          <li>
+            <h3>Berggggnardette</h3>
+          </li>
+          <li>
+            <h3>grhrhrhrh</h3>
+          </li>
+          <li>
+            <h3>Bernardette</h3>
+          </li>
+          <li>
+            <h3>Edwa41vg4g4rdo</h3>
+          </li>
+          <li>
+            <h3>Edwardo</h3>
+          </li>
+          <li>
+            <h3>Berggggnardette</h3>
+          </li>
+          <li>
+            <h3>grhrhrhrh</h3>
+          </li>
+          <li>
+            <h3>Bernardette</h3>
+          </li>
+          <li>
+            <h3>Edwa41vg4g4rdo</h3>
+          </li>
+          <li>
+            <h3>Edwardo</h3>
+          </li>
+        </ul>
+      </h2>
+
+<!-- 
+      <div id="roomCodeBox" class="roomCodeBox boxed">
+        <h2 class="roomCode">Room code</h2>
+        <button id="copyButton" class="copy"><span id="roomCodeDisplay"></span></button>
+        <button id="exitRoom" class="redbutton">🚪 Exit Room</button>
+      </div>
+      <div id="localPlayersSettings" class="displayPlayer" style="display:flex">
+        <div id="displayPlayer" class="displayPlayer">
+          <h2 class="alert">ERROR: displayPlayer not working</h2>
         </div>
-        <div id="localPlayersSettings" class="displayPlayer" style="display:flex">
-          <div id="displayPlayer" class="displayPlayer">
+        <button id="setPlayerButton" type="submit">
+          ✏️ Edit & 🕹️ Set Controls
+        </button>
+        <button id="removeLocalPlayer" type="submit">
+          ➖ Remove
+        </button>
+      </div>
+      <button id="newPlayerButton" type="submit">➕ Add Local Player</button>
+      <div id="adminSettings">
+        <div id="clientsSettings">
+          <div id="displayPlayer">
             <h2 class="alert">ERROR: displayPlayer not working</h2>
           </div>
-          <button id="setPlayerButton" type="submit">
-            ✏️ Edit & 🕹️ Set Controls
-          </button>
           <button id="removeLocalPlayer" type="submit">
             ➖ Remove
           </button>
         </div>
-        <button id="newPlayerButton" type="submit">➕ Add Local Player</button>
-        <div id="adminSettings">
-          <div id="clientsSettings">
-            <div id="displayPlayer">
-              <h2 class="alert">ERROR: displayPlayer not working</h2>
-            </div>
-            <button id="removeLocalPlayer" type="submit">
-              ➖ Remove
-            </button>
-          </div>
-        </div>
-      </div>
+      </div> -->
     </div>
   </body>
 </html>
