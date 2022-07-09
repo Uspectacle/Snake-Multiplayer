@@ -11,76 +11,98 @@
     <title>Snakes</title>
   </head>
   <body>
-    <script type="importmap">
-      {
-        "imports": {
-          "socket.io-client": "https://cdn.socket.io/4.4.1/socket.io.esm.min.js"
+    <div class="container">
+      <script type="importmap">
+        {
+          "imports": {
+            "socket.io-client": "https://cdn.socket.io/4.4.1/socket.io.esm.min.js"
+          }
         }
-      }
-    </script>
-    <script type="module" src="index.js"></script>
-    
-    <div class="screen" id="gameScreen">
-      <div class="gameScreen">
-        <div id="Q1Q2" class="quarterContainer">
-          <div id="Q1" class="quarter">
-            <div class="center">
-              <div id="controllerPlayerTwo" style="display: none;">
-                <div id="displayPlayerTwo"><h2>ERROR: displayPlayerTwo not working</h2></div>
-                <div class="directional-buttons">
-                  <button id="upButtonTwo" class="direction-button up" role="button"/>
-                  <button id="leftButtonTwo" class="direction-button left" role="button"></button>
-                  <button id="rightButtonTwo" class="direction-button right" role="button"></button>
-                  <button id="downButtonTwo" class="direction-button down" role="button"></button>
+      </script>
+      <script type="module" src="index.js"></script>
+      
+      <!-- Navigation & Full Screen -->
+      <div id="nav-latteral" class="nav-latteral">
+        <button id="nav-close" class="button-icon top-left">X</button>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="game.html">Game</a></li>
+          <li><a href="players.html">Players</a></li>
+          <li><a href="settings.html">Settings</a></li>
+          <li><a href="about.html">About</a></li>
+        </ul>
+      </div>
+      <div id="nav-wrapper"></div>
+      <button id="nav-open" class="button-icon top-left">≡</button>
+      <button id="fullScreen" class="button-icon top-right">⛶</button>
+
+      <!-- Place Holder -->
+      <div class="title" id="title"></div>
+      <h2>Game not working come back in a few months</h2>
+
+      <!-- Game Screen -->
+      <div class="screen" id="gameScreen" style="display: none">
+        <div class="gameScreen">
+          <div id="Q1Q2" class="quarterContainer">
+            <div id="Q1" class="quarter">
+              <div class="center">
+                <div id="controllerPlayerTwo" style="display: none;">
+                  <div id="displayPlayerTwo"><h2>ERROR: displayPlayerTwo not working</h2></div>
+                  <div class="directional-buttons">
+                    <button id="upButtonTwo" class="direction-button up" role="button"/>
+                    <button id="leftButtonTwo" class="direction-button left" role="button"></button>
+                    <button id="rightButtonTwo" class="direction-button right" role="button"></button>
+                    <button id="downButtonTwo" class="direction-button down" role="button"></button>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="center">
+                <div id="roomCodeBox">
+                  <h2 class="roomCode">Room code</h2>
+                  <button id="copyButton" class="copy"><span id="roomCodeDisplay"></span></button>
                 </div>
               </div>
             </div>
-            
-            <div class="center">
-              <div id="roomCodeBox">
-                <h2 class="roomCode">Room code</h2>
-                <button id="copyButton" class="copy"><span id="roomCodeDisplay"></span></button>
+
+            <div id="Q2" class="quarter">
+              <div class="center">
+                <div id="playersDisplay" class="playersDisplay">
+                  <h2>ERROR: players display not working</h2>
+                </div>
               </div>
             </div>
           </div>
 
-          <div id="Q2" class="quarter">
-            <div class="center">
-              <div id="playersDisplay" class="playersDisplay">
-                <h2>ERROR: players display not working</h2>
+
+          <div id="gameContainer" class="gameContainer">
+            <div id="game" class="game">
+              <canvas id="backCanvas" width="1000" height="1000"></canvas>
+              <canvas id="frontCanvas" width="1000" height="1000"></canvas>
+              <button id="readyButton" type="submit">I'm Ready</button>
+            </div>
+          </div>
+
+
+          <div id="Q3Q4" class="quarterContainer">
+            <div id="Q3" class="quarter">
+              <div class="center">
+                <button id="settingsButton" type="submit" >
+                  ⚙️ Settings
+                </button>
               </div>
             </div>
-          </div>
-        </div>
 
-
-        <div id="gameContainer" class="gameContainer">
-          <div id="game" class="game">
-            <canvas id="backCanvas" width="1000" height="1000"></canvas>
-            <canvas id="frontCanvas" width="1000" height="1000"></canvas>
-            <button id="readyButton" type="submit">I'm Ready</button>
-          </div>
-        </div>
-
-
-        <div id="Q3Q4" class="quarterContainer">
-          <div id="Q3" class="quarter">
-            <div class="center">
-              <button id="settingsButton" type="submit" >
-                ⚙️ Settings
-              </button>
-            </div>
-          </div>
-
-          <div id="Q4" class="quarter">
-            <div class="center">
-              <div id="controllerPlayer" style="display: none;">
-                <div id="displayPlayer"><h2 class="alert">ERROR: displayPlayer not working</h2></div>
-                <div class="directional-buttons">
-                  <button id="upButton" class="direction-button up" role="button"></button>
-                  <button id="leftButton" class="direction-button left" role="button"></button>
-                  <button id="rightButton" class="direction-button right" role="button"></button>
-                  <button id="downButton" class="direction-button down" role="button"></button>
+            <div id="Q4" class="quarter">
+              <div class="center">
+                <div id="controllerPlayer" style="display: none;">
+                  <div id="displayPlayer"><h2 class="alert">ERROR: displayPlayer not working</h2></div>
+                  <div class="directional-buttons">
+                    <button id="upButton" class="direction-button up" role="button"></button>
+                    <button id="leftButton" class="direction-button left" role="button"></button>
+                    <button id="rightButton" class="direction-button right" role="button"></button>
+                    <button id="downButton" class="direction-button down" role="button"></button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -90,5 +112,3 @@
     </div>
   </body>
 </html>
-
-<!-- 😃⚙️❌↺✔️  -->

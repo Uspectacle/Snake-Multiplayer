@@ -23,7 +23,7 @@
     animation-direction: alternate;
     animation-timing-function: cubic-bezier(0.13,-0.13, 0.2, 1);
     image-rendering: pixelated;
-    & :hover {background-position: 0 -32em;}
+    &:hover {background-position: 0 -32em;}
 }
 .blink {background-position: 0 -16em;}
 

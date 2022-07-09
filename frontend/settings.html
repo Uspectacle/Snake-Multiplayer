@@ -11,49 +11,65 @@
     <title>Snakes</title>
   </head>
   <body>
-    <script type="importmap">
-      {
-        "imports": {
-          "socket.io-client": "https://cdn.socket.io/4.4.1/socket.io.esm.min.js"
+    <div class="container">
+      <script type="importmap">
+        {
+          "imports": {
+            "socket.io-client": "https://cdn.socket.io/4.4.1/socket.io.esm.min.js"
+          }
         }
-      }
-    </script>
-    <script type="module" src="index.js"></script>
+      </script>
+      <script type="module" src="index.js"></script>
 
-    <div class="screen" id="settingsScreen">
-      <div class="settingsScreen">
-        <div id="adminSettings">
-          <div id="clientsSettings">
-            <button id="removeLocalPlayer" type="submit">
-              🛠️ Make Admin
-            </button>
-          </div>
-          <div id="colorSettings">
-            <input type="color" id="colorInputBackground" value="#024601" class="color">
-            <input type="color" id="colorInputBackground2" value="#024601" class="color">
-            <input type="color" id="colorInputFood" value="#024601" class="color">
-            <input type="color" id="colorInputSnake" value="#024601" class="color">
-          </div>
-          <div id="gameplaySettings">
-            <input class="form-control"
-              type="text"
-              placeholder="32"
-              id="MapSize"
-              autocomplete="off"
-              maxlength="3"
-            >
-            <input class="form-control"
-              type="text"
-              placeholder="32"
-              id="numFood"
-              autocomplete="off"
-              maxlength="3"
-            >
-          </div>
+      <!-- Navigation & Full Screen -->
+      <div id="nav-latteral" class="nav-latteral">
+        <button id="nav-close" class="button-icon top-left">X</button>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="game.html">Game</a></li>
+          <li><a href="players.html">Players</a></li>
+          <li><a href="settings.html">Settings</a></li>
+          <li><a href="about.html">About</a></li>
+        </ul>
+      </div>
+      <div id="nav-wrapper"></div>
+      <button id="nav-open" class="button-icon top-left">≡</button>
+      <button id="fullScreen" class="button-icon top-right">⛶</button>
+
+      <!-- Place Holder -->
+      <div class="title" id="title"></div>
+      <h2>Settings not working come back in a few months</h2>
+
+      <!-- Settings -->
+      <div id="adminSettings" style="display:none">
+        <div id="clientsSettings">
+          <button id="removeLocalPlayer" type="submit">
+            🛠️ Make Admin
+          </button>
+        </div>
+        <div id="colorSettings">
+          <input type="color" id="colorInputBackground" value="#024601" class="color">
+          <input type="color" id="colorInputBackground2" value="#024601" class="color">
+          <input type="color" id="colorInputFood" value="#024601" class="color">
+          <input type="color" id="colorInputSnake" value="#024601" class="color">
+        </div>
+        <div id="gameplaySettings">
+          <input class="form-control"
+            type="text"
+            placeholder="32"
+            id="MapSize"
+            autocomplete="off"
+            maxlength="3"
+          >
+          <input class="form-control"
+            type="text"
+            placeholder="32"
+            id="numFood"
+            autocomplete="off"
+            maxlength="3"
+          >
         </div>
       </div>
     </div>
   </body>
 </html>
-
-<!-- 😃⚙️❌↺✔️  -->

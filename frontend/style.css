@@ -453,7 +453,7 @@ nav {
   animation-timing-function: cubic-bezier(0.13, -0.13, 0.2, 1);
   image-rendering: pixelated;
 }
-.title :hover {
+.title:hover {
   background-position: 0 -32em;
 }
 

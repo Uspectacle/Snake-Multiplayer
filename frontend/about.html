@@ -11,20 +11,41 @@
     <title>Snakes</title>
   </head>
   <body>
-    <script type="importmap">
-      {
-        "imports": {
-          "socket.io-client": "https://cdn.socket.io/4.4.1/socket.io.esm.min.js"
+    <div class="container">
+      <script type="importmap">
+        {
+          "imports": {
+            "socket.io-client": "https://cdn.socket.io/4.4.1/socket.io.esm.min.js"
+          }
         }
-      }
-    </script>
-    <script type="module" src="index.js"></script>
-    
-    <!-- One day I swear
-      <button type="submit" class="button green" id="exitRoomButton">
-        🎮 Select other Games
-      </button> 
-    -->
+      </script>
+      <script type="module" src="index.js"></script>
+      
+      <!-- Navigation & Full Screen -->
+      <div id="nav-latteral" class="nav-latteral">
+        <button id="nav-close" class="button-icon top-left">X</button>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="game.html">Game</a></li>
+          <li><a href="players.html">Players</a></li>
+          <li><a href="settings.html">Settings</a></li>
+          <li><a href="about.html">About</a></li>
+        </ul>
+      </div>
+      <div id="nav-wrapper"></div>
+      <button id="nav-open" class="button-icon top-left">≡</button>
+      <button id="fullScreen" class="button-icon top-right">⛶</button>
+
+      <!-- Place Holder -->
+      <div class="title" id="title"></div>
+      <h2>About Screen not written come back in a few months</h2>
+
+      <!-- One day I swear
+        <button type="submit" class="button green" id="exitRoomButton">
+          🎮 Select other Games
+        </button> 
+      -->
+    </div>
   </body>
 </html>
 
