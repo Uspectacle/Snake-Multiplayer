@@ -98,6 +98,13 @@ button {
   color: rgb(185, 185, 185);
 }
 
+* {
+  box-sizing: border-box;
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
 ul {
   list-style-type: none;
   margin-block-start: 0;
@@ -117,20 +124,11 @@ li {
   text-align: -webkit-match-parent;
 }
 
-nav {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  background-color: rgb(0, 0, 0);
-  z-index: 1;
-}
-
 .nav-latteral {
   position: absolute;
   top: 0;
   left: -100%;
-  background-color: rgb(0, 0, 0);
+  background-color: #002b00;
   z-index: 3;
   height: 100vh;
   width: max-content;
@@ -152,49 +150,31 @@ nav {
   display: block;
 }
 
-#nav-close {
-  margin-bottom: 4rem;
-}
-
 .nav-links {
-  padding: 1rem 6rem 1rem 3rem;
+  margin-top: 4em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 10em;
 }
-
-.nav-link {
-  cursor: pointer;
-  font-size: 25px;
-  margin-bottom: 50px;
+.nav-links > a {
+  font-size: 1.3em;
+  height: 2em;
+  margin-top: 0.5em;
+  width: 100%;
+  border-radius: 0.25em;
+  background-color: #006600;
   display: flex;
   align-items: center;
+  justify-content: flex-start;
+  padding-left: 1em;
 }
-
-.nav-link:hover {
-  color: lightcoral;
+.nav-links > a:hover {
+  background-color: #009900;
 }
-
-.nav-link ion-icon {
-  margin-right: 15px;
-}
-
-.nav-link,
-.nav-button {
-  transition: all 0.2s ease;
-}
-
-.nav-button {
-  font-size: 40px;
-  cursor: pointer;
-  height: 50px;
-  width: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 5px;
-}
-
-.nav-button:hover {
-  color: orange;
-  background-color: #dedede;
+.nav-links > a:active {
+  color: #00ff00;
 }
 
 * {
