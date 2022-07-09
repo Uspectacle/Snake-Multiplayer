@@ -1,0 +1,138 @@
+@import "variable";
+
+$main-length: 5em;
+$gap-length: calc($main-length / 10);
+$border-length: calc($main-length / 3);
+$test-length: calc($main-length / 6);
+$radius-length: calc($gap-length / 2);
+$width: calc($main-length / 1.4142);
+
+/* Directional-buttons */
+.directional-buttons {
+    font-size: 1em;
+    margin-left: auto;
+    margin-right: auto;
+    background-image: none;
+    width: calc(2* ($main-length + $gap-length));
+    height: calc(2* ($main-length + $gap-length));
+    display: grid;
+    grid-gap: $gap-length;
+    grid-template-columns: 25fr 50fr 25fr;
+    grid-template-rows: 25fr 50fr 25fr;
+    grid-template-areas:
+      "....  up  ....."
+      "left  ..  right"
+      ".... down .....";
+}
+  
+.direction-button {
+    font-size: 1em;
+    color: $green;
+    background: currentcolor;
+    border: none;
+    padding: 0 0 0 0;
+    margin: 0;
+    position: relative;
+}
+  
+.direction-button:focus {
+    border: none;
+    outline: none;
+}
+  
+.direction-button:before {
+    font-size: 1em;
+    display: block;
+    content: "";
+    position: absolute;
+    transform: rotate(45deg);
+    width: $width;
+    height: $width;
+    background: currentcolor;
+}
+
+.direction-button:after {
+    display: block;
+    position: absolute;
+    border: $border-length solid transparent;
+    color: rgba(255, 250, 250, 0.6);
+    content: "";
+}
+
+.direction-button:hover {color: $darker-green;}
+.direction-button:active {color: $green;}
+.direction-button:active:after {color: rgba(0, 0, 0, 0.6);}
+.up {
+    grid-area: up;
+    border-radius: $radius-length $radius-length 0 0;
+}
+.up:before {
+    left: calc(50% - $width/2);
+    top: calc(100% - $width/2);
+}
+.up:after {
+    border-bottom-color: currentcolor;
+    left: calc(50% - $border-length);
+    top: calc(50% - $border-length*3/2);
+}
+
+.left {
+    grid-area: left;
+    border-radius: $radius-length 0 0 $radius-length;
+}
+.left:before {
+    left: calc(100% - $width/2);
+    top: calc(50% - $width/2);
+}
+.left:after {
+    border-right-color: currentcolor;
+    left: calc(50% - $border-length*3/2);
+    top: calc(50% - $border-length);
+}
+
+.right {
+    grid-area: right;
+    border-radius: 0 $radius-length $radius-length 0;
+}
+.right:before {
+    right: calc(100% - $width/2);
+    top: calc(50% - $width/2);
+}
+.right:after {
+    border-left-color: currentcolor;
+    right: calc(50% - $border-length*3/2);
+    top: calc(50% - $border-length);
+}
+
+.down {
+    grid-area: down;
+    border-radius: 0 0 $radius-length $radius-length;
+}
+.down:before {
+    left: calc(50% - $width/2);
+    bottom: calc(100% - $width/2);
+}
+.down:after {
+    border-top-color: currentcolor;
+    left: calc(50% - $border-length);
+    bottom: calc(50% - $border-length*3/2);
+}
+
+.map:after {
+    content: attr(data-content);
+    border: none;
+    font-size: 2em;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.mapping {background: $red;}
+.mapping:before {background: $red;}
+.mapping:hover {background: $darker-red;}
+.mapping:hover:before {background: $darker-red;}
+.mapping:before:hover {background: $darker-red;}
+.mapping:active {background: $red;}
+.mapping:before:active {background: $red;}
+.mapping:active:before {background: $red;}

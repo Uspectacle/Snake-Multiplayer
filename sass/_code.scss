@@ -1,0 +1,35 @@
+@import "variable";
+
+/* Room Code: Display and copie */
+
+.roomCodeBox{
+    display: flex;
+    flex-direction:  column;
+  }
+  
+  .roomCode{
+    padding: 0.2em;
+    font-size: 2em;
+    text-align: center;
+    color: $green;
+  }
+  
+  .copy{  
+    padding: 0.3em;
+    font-size: 2em;
+    color:rgb(255, 255, 255);
+    border-radius: 0.5em;
+    border: 0.2em solid;
+    border-color: #00000000;
+    background-color: #00000000;
+  }
+  .copy:hover{
+    border-color: #ffffff33;
+    background-color: #00000000;
+  }
+  .copy:hover span {display: none}
+  .copy:hover:before {content: "🔗 Copy"}
+  .copy:active:before {content: "🔗 Copied"}
+  .copy:active{border-color: #ffffff80;}
+  
+  
