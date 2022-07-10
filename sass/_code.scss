@@ -27,9 +27,10 @@
     border-color: #ffffff33;
     background-color: #00000000;
   }
+  .copy:after {content: "Link"}
   .copy:hover span {display: none}
-  .copy:hover:before {content: "🔗 Copy"}
-  .copy:active:before {content: "🔗 Copied"}
+  .copy:hover:after {content: "Copy"}
+  .copy:active:after {content: "Copied"}
   .copy:active{border-color: #ffffff80;}
   
   

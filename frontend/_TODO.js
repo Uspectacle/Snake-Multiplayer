@@ -712,11 +712,9 @@ function display(admin, ready, score, color, name) {
 // * Game Screen : Room Code Box *
 
 function copyRoomCode() {
-  let copyText =
-    "Wesh bruv! Come play at \
-    https://psl.institute/frontend/index.html \n\
-    My room code is: \n\n" +
-    roomCodeDisplay.innerText;
+  let copyText = `Wesh bruv! Come play at \
+    https://psl.institute/frontend/index.html?r=${roomCodeDisplay.innerText} \n\
+    My room code is: ${roomCodeDisplay.innerText}`;
   navigator.clipboard.writeText(copyText);
 }
 

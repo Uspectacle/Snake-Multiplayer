@@ -73,14 +73,22 @@
       </div>
 
       <!-- Share Code Room Link -->
-      <div id="share" class="overlay">
-        <div class="popup">
-          <div id="roomCodeBox" class="roomCodeBox boxed">
-            <h2 class="roomCode">Room code</h2>
-            <button id="copyButton" class="copy"><span id="roomCodeDisplay">TEST</span></button>
-          </div>
-          <button class="button-red">Done</button>
-        </div>
+      <div id="shareOverlay" class="overlay"></div>
+      <div id="sharePopup" class="popup">
+        <h2 class="roomCode">
+          Room code 
+          <span id="roomCodeDisplay">TEST</span>
+        </h2>
+        <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+        <div class="qrcode" id="qrcode"></div>
+        <script type="text/javascript">
+          let roomCodeDisplay = document.getElementById("roomCodeDisplay");
+          console.log(roomCodeDisplay.innerHTML);
+          let qrcode = document.getElementById("qrcode");
+          new QRCode(qrcode, `https://psl.institute/frontend/index.html?r=${roomCodeDisplay.innerHTML}`);
+        </script>        
+        <button id="copyButton" class="copy">🔗 </button>
+        <button id="doneShare" class="button-red">🚪 Done</button>
       </div>
 
       <!-- Lists of Players -->

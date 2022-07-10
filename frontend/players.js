@@ -51,6 +51,10 @@ import { defaultColor, defaultName, mobileCheck, splitKey } from "./utils.js";
 
 const localPlayersStack = document.getElementById("localPlayers");
 const remotePlayersStack = document.getElementById("remotePlayers");
+const sharePopup = document.getElementById("sharePopup");
+const shareOverlay = document.getElementById("shareOverlay");
+const doneShareButton = document.getElementById("doneShare");
+const copyButton = document.getElementById("copyButton");
 // const colorInput = document.getElementById("colorInput");
 // const nameInput = document.getElementById("nameInput");
 // const useController = document.getElementById("useController");
@@ -74,7 +78,10 @@ const remotePlayersStack = document.getElementById("remotePlayers");
 
 // // *** Event Listener ***
 
-// // document.addEventListener("keydown", keydown);
+copyButton.addEventListener("click", copyRoomCode);
+doneShareButton.addEventListener("click", closeShare);
+shareOverlay.addEventListener("click", closeShare);
+// document.addEventListener("keydown", keydown);
 // document.addEventListener("click", handleClick);
 
 // // *** Server Listener ***
@@ -172,7 +179,7 @@ function updateStack() {
   let newremotePlayerButton = document.createElement("button");
   newremotePlayerButton.classList.add("button-green");
   newremotePlayerButton.innerText = "➕ New Remote Player";
-  newremotePlayerButton.addEventListener("click", newRemotePlayer);
+  newremotePlayerButton.addEventListener("click", openShare);
   lastRemoteLine.append(newremotePlayerButton);
   remotePlayersStack.append(lastRemoteLine);
 
@@ -247,9 +254,24 @@ function removePlayer(playerKey) {
 function newLocalPlayer() {
   console.log(["newLocalPlayer"]);
 }
-function newRemotePlayer() {
-  console.log(["newRemotePlayer"]);
+
+function openShare() {
+  sharePopup.classList.add("active");
+  shareOverlay.classList.add("active");
 }
+
+function copyRoomCode() {
+  let copyText = `https://psl.institute/frontend/index.html?r=${roomCodeDisplay.innerText}&\n\n\
+    Wesh bruv! Come play, it no the same without you\n\
+    My room code is: ${roomCodeDisplay.innerText}`;
+  navigator.clipboard.writeText(copyText);
+}
+
+function closeShare() {
+  sharePopup.classList.remove("active");
+  shareOverlay.classList.remove("active");
+}
+
 // function initSetPlayerScreen() {
 //   if (localPlayers[setPlayerKey]) {
 //     setPlayer = { ...localPlayers[setPlayerKey] };

@@ -22,10 +22,6 @@
     visibility: hidden;
     opacity: 0;
 }
-.overlay:target {
-    visibility: visible;
-    opacity: 1;
-}
 
 .popup {
     position: absolute;
@@ -43,5 +39,26 @@
 
     background-color: $very-dark-green;
     border-radius: 1em;
-    transition: all 5s ease-in-out;
+
+    transition: opacity 500ms;
+    visibility: hidden;
+    opacity: 0;
+}
+
+.active {
+    visibility: visible;
+    opacity: 1;
+}
+
+.qrcode {
+    background-color: white;
+    padding: 1em;
+    border-radius: 1em;
+}
+
+.roomCode{
+    & > span {
+        color: white;
+        font-size: 2em;
+    }
 }

@@ -99,8 +99,11 @@ blinkTitle();
 // *** Init RoomCode from storage ***
 
 function initRoomCode() {
+    let roomCode = new URLSearchParams(window.location.search).get("r");
+    if (roomCode) {
+        sessionStorage.setItem('roomCode', roomCode);
+    }
     roomCodeInput.value = sessionStorage.getItem('roomCode');
-    sessionStorage.removeItem('roomCode');
 }
 
 initRoomCode();
