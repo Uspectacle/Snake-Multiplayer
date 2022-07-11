@@ -455,6 +455,10 @@ li {
 form {
   display: flex;
   flex-direction: column;
+  align-items: center;
+}
+form > * {
+  margin: 0.2em;
 }
 
 .text-input {
