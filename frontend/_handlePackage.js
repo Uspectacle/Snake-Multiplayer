@@ -1,5 +1,12 @@
+let socketCORS = "https://snake-multi-psl.herokuapp.com/";
+let baseHref = "https://uspectacle.github.io/Snake-Multiplayer";
+if (window.location.hostname == "127.0.0.1:5500") {
+  socketCORS = "http://localhost:3000";
+  baseHref = "";
+}
+
 export { handleRoomPackage };
-import { clientId, splitKey } from "./_utils.js";
+import { clientId, splitKey } from baseHref+"/frontend/_utils.js";
 
 function handleRoomPackage(roomPackage) {
   if (!sessionStorage.getItem("isLog")) {

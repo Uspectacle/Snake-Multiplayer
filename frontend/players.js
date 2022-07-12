@@ -1,9 +1,10 @@
 // *** Server-Client Initialisation ***
 
-import { LOCALHOST } from "/frontend/_local.js";
 let socketCORS = "https://snake-multi-psl.herokuapp.com/";
-if (LOCALHOST) {
+let baseHref = "https://uspectacle.github.io/Snake-Multiplayer";
+if (window.location.hostname == "127.0.0.1:5500") {
   socketCORS = "http://localhost:3000";
+  baseHref = "";
 }
 
 import { io } from "socket.io-client";
@@ -14,7 +15,7 @@ const socket = io(socketCORS, {
   },
 });
 
-import { handleRoomPackage } from "/frontend/_handlePackage.js";
+import { handleRoomPackage } from baseHref+"/frontend/_handlePackage.js";
 socket.on("roomPackage", handleRoomPackage);
 
 socket.on("isLog", handleIsLog);
@@ -29,7 +30,7 @@ function handleIsLog(isLog) {
 
 // *** FullScreen & Navigation ***
 
-import { toggleFullScreen } from "/frontend/_fullscreen.js";
+import { toggleFullScreen } from baseHref+"/frontend/_fullscreen.js";
 
 const fullScreen = document.getElementById("fullScreen");
 fullScreen.addEventListener("click", haddleFullScreen);
@@ -64,7 +65,7 @@ import {
   clientId,
   mobileCheck,
   splitKey,
-} from "/frontend/_utils.js";
+} from baseHref+"/frontend/_utils.js";
 
 // *** Import element from the html document ***
 

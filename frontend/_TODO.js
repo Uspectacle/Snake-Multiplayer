@@ -1,9 +1,10 @@
 // *** Server-Client Initialisation ***
 
-import { LOCALHOST } from "/frontend/_local.js";
 let socketCORS = "https://snake-multi-psl.herokuapp.com/";
-if (LOCALHOST) {
+let baseHref = "https://uspectacle.github.io/Snake-Multiplayer";
+if (window.location.hostname == "127.0.0.1:5500") {
   socketCORS = "http://localhost:3000";
+  baseHref = "";
 }
 
 import { io } from "socket.io-client";
@@ -21,14 +22,14 @@ import {
   defaultName,
   mobileCheck,
   splitKey,
-} from "/frontend/utils.js";
+} from baseHref+"/frontend/utils.js";
 
 import {
   paintGame,
   initPaint,
   colorPaletteDefault,
   backgroundColorsDefault,
-} from "/frontend/_graphic.js";
+} from baseHref+"/frontend/_graphic.js";
 
 // *** Import element from the html document ***
 
