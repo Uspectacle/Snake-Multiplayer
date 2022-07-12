@@ -15,7 +15,7 @@ const socket = io(socketCORS, {
   },
 });
 
-import { handleRoomPackage } from baseHref+"/frontend/_handlePackage.js";
+import { handleRoomPackage } from "https://uspectacle.github.io/Snake-Multiplayer/frontend/_handlePackage.js";
 socket.on("roomPackage", handleRoomPackage);
 
 socket.on("isLog", handleIsLog);
@@ -30,7 +30,7 @@ function handleIsLog(isLog) {
 
 // *** FullScreen & Navigation ***
 
-import { toggleFullScreen } from baseHref+"/frontend/_fullscreen.js";
+import { toggleFullScreen } from "https://uspectacle.github.io/Snake-Multiplayer/frontend/_fullscreen.js";
 
 const fullScreen = document.getElementById("fullScreen");
 fullScreen.addEventListener("click", haddleFullScreen);
@@ -65,7 +65,7 @@ import {
   clientId,
   mobileCheck,
   splitKey,
-} from baseHref+"/frontend/_utils.js";
+} from "https://uspectacle.github.io/Snake-Multiplayer/frontend/_utils.js";
 
 // *** Import element from the html document ***
 

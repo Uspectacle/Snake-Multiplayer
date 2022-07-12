@@ -6,7 +6,10 @@ if (window.location.hostname == "127.0.0.1:5500") {
 }
 
 export { handleRoomPackage };
-import { clientId, splitKey } from baseHref+"/frontend/_utils.js";
+import {
+  clientId,
+  splitKey,
+} from "https://uspectacle.github.io/Snake-Multiplayer/frontend/_utils.js";
 
 function handleRoomPackage(roomPackage) {
   if (!sessionStorage.getItem("isLog")) {

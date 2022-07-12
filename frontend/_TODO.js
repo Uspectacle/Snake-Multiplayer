@@ -22,14 +22,14 @@ import {
   defaultName,
   mobileCheck,
   splitKey,
-} from baseHref+"/frontend/utils.js";
+} from "https://uspectacle.github.io/Snake-Multiplayer/frontend/utils.js";
 
 import {
   paintGame,
   initPaint,
   colorPaletteDefault,
   backgroundColorsDefault,
-} from baseHref+"/frontend/_graphic.js";
+} from "https://uspectacle.github.io/Snake-Multiplayer/frontend/_graphic.js";
 
 // *** Import element from the html document ***
 
