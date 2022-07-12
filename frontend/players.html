@@ -81,9 +81,9 @@
         <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
         <div class="qrcode" id="qrcode"></div>
         <script type="text/javascript">
-          let roomCodeDisplay = document.getElementById("roomCodeDisplay");
+          let roomCode = sessionStorage.getItem("roomCode");
           let qrcode = document.getElementById("qrcode");
-          new QRCode(qrcode, `https://psl.institute/frontend/index.html?r=${roomCodeDisplay.innerHTML}`);
+          new QRCode(qrcode, `https://psl.institute/frontend/index.html?r=${roomCode}`);
         </script>        
         <button id="copyButton" class="copy">🔗 </button>
         <button id="doneShare" class="button-red">🚪 Done</button>

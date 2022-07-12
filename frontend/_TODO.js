@@ -226,8 +226,8 @@ function newRoom() {
 
 function joinRoom(event) {
   errorRoomCode.innerText = "";
-  const roomCode = roomCodeInput.value;
-  socket.emit("joinRoom", roomCode.toUpperCase());
+  const roomCode = roomCodeInput.value.toUpperCase();
+  socket.emit("joinRoom", roomCode);
   event.preventDefault();
 }
 

@@ -14,6 +14,19 @@ const socket = io(socketCORS, {
   },
 });
 
+import { handleRoomPackage } from "./_handlePackage.js";
+socket.on("roomPackage", handleRoomPackage);
+
+socket.on("isLog", handleIsLog);
+
+function handleIsLog(isLog) {
+  if (isLog) {
+    sessionStorage.setItem("isLog", true);
+  } else {
+    sessionStorage.removeItem("isLog");
+  }
+}
+
 // *** FullScreen & Navigation ***
 
 import { toggleFullScreen } from "./_fullscreen.js";
@@ -45,7 +58,13 @@ navWrapper.addEventListener("click", closeNav);
 
 // *** Import utils ***
 
-import { defaultColor, defaultName, mobileCheck, splitKey } from "./utils.js";
+import {
+  defaultColor,
+  defaultName,
+  clientId,
+  mobileCheck,
+  splitKey,
+} from "./_utils.js";
 
 // *** Import element from the html document ***
 
@@ -74,16 +93,6 @@ const downButtonMap = document.getElementById("downButtonMap");
 const saveEditButton = document.getElementById("saveEdit");
 const cancelEditButton = document.getElementById("cancelEdit");
 
-// const settingsScreen = document.getElementById("settingsScreen");
-// const exitSettingsButton = document.getElementById("exitSettingsButton");
-// const localPlayersSettings = document.getElementById("localPlayersSettings");
-// const newPlayerButton = document.getElementById("newLocalPlayerButton");
-// const adminSettings = document.getElementById("adminSettings");
-// const clientsSettings = document.getElementById("clientsSettings");
-// const colorSettings = document.getElementById("colorSettings");
-// const gameplaySettings = document.getElementById("gameplaySettings");
-// const exitRoom = document.getElementById("exitRoom");
-
 // // *** Event Listener ***
 
 copyButton.addEventListener("click", copyRoomCode);
@@ -109,11 +118,6 @@ downButtonMap.inputCode = "down";
 
 document.addEventListener("keydown", keydown);
 document.addEventListener("click", handleClick);
-
-// setPlayerExit.addEventListener("click", handleSetPlayerExit);
-
-// exitSettingsButton.addEventListener("click", handleExitSettingsButton);
-// exitRoom.addEventListener("click", handleExitRoom);
 
 // *** Global Variables Declaration ***
 
@@ -149,15 +153,25 @@ sessionStorage.setItem(
 );
 sessionStorage.setItem("keyController", JSON.stringify(keyController));
 
-window.onload = updatePlayers;
+window.onload = (event) => {
+  socket.emit("id", clientId());
+  updatePlayers();
+};
 
 // *** Update Players Lists ***
 
 function checkVariables() {
+  localPlayers = JSON.parse(sessionStorage.getItem("localPlayers"));
+  remotePlayers = JSON.parse(sessionStorage.getItem("remotePlayers"));
+  keyController = JSON.parse(sessionStorage.getItem("keyController"));
+  localKeyCount = sessionStorage.getItem("localKeyCount");
+  playerController = sessionStorage.getItem("playerController");
+  playerControllerTwo = sessionStorage.getItem("playerControllerTwo");
+  socket.emit("isLog");
+
   let keys = Object.keys(localPlayers);
   localKeyCount = Math.max(keys);
   sessionStorage.setItem("localKeyCount", localKeyCount);
-  console.log({ localKeyCount, test: sessionStorage.getItem("localKeyCount") });
   if (!keys.includes(playerControllerTwo)) {
     playerControllerTwo = null;
     sessionStorage.setItem("playerControllerTwo", playerControllerTwo);
@@ -180,12 +194,6 @@ function checkVariables() {
 }
 
 function updatePlayers() {
-  localPlayers = JSON.parse(sessionStorage.getItem("localPlayers"));
-  remotePlayers = JSON.parse(sessionStorage.getItem("remotePlayers"));
-  keyController = JSON.parse(sessionStorage.getItem("keyController"));
-  localKeyCount = sessionStorage.getItem("localKeyCount");
-  playerController = sessionStorage.getItem("playerController");
-  playerControllerTwo = sessionStorage.getItem("playerControllerTwo");
   checkVariables();
   remotePlayersStack.replaceChildren();
   Object.keys(remotePlayers).forEach((playerKey) => {
@@ -193,16 +201,15 @@ function updatePlayers() {
   });
   let lastRemoteLine = document.createElement("li");
   lastRemoteLine.classList.add("new-player");
-  let newremotePlayerButton = document.createElement("button");
-  newremotePlayerButton.classList.add("button-green");
-  newremotePlayerButton.innerText = "➕ New Remote Player";
-  newremotePlayerButton.addEventListener("click", openShare);
-  lastRemoteLine.append(newremotePlayerButton);
+  let newRemotePlayerButton = document.createElement("button");
+  newRemotePlayerButton.classList.add("button-green");
+  newRemotePlayerButton.innerText = "➕ New Remote Player";
+  newRemotePlayerButton.addEventListener("click", newRemote);
+  lastRemoteLine.append(newRemotePlayerButton);
   remotePlayersStack.append(lastRemoteLine);
 
   localPlayersStack.replaceChildren();
   Object.keys(localPlayers).forEach((playerKey) => {
-    console.log({ playerKey });
     localPlayersStack.append(localLine(playerKey));
   });
   if (mobileCheck() && localPlayersStack.length > 1) {
@@ -255,15 +262,21 @@ function remoteLine(playerKey) {
 
 // *** Share Screen ***
 
-function openShare() {
-  sharePopup.classList.add("active");
-  shareOverlay.classList.add("active");
+function newRemote() {
+  if (sessionStorage.getItem("isLog") && sessionStorage.getItem("roomCode")) {
+    roomCodeDisplay.innerText = sessionStorage.getItem("roomCode");
+    sharePopup.classList.add("active");
+    shareOverlay.classList.add("active");
+    return;
+  }
+  window.location.pathname = "frontend/index.html";
 }
 
 function copyRoomCode() {
-  let copyText = `https://psl.institute/frontend/index.html?r=${roomCodeDisplay.innerText}&\n\n\
+  let roomCode = sessionStorage.getItem("roomCode");
+  let copyText = `https://psl.institute/frontend/index.html?r=${roomCode}&\n\n\
     Wesh bruv! Come play, it no the same without you\n\
-    My room code is: ${roomCodeDisplay.innerText}`;
+    My room code is: ${roomCode}`;
   navigator.clipboard.writeText(copyText);
 }
 
@@ -300,6 +313,7 @@ function removePlayer(playerKey) {
     })
   );
   sessionStorage.setItem("localPlayers", JSON.stringify(localPlayers));
+  socket.emit("updatePlayers", JSON.stringify(localPlayers));
   sessionStorage.setItem("keyController", JSON.stringify(keyController));
   sessionStorage.setItem("playerController", playerController);
   sessionStorage.setItem("playerControllerTwo", playerControllerTwo);
@@ -397,6 +411,7 @@ function saveEdit() {
   localPlayers[setPlayerKey] = { ...setPlayer };
 
   sessionStorage.setItem("localPlayers", JSON.stringify(localPlayers));
+  socket.emit("updatePlayers", JSON.stringify(localPlayers));
   sessionStorage.setItem("keyController", JSON.stringify(keyController));
   sessionStorage.setItem("localKeyCount", localKeyCount);
   sessionStorage.setItem("playerController", playerController);
@@ -576,29 +591,3 @@ function stringFromKeyCode(keyCode) {
   }
   return String.fromCharCode(parseInt(keyCode));
 }
-
-// *** Server Communication ***
-
-// function handleWellcomePackage(wellcomePackage) {
-//   let unpack = JSON.parse(wellcomePackage);
-//   roomCodeDisplay.innerText = unpack.roomCode;
-//   handleSettings(unpack.settings);
-//   clientKey = unpack.clientKey;
-//   ready = false;
-//   updateReadyButton();
-//   sendUpdate();
-//   if (!Object.keys(localPlayers).length) {
-//     handleNewPlayer();
-//     return;
-//   }
-//   showScreen(gameScreen);
-// }
-
-// function sendUpdate() {
-//   let updatePackage = {
-//     players: localPlayers,
-//     settings: localSettings,
-//     ready: ready,
-//   };
-//   socket.emit("updatePackage", JSON.stringify(updatePackage));
-// }

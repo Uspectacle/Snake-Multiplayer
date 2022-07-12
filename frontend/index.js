@@ -14,6 +14,18 @@ const socket = io(socketCORS, {
   },
 });
 
+import { handleRoomPackage } from "./_handlePackage.js";
+socket.on("roomPackage", handleRoomPackage);
+
+socket.on("isLog", handleIsLog);
+
+function handleIsLog(isLog) {
+  if (isLog) {
+    sessionStorage.setItem("isLog", true);
+  } else {
+    sessionStorage.removeItem("isLog");
+  }
+}
 // *** FullScreen & Navigation ***
 
 import { toggleFullScreen } from "./_fullscreen.js";
@@ -43,6 +55,16 @@ openBtn.addEventListener("click", openNav);
 closeBtn.addEventListener("click", closeNav);
 navWrapper.addEventListener("click", closeNav);
 
+// *** Import utils ***
+
+import {
+  defaultColor,
+  defaultName,
+  clientId,
+  mobileCheck,
+  splitKey,
+} from "./_utils.js";
+
 // *** Import element from the html document ***
 
 const title = document.getElementById("title");
@@ -64,13 +86,11 @@ roomCodeInput.addEventListener("input", removeErrorRoomCode);
 socket.on("unknownRoom", handleUnknownRoom);
 socket.on("tooManyPlayers", handleTooManyPlayers);
 socket.on("accessRestricted", handleAccessRestricted);
-
-socket.on("wellcomePackage", handleWellcomePackage);
-socket.on("settings", handleSettings);
+socket.on("clientId", handleClientId);
 
 // *** Initialisation ***
-
 window.onload = (event) => {
+  socket.emit("id", clientId());
   blinkTitle();
   initRoomCode();
 };
@@ -94,10 +114,10 @@ function initRoomCode() {
   if (roomCode) {
     sessionStorage.setItem("roomCode", roomCode);
   }
-  roomCodeInput.value = sessionStorage.getItem("roomCode");
   if (roomCodeInput.value) {
     joinRoom();
   }
+  roomCodeInput.value = sessionStorage.getItem("roomCode");
 }
 
 // *** Handle Buttons ***
@@ -141,30 +161,12 @@ function removeErrorRoomCode() {
 
 // *** Transition from Title to Game ***
 
-function handleWellcomePackage(wellcomePackage) {
-  let unpack = JSON.parse(wellcomePackage);
+function handleClientId(pack) {
+  let unpack = JSON.parse(pack);
   sessionStorage.setItem("roomCode", unpack.roomCode);
-  handleSettings(unpack.settings);
+  sessionStorage.setItem("clientKey", unpack.clientKey);
+  sessionStorage.setItem("isLog", true);
   sessionStorage.setItem("ready", false);
   window.location.pathname = "frontend/players.html";
   return;
-}
-
-function handleNewPlayer() {
-  initSetPlayerScreen();
-  showScreen(setPlayerScreen);
-}
-
-function handleSettings(settings) {
-  // localSettings = settings;
-  // ONE DAY MORE
-}
-
-function sendUpdate() {
-  let updatePackage = {
-    players: localPlayers,
-    settings: localSettings,
-    ready: ready,
-  };
-  socket.emit("updatePackage", JSON.stringify(updatePackage));
 }
