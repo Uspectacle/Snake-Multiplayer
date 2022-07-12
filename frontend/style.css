@@ -583,7 +583,8 @@ h2 > button {
   -webkit-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
   height: 90%;
-  width: 90%;
+  padding-left: 2em;
+  padding-right: 2em;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;

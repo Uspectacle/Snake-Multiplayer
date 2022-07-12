@@ -37,38 +37,37 @@
       <button id="fullScreen" class="button-icon top-right">⛶</button>
 
       <!-- Edit Player Settings -->
-      <div id="edit" class="overlay">
-        <div class="popup">
-          <h2>Edit Color & Nickname<br><br>
-            <div class="line">
-              <input type="color" id="colorInput" value="#901192" class="color">
-              <input class="form-control name"
-                type="text"
-                placeholder="Urbain Fabre"
-                id="nameInput"
-                autocomplete="off"
-                maxlength="12"
-              >
-            </div>
-          </h2>
-          <h2>Edit Controls<br><br>
-            <p class="alert" id="errorMapKey"></p>
-            <div class="line">
-              <button class="button-green" id="useController">🖱️ Use the Mouse</button>
-              <div id="controllerMap">
-                <div class="directional-buttons">
-                  <button id="upButtonMap" class="direction-button up" role="button"></button>
-                  <button id="leftButtonMap" class="direction-button left" role="button"></button>
-                  <button id="rightButtonMap" class="direction-button right" role="button"></button>
-                  <button id="downButtonMap" class="direction-button down" role="button"></button>
-                </div>
+      <div id="editOverlay" class="overlay"></div>
+      <div id="editPopup" class="popup">
+        <h2>Edit Color & Nickname<br><br>
+          <div class="line">
+            <input type="color" id="colorInput" value="#901192" class="color">
+            <input class="form-control name"
+              type="text"
+              placeholder="Urbain Fabre"
+              id="nameInput"
+              autocomplete="off"
+              maxlength="12"
+            >
+          </div>
+        </h2>
+        <h2>Edit Controls<br><br>
+          <p class="alert" id="errorMapKey"></p>
+          <div class="line">
+            <button class="button-green" id="useController">🖱️ Use the Mouse</button>
+            <div id="controllerMap">
+              <div class="directional-buttons">
+                <button id="upButtonMap" class="direction-button up" role="button"></button>
+                <button id="leftButtonMap" class="direction-button left" role="button"></button>
+                <button id="rightButtonMap" class="direction-button right" role="button"></button>
+                <button id="downButtonMap" class="direction-button down" role="button"></button>
               </div>
             </div>
-          </h2>
-          <div class="line">
-            <button class="button-red">Cancel</button>
-            <button class="button-green">Save</button>
           </div>
+        </h2>
+        <div class="line">
+          <button id="cancelEdit" class="button-red">❌ Cancel</button>
+          <button id="saveEdit" class="button-green">✔️ Save</button>
         </div>
       </div>
 
@@ -83,7 +82,6 @@
         <div class="qrcode" id="qrcode"></div>
         <script type="text/javascript">
           let roomCodeDisplay = document.getElementById("roomCodeDisplay");
-          console.log(roomCodeDisplay.innerHTML);
           let qrcode = document.getElementById("qrcode");
           new QRCode(qrcode, `https://psl.institute/frontend/index.html?r=${roomCodeDisplay.innerHTML}`);
         </script>        

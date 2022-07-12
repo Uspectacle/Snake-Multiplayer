@@ -68,6 +68,13 @@ socket.on("accessRestricted", handleAccessRestricted);
 socket.on("wellcomePackage", handleWellcomePackage);
 socket.on("settings", handleSettings);
 
+// *** Initialisation ***
+
+window.onload = (event) => {
+  blinkTitle();
+  initRoomCode();
+};
+
 // *** Blink the Title ***
 
 function blinkTitle() {
@@ -80,8 +87,6 @@ function blinkTitle() {
   }, 2000 + Math.floor(Math.random() * 8000));
 }
 
-blinkTitle();
-
 // *** Init RoomCode from storage ***
 
 function initRoomCode() {
@@ -90,9 +95,10 @@ function initRoomCode() {
     sessionStorage.setItem("roomCode", roomCode);
   }
   roomCodeInput.value = sessionStorage.getItem("roomCode");
+  if (roomCodeInput.value) {
+    joinRoom();
+  }
 }
-
-initRoomCode();
 
 // *** Handle Buttons ***
 
@@ -101,10 +107,15 @@ function newRoom() {
 }
 
 function joinRoom(event) {
-  event.preventDefault();
+  if (event) {
+    event.preventDefault();
+    sessionStorage.removeItem("roomCode");
+  }
   removeErrorRoomCode();
   const roomCode = roomCodeInput.value.toUpperCase();
-  socket.emit("joinRoom", roomCode);
+  if (roomCode) {
+    socket.emit("joinRoom", roomCode);
+  }
 }
 
 // *** Handle RoomCode errors ***
