@@ -1,6 +1,6 @@
 // *** Server-Client Initialisation ***
 
-import { LOCALHOST } from "./_local.js";
+import { LOCALHOST } from "/frontend/_local.js";
 let socketCORS = "https://snake-multi-psl.herokuapp.com/";
 if (LOCALHOST) {
   socketCORS = "http://localhost:3000";
@@ -14,7 +14,7 @@ const socket = io(socketCORS, {
   },
 });
 
-import { handleRoomPackage } from "./_handlePackage.js";
+import { handleRoomPackage } from "/frontend/_handlePackage.js";
 socket.on("roomPackage", handleRoomPackage);
 
 socket.on("isLog", handleIsLog);
@@ -28,7 +28,7 @@ function handleIsLog(isLog) {
 }
 // *** FullScreen & Navigation ***
 
-import { toggleFullScreen } from "./_fullscreen.js";
+import { toggleFullScreen } from "/frontend/_fullscreen.js";
 
 const fullScreen = document.getElementById("fullScreen");
 fullScreen.addEventListener("click", haddleFullScreen);
@@ -63,14 +63,14 @@ import {
   clientId,
   mobileCheck,
   splitKey,
-} from "./_utils.js";
+} from "/frontend/_utils.js";
 
 import {
   paintGame,
   initPaint,
   colorPaletteDefault,
   backgroundColorsDefault,
-} from "./_graphic.js";
+} from "/frontend/_graphic.js";
 
 // *** Import element from the html document ***
 

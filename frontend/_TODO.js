@@ -1,6 +1,6 @@
 // *** Server-Client Initialisation ***
 
-import { LOCALHOST } from "./_local.js";
+import { LOCALHOST } from "/frontend/_local.js";
 let socketCORS = "https://snake-multi-psl.herokuapp.com/";
 if (LOCALHOST) {
   socketCORS = "http://localhost:3000";
@@ -16,14 +16,19 @@ const socket = io(socketCORS, {
 
 // *** Import function from other local scripts ***
 
-import { defaultColor, defaultName, mobileCheck, splitKey } from "./utils.js";
+import {
+  defaultColor,
+  defaultName,
+  mobileCheck,
+  splitKey,
+} from "/frontend/utils.js";
 
 import {
   paintGame,
   initPaint,
   colorPaletteDefault,
   backgroundColorsDefault,
-} from "./_graphic.js";
+} from "/frontend/_graphic.js";
 
 // *** Import element from the html document ***
 
