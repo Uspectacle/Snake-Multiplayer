@@ -15,7 +15,7 @@ const socket = io(socketCORS, {
   },
 });
 
-import { handleRoomPackage } from baseHref+baseHref+"/frontend/_handlePackage.js";
+import { handleRoomPackage } from baseHref+"/frontend/_handlePackage.js";
 socket.on("roomPackage", handleRoomPackage);
 
 socket.on("isLog", handleIsLog);
