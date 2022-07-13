@@ -15,7 +15,7 @@ const socket = io(socketCORS, {
   },
 });
 
-import { handleRoomPackage } from "/frontend/_handlePackage.js";
+import { handleRoomPackage } from "/frontend/handlePackage.js";
 socket.on("roomPackage", handleRoomPackage);
 
 socket.on("isLog", handleIsLog);
@@ -30,7 +30,7 @@ function handleIsLog(isLog) {
 
 // *** FullScreen & Navigation ***
 
-import { toggleFullScreen } from "/frontend/_fullscreen.js";
+import { toggleFullScreen } from "/frontend/fullscreen.js";
 
 const fullScreen = document.getElementById("fullScreen");
 fullScreen.addEventListener("click", haddleFullScreen);
@@ -65,7 +65,7 @@ import {
   clientId,
   mobileCheck,
   splitKey,
-} from "/frontend/_utils.js";
+} from "/frontend/utils.js";
 
 // *** Import element from the html document ***
 

@@ -29,7 +29,7 @@ import {
   initPaint,
   colorPaletteDefault,
   backgroundColorsDefault,
-} from "/frontend/_graphic.js";
+} from "/frontend/graphic.js";
 
 // *** Import element from the html document ***
 

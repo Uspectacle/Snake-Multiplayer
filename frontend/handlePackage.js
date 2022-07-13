@@ -6,7 +6,7 @@ if (window.location.hostname == "127.0.0.1:5500") {
 }
 
 export { handleRoomPackage };
-import { clientId, splitKey } from "/frontend/_utils.js";
+import { clientId, splitKey } from "/frontend/utils.js";
 
 function handleRoomPackage(roomPackage) {
   if (!sessionStorage.getItem("isLog")) {
