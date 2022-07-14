@@ -39,7 +39,6 @@ function splitKey(key) {
   let prime = 1;
   while (remainder > 1) {
     if (remainder < prime) {
-      console.log("error splitKey", key);
       break;
     }
     prime++;

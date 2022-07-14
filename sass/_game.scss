@@ -1,0 +1,131 @@
+@import "variable";
+
+/* Game Room: Layers, game, controles & co */
+
+.quarterContainer {
+    display: none;
+    position: relative;
+    height: 100vh;
+    width: $quarter-size;
+}
+
+.quarter {
+    width: 100%;
+    height: 50%;
+    position: relative;
+    display: block;
+    /* margin: auto; */
+}
+
+/* For vertical browser's viewport */
+@media (max-width: 100vh) {
+    .gameScreen {display: block;}
+
+    .quarterContainer {
+        position: relative;
+        display: none;
+        height: $quarter-size;
+        width: 100vw;
+    }
+    .quarter {
+        width: 50%;
+        height: 100%;
+    }
+}
+
+.quarter img{
+    width: 90%;
+    height: 90%;
+}
+
+
+
+
+/* Game Screen */
+.gameContainer{
+    display: block;
+    height: $game-size;
+    width: $game-size;
+}
+
+.game{
+    position: absolute;
+    height: $game-size;
+    width: $game-size;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.game canvas{
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+}
+
+.game button{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    opacity: 1;
+}
+
+
+/* Player Display: Name, Color, Ready & co */
+//   .playersDisplay {
+//     display: flex;
+//     flex-direction: column;
+//     width: 95%;
+//     height: 95%;
+//     position: absolute;
+//     top: 50%;
+//     left: 50%;
+//     transform: translate(-50%, -50%);
+//   }
+
+.player {
+    display: table-row;
+    /* width: 90%;
+    margin-top: 0.5em;
+    height: 1.5em; */
+}
+
+.player h2{
+    color: white;
+    font-size: 1em;
+    margin-left: 0.5em;
+    width: 1em;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.player .name{
+    margin-left: 0.5em;
+    width: auto;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+.player .form-control{
+    width: 8em;
+}
+
+.player .color{
+    background-color: $green;
+    border-color: $green;
+    border-radius: 0.5em;
+    margin-left: 0.5em;
+    width: 1em;
+    height: 1em;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.player .color::-webkit-color-swatch {
+    border: none;
+    border-radius: 0.5em;
+}

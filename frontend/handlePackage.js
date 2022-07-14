@@ -1,8 +1,6 @@
 let socketCORS = "https://snake-multi-psl.herokuapp.com/";
-let baseHref = "https://uspectacle.github.io/Snake-Multiplayer";
-if (window.location.hostname == "127.0.0.1:5500") {
+if (window.location.hostname == "127.0.0.1") {
   socketCORS = "http://localhost:3000";
-  baseHref = "";
 }
 
 export { handleRoomPackage };
@@ -38,10 +36,7 @@ function handlePlayers(players) {
     }
     remote[playerKey] = player;
   });
-  sessionStorage.setItem("remotePlayers", remote);
-  if (window.location.pathname == "frontend/players.html") {
-    updatePlayers();
-  }
+  sessionStorage.setItem("remotePlayers", JSON.stringify(remote));
 }
 
 function handleSettings(settings) {

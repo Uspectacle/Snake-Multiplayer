@@ -19,7 +19,6 @@ $red: #ff3300;
 $light-red: #ff9933;
 $orange: #ff9933;
 
-$quarter-min: 10rem;
 
 
 $medium: 768px!default;
@@ -28,6 +27,7 @@ $large: 1000px!default;
 $medium-up: "only screen and (min-width: #{$medium})";
 $medium-down: "only screen and (max-width: #{$medium})";
 
-// $game-size: min(100vmax - 2*$quarter-min, 100vmin);
-// $quarter-size: 50vmax - $game-size/2;
-// $game-font: min($quarter-size, 50vmin) * 7/100;
+$quarter-min: 10rem;
+$game-size: min(calc(100vmax - 2*$quarter-min), 100vmin);
+$quarter-size: calc(50vmax - $game-size/2);
+$game-font: calc(min($quarter-size, 50vmin) * 7/100);

@@ -1,13 +1,11 @@
 // *** Server-Client Initialisation ***
 
 let socketCORS = "https://snake-multi-psl.herokuapp.com/";
-let baseHref = "https://uspectacle.github.io/Snake-Multiplayer";
-if (window.location.hostname == "127.0.0.1:5500") {
+if (window.location.hostname == "127.0.0.1") {
   socketCORS = "http://localhost:3000";
-  baseHref = "";
 }
 
-import { io } from "socket.io-client";
+import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
 const socket = io(socketCORS, {
   withCredentials: true,
   extraHeaders: {

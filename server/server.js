@@ -42,18 +42,10 @@ let ids = {};
 io.on("connection", (client) => {
   client.on("newRoom", handleNewRoom);
   client.on("joinRoom", handleJoinRoom);
-
-  client.on("controllerInput", handleControllerInput); // change to action playerKey updownleftright
-
+  client.on("controllerInput", handleControllerInput);
   client.on("updatePlayers", handleUpdatePlayers);
-  // client.on('playerColor', handlePlayerColor);
-  // client.on('exitRoom', handleExitRoom);
-  // ONE DAY MORE
-
   client.on("disconnect", handleDisconnect);
-
   client.on("isLog", sendLog);
-
   client.on("id", handleId);
 
   function handleId(clientId) {
@@ -164,7 +156,6 @@ io.on("connection", (client) => {
     getPlayers(ids[client.id]).forEach((playerKey) => {
       removePlayer(roomCode, playerKey);
     });
-
     Object.entries(localPlayers).forEach(([localKey, player]) => {
       let playerKey = combineKeys([clientId.clientKey, localKey]);
       // player.ready = unpack.ready;
@@ -172,7 +163,6 @@ io.on("connection", (client) => {
     });
     // room.settings = unpack.settings;
     // thisClient.ready = unpack.ready;
-
     updateRoom(roomCode);
   }
 
@@ -356,7 +346,7 @@ function getPlayers(clientIdPack) {
   const roomCode = clientId.roomCode;
   let room = activeRooms[roomCode];
   return Object.keys(room.players).filter((playerKey) => {
-    if (splitKey(playerKey)[0] === clientId.clientKey) {
+    if (splitKey(playerKey)[0] == clientId.clientKey) {
       return playerKey;
     }
   });

@@ -158,6 +158,8 @@ li {
   width: 10em;
 }
 .nav-links > a {
+  text-decoration: none;
+  color: white;
   font-size: 1.3em;
   height: 2em;
   margin-top: 0.5em;
@@ -610,6 +612,128 @@ h2 > button {
 .roomCode > span {
   color: white;
   font-size: 2em;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Game Room: Layers, game, controles & co */
+.quarterContainer {
+  display: none;
+  position: relative;
+  height: 100vh;
+  width: calc(50vmax - min(100vmax - 20rem, 100vmin) / 2);
+}
+
+.quarter {
+  width: 100%;
+  height: 50%;
+  position: relative;
+  display: block;
+  /* margin: auto; */
+}
+
+/* For vertical browser's viewport */
+@media (max-width: 100vh) {
+  .gameScreen {
+    display: block;
+  }
+  .quarterContainer {
+    position: relative;
+    display: none;
+    height: calc(50vmax - min(100vmax - 20rem, 100vmin) / 2);
+    width: 100vw;
+  }
+  .quarter {
+    width: 50%;
+    height: 100%;
+  }
+}
+.quarter img {
+  width: 90%;
+  height: 90%;
+}
+
+/* Game Screen */
+.gameContainer {
+  display: block;
+  height: min(100vmax - 20rem, 100vmin);
+  width: min(100vmax - 20rem, 100vmin);
+}
+
+.game {
+  position: absolute;
+  height: min(100vmax - 20rem, 100vmin);
+  width: min(100vmax - 20rem, 100vmin);
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.game canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.game button {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  opacity: 1;
+}
+
+/* Player Display: Name, Color, Ready & co */
+.player {
+  display: table-row;
+  /* width: 90%;
+  margin-top: 0.5em;
+  height: 1.5em; */
+}
+
+.player h2 {
+  color: white;
+  font-size: 1em;
+  margin-left: 0.5em;
+  width: 1em;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.player .name {
+  margin-left: 0.5em;
+  width: auto;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.player .form-control {
+  width: 8em;
+}
+
+.player .color {
+  background-color: #00cc00;
+  border-color: #00cc00;
+  border-radius: 0.5em;
+  margin-left: 0.5em;
+  width: 1em;
+  height: 1em;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.player .color::-webkit-color-swatch {
+  border: none;
+  border-radius: 0.5em;
 }
 
 /*# sourceMappingURL=style.css.map */
