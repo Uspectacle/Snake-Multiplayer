@@ -1,67 +1,4 @@
-// *** Server-Client Initialisation ***
-
-let socketCORS = "https://snake-multi-psl.herokuapp.com/";
-if (window.location.hostname == "127.0.0.1") {
-  socketCORS = "http://localhost:3000";
-}
-
-import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
-const socket = io(socketCORS, {
-  withCredentials: true,
-  extraHeaders: {
-    "server-client": "yey-ca-marche",
-  },
-});
-
-import { handleRoomPackage } from "/frontend/handlePackage.js";
-socket.on("roomPackage", handleRoomPackage);
-socket.on("roomPackage", updateRemote);
-
-function updateRemote() {
-  setTimeout(() => {
-    updatePlayers();
-  }, 10);
-}
-socket.on("isLog", handleIsLog);
-
-function handleIsLog(isLog) {
-  if (isLog) {
-    sessionStorage.setItem("isLog", true);
-  } else {
-    sessionStorage.removeItem("isLog");
-  }
-}
-
-// *** FullScreen & Navigation ***
-
-import { toggleFullScreen } from "/frontend/fullscreen.js";
-
-const fullScreen = document.getElementById("fullScreen");
-fullScreen.addEventListener("click", haddleFullScreen);
-function haddleFullScreen() {
-  toggleFullScreen(document);
-}
-
-let openBtn = document.getElementById("nav-open");
-let closeBtn = document.getElementById("nav-close");
-let navWrapper = document.getElementById("nav-wrapper");
-let navLatteral = document.getElementById("nav-latteral");
-
-const openNav = () => {
-  navWrapper.classList.add("active");
-  navLatteral.style.left = "0";
-};
-
-const closeNav = () => {
-  navWrapper.classList.remove("active");
-  navLatteral.style.left = "-100%";
-};
-
-openBtn.addEventListener("click", openNav);
-closeBtn.addEventListener("click", closeNav);
-navWrapper.addEventListener("click", closeNav);
-
-// *** Import utils ***
+// *** Import function from other local scripts ***
 
 import {
   defaultColor,
@@ -70,6 +7,31 @@ import {
   mobileCheck,
   splitKey,
 } from "/frontend/utils.js";
+
+import {
+  paintGame,
+  initPaint,
+  colorPaletteDefault,
+  backgroundColorsDefault,
+} from "/frontend/graphic.js";
+
+import { initFullScreen } from "/frontend/fullscreen.js";
+import { buildServer } from "/frontend/handlePackage.js";
+const socket = buildServer();
+
+// *** Global Variables Declaration ***
+
+let localPlayers;
+let remotePlayers;
+let keyController;
+let localKeyCount;
+let playerController;
+let playerControllerTwo;
+
+let setPlayerKey;
+let setPlayer;
+let setPlayerControls;
+let waitForKey = false;
 
 // *** Import element from the html document ***
 
@@ -98,7 +60,23 @@ const downButtonMap = document.getElementById("downButtonMap");
 const saveEditButton = document.getElementById("saveEdit");
 const cancelEditButton = document.getElementById("cancelEdit");
 
-// // *** Event Listener ***
+// *** Event Listener ***
+
+window.onload = (event) => {
+  initFullScreen(document);
+  socket.emit("id", clientId());
+  updatePlayers();
+};
+
+window.addEventListener("storage", handleStorage);
+function handleStorage(event) {
+  if (event.key == "remotePlayers") {
+    updatePlayers();
+  }
+}
+
+document.addEventListener("keydown", keydown);
+document.addEventListener("click", handleClick);
 
 copyButton.addEventListener("click", copyRoomCode);
 doneShareButton.addEventListener("click", closeShare);
@@ -121,55 +99,30 @@ rightButtonMap.inputCode = "right";
 downButtonMap.addEventListener("click", handleButtonMap);
 downButtonMap.inputCode = "down";
 
-document.addEventListener("keydown", keydown);
-document.addEventListener("click", handleClick);
-
-// *** Global Variables Declaration ***
-
-let localPlayers = {};
-let remotePlayers = {};
-let localKeyCount = 0;
-let playerController;
-let playerControllerTwo;
-let keyController = {
-  37: { playerKey: 0, inputCode: "left" },
-  38: { playerKey: 0, inputCode: "up" },
-  39: { playerKey: 0, inputCode: "right" },
-  40: { playerKey: 0, inputCode: "down" },
-  81: { playerKey: 0, inputCode: "left" },
-  83: { playerKey: 0, inputCode: "down" },
-  68: { playerKey: 0, inputCode: "right" },
-  90: { playerKey: 0, inputCode: "up" },
-};
-
-let setPlayerKey;
-let setPlayer;
-let setPlayerControls;
-let waitForKey = false;
-
-// *** Initialisation ***
-
-sessionStorage.setItem("localPlayers", JSON.stringify(localPlayers));
-sessionStorage.setItem("remotePlayers", JSON.stringify(remotePlayers));
-sessionStorage.setItem("playerController", JSON.stringify(playerController));
-sessionStorage.setItem(
-  "playerControllerTwo",
-  JSON.stringify(playerControllerTwo)
-);
-sessionStorage.setItem("keyController", JSON.stringify(keyController));
-
-window.onload = (event) => {
-  socket.emit("id", clientId());
-  updatePlayers();
-};
-
 // *** Update Players Lists ***
 
+function updatePlayers() {
+  checkVariables();
+  buildRemotePlayersStack();
+  buildLocalPlayersStack();
+}
+
 function checkVariables() {
-  localPlayers = JSON.parse(sessionStorage.getItem("localPlayers"));
-  remotePlayers = JSON.parse(sessionStorage.getItem("remotePlayers"));
-  keyController = JSON.parse(sessionStorage.getItem("keyController"));
-  localKeyCount = sessionStorage.getItem("localKeyCount");
+  localPlayers = JSON.parse(sessionStorage.getItem("localPlayers") || {});
+  remotePlayers = JSON.parse(sessionStorage.getItem("remotePlayers") || {});
+  keyController = JSON.parse(
+    sessionStorage.getItem("keyController") || {
+      37: { playerKey: 0, inputCode: "left" },
+      38: { playerKey: 0, inputCode: "up" },
+      39: { playerKey: 0, inputCode: "right" },
+      40: { playerKey: 0, inputCode: "down" },
+      81: { playerKey: 0, inputCode: "left" },
+      83: { playerKey: 0, inputCode: "down" },
+      68: { playerKey: 0, inputCode: "right" },
+      90: { playerKey: 0, inputCode: "up" },
+    }
+  );
+  localKeyCount = sessionStorage.getItem("localKeyCount") || 0;
   playerController = sessionStorage.getItem("playerController");
   playerControllerTwo = sessionStorage.getItem("playerControllerTwo");
   socket.emit("isLog");
@@ -198,8 +151,7 @@ function checkVariables() {
   );
 }
 
-function updatePlayers() {
-  checkVariables();
+function buildRemotePlayersStack() {
   remotePlayersStack.replaceChildren();
   Object.keys(remotePlayers).forEach((playerKey) => {
     remotePlayersStack.append(remoteLine(playerKey));
@@ -212,7 +164,18 @@ function updatePlayers() {
   newRemotePlayerButton.addEventListener("click", newRemote);
   lastRemoteLine.append(newRemotePlayerButton);
   remotePlayersStack.append(lastRemoteLine);
+}
 
+function remoteLine(playerKey) {
+  let line = document.createElement("li");
+  let nameTag = document.createElement("h3");
+  nameTag.innerHTML = remotePlayers[playerKey].name;
+  line.playerKey = playerKey;
+  line.append(nameTag);
+  return line;
+}
+
+function buildLocalPlayersStack() {
   localPlayersStack.replaceChildren();
   Object.keys(localPlayers).forEach((playerKey) => {
     localPlayersStack.append(localLine(playerKey));
@@ -253,15 +216,6 @@ function localLine(playerKey) {
   line.append(nameTag);
   line.append(editButton);
   line.append(removeButton);
-  return line;
-}
-
-function remoteLine(playerKey) {
-  let line = document.createElement("li");
-  let nameTag = document.createElement("h3");
-  nameTag.innerHTML = remotePlayers[playerKey].name;
-  line.playerKey = playerKey;
-  line.append(nameTag);
   return line;
 }
 

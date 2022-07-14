@@ -1,59 +1,3 @@
-// *** Server-Client Initialisation ***
-
-let socketCORS = "https://snake-multi-psl.herokuapp.com/";
-if (window.location.hostname == "127.0.0.1") {
-  socketCORS = "http://localhost:3000";
-}
-
-import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
-const socket = io(socketCORS, {
-  withCredentials: true,
-  extraHeaders: {
-    "server-client": "yey-ca-marche",
-  },
-});
-
-import { handleRoomPackage } from "/frontend/handlePackage.js";
-socket.on("roomPackage", handleRoomPackage);
-
-socket.on("isLog", handleIsLog);
-
-function handleIsLog(isLog) {
-  if (isLog) {
-    sessionStorage.setItem("isLog", true);
-  } else {
-    sessionStorage.removeItem("isLog");
-  }
-}
-// *** FullScreen & Navigation ***
-
-import { toggleFullScreen } from "/frontend/fullscreen.js";
-
-const fullScreen = document.getElementById("fullScreen");
-fullScreen.addEventListener("click", haddleFullScreen);
-function haddleFullScreen() {
-  toggleFullScreen(document);
-}
-
-let openBtn = document.getElementById("nav-open");
-let closeBtn = document.getElementById("nav-close");
-let navWrapper = document.getElementById("nav-wrapper");
-let navLatteral = document.getElementById("nav-latteral");
-
-const openNav = () => {
-  navWrapper.classList.add("active");
-  navLatteral.style.left = "0";
-};
-
-const closeNav = () => {
-  navWrapper.classList.remove("active");
-  navLatteral.style.left = "-100%";
-};
-
-openBtn.addEventListener("click", openNav);
-closeBtn.addEventListener("click", closeNav);
-navWrapper.addEventListener("click", closeNav);
-
 // *** Import function from other local scripts ***
 
 import {
@@ -71,36 +15,28 @@ import {
   backgroundColorsDefault,
 } from "/frontend/graphic.js";
 
+import { initFullScreen } from "/frontend/fullscreen.js";
+import { buildServer } from "/frontend/handlePackage.js";
+const socket = buildServer();
+
+// *** Global Variables Declaration ***
+
+// ONE DAY MORE
+sessionStorage.setItem(
+  "paintSettings",
+  JSON.stringify({
+    colorPalette: colorPaletteDefault,
+    backgroundColors: backgroundColorsDefault,
+  })
+);
+// ONE DAY MORE
+
 // *** Import element from the html document ***
 
-// * Game Screen *
-const gameScreen = document.getElementById("gameScreen");
-
-// * Game Screen : Controller Player Two *
-const controllerPlayerTwo = document.getElementById("controllerPlayerTwo");
-const displayPlayerTwo = document.getElementById("displayPlayerTwo");
-const upButtonTwo = document.getElementById("upButtonTwo");
-const leftButtonTwo = document.getElementById("leftButtonTwo");
-const rightButtonTwo = document.getElementById("rightButtonTwo");
-const downButtonTwo = document.getElementById("downButtonTwo");
-
-// * Game Screen : Room Code Box *
-const roomCodeBox = document.getElementById("roomCodeBox");
-const roomCodeDisplay = document.getElementById("roomCodeDisplay");
-const copyButton = document.getElementById("copyButton");
-
-// * Game Screen : Players Display *
-const playersDisplay = document.getElementById("playersDisplay");
-
-// * Game Screen : Game *
 const backCanvas = document.getElementById("backCanvas");
 const frontCanvas = document.getElementById("frontCanvas");
 const readyButton = document.getElementById("readyButton");
 
-// * Game Screen : Settings *
-const settingsButton = document.getElementById("settingsButton");
-
-// * Game Screen : Controller *
 const controllerPlayer = document.getElementById("controllerPlayer");
 const displayPlayer = document.getElementById("displayPlayer");
 const upButton = document.getElementById("upButton");
@@ -108,8 +44,47 @@ const leftButton = document.getElementById("leftButton");
 const rightButton = document.getElementById("rightButton");
 const downButton = document.getElementById("downButton");
 
+const controllerPlayerTwo = document.getElementById("controllerPlayerTwo");
+const displayPlayerTwo = document.getElementById("displayPlayerTwo");
+const upButtonTwo = document.getElementById("upButtonTwo");
+const leftButtonTwo = document.getElementById("leftButtonTwo");
+const rightButtonTwo = document.getElementById("rightButtonTwo");
+const downButtonTwo = document.getElementById("downButtonTwo");
+
+const roomCodeBox = document.getElementById("roomCodeBox");
+const roomCodeDisplay = document.getElementById("roomCodeDisplay");
+const copyButton = document.getElementById("copyButton");
+
+const playersDisplay = document.getElementById("playersDisplay");
+
 // *** Event Listener ***
-// * Game Screen : Controller Player Two *
+
+window.onload = (event) => {
+  initFullScreen(document);
+  socket.emit("id", clientId());
+  updateGame();
+};
+
+window.addEventListener("storage", handleStorage);
+function handleStorage(event) {
+  if (event.key == "gameState") {
+    updateGame();
+  }
+}
+
+document.addEventListener("keydown", keydown);
+
+readyButton.addEventListener("click", updateReady);
+
+upButton.addEventListener("click", handleDirectionButton);
+upButton.inputCode = "up";
+leftButton.addEventListener("click", handleDirectionButton);
+leftButton.inputCode = "left";
+rightButton.addEventListener("click", handleDirectionButton);
+rightButton.inputCode = "right";
+downButton.addEventListener("click", handleDirectionButton);
+downButton.inputCode = "down";
+
 upButtonTwo.addEventListener("click", handleDirectionButton);
 upButton.inputCode = "up";
 upButton.playerTwo = true;
@@ -123,38 +98,35 @@ downButtonTwo.addEventListener("click", handleDirectionButton);
 downButtonTwo.inputCode = "down";
 downButtonTwo.playerTwo = true;
 
-// *** Initialisation ***
-window.onload = (event) => {
-  socket.emit("id", clientId());
-};
-
-// * Game Screen : Room Code Box *
 // copyButton.addEventListener("click", copyRoomCode);
 // newPlayerButton.addEventListener("click", handleNewPlayer);
 
-// * Game Screen : Game *
-readyButton.addEventListener("click", updateReady);
+// *** Update Game Screen ***
 
-// * Game Screen : Settings *
-// settingsButton.addEventListener("click", handleSettingsButton);
-
-// * Game Screen : Controller *
-upButton.addEventListener("click", handleDirectionButton);
-upButton.inputCode = "up";
-leftButton.addEventListener("click", handleDirectionButton);
-leftButton.inputCode = "left";
-rightButton.addEventListener("click", handleDirectionButton);
-rightButton.inputCode = "right";
-downButton.addEventListener("click", handleDirectionButton);
-downButton.inputCode = "down";
-
-// *** Server Listener ***
-socket.on("onlyGameState", handleOnlyGameState);
-
-// *** Game Screen ***
-
-function handleOnlyGameState(gameState) {
-  handleGameState(JSON.parse(gameState));
+function updateGame() {
+  const gameState = JSON.parse(sessionStorage.getItem("gameState"));
+  const paintSettings = JSON.parse(sessionStorage.getItem("paintSettings"));
+  if (!gameState) {
+    return;
+  }
+  if (gameState.event === "init") {
+    initPaint(backCanvas, frontCanvas, gameState, paintSettings);
+    readyButton.style.opacity = 1;
+    readyButton.style.display = "block";
+  }
+  if (gameState.event === "start") {
+    readyButton.style.opacity = -(gameState.time / gameState.frameRate) / 5;
+  }
+  if (gameState.time === 0) {
+    readyButton.style.display = "none";
+    ready = false;
+    updateReadyButton();
+  }
+  if (gameState.event === "after") {
+    readyButton.style.opacity = 1;
+    readyButton.style.display = "block";
+  }
+  requestAnimationFrame(() => paintGame(gameState));
 }
 
 // *** Game Screen : Ready Button ***
@@ -173,33 +145,6 @@ function updateReadyButton() {
     readyButton.classList.remove("redbutton");
     readyButton.innerText = "I'm Ready";
   }
-}
-
-// * Game Screen : Game State *
-
-function handleGameState(gameState) {
-  if (gameState.event === "init") {
-    let paintSettings = {
-      colorPalette: colorPaletteDefault,
-      backgroundColors: backgroundColorsDefault,
-    };
-    initPaint(backCanvas, frontCanvas, gameState, paintSettings);
-    readyButton.style.opacity = 1;
-    readyButton.style.display = "block";
-  }
-  if (gameState.event === "start") {
-    readyButton.style.opacity = -(gameState.time / gameState.frameRate) / 5;
-  }
-  if (gameState.time === 0) {
-    readyButton.style.display = "none";
-    ready = false;
-    updateReadyButton();
-  }
-  if (gameState.event === "after") {
-    readyButton.style.opacity = 1;
-    readyButton.style.display = "block";
-  }
-  requestAnimationFrame(() => paintGame(gameState));
 }
 
 // * Game Screen : Controller *
