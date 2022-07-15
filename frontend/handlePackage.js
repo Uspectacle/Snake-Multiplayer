@@ -34,12 +34,12 @@ function handleDisconnect() {
 }
 
 function handleClientId(pack) {
-  socket.emit("updatePlayers", sessionStorage.getItem("localPlayers"));
   let unpack = JSON.parse(pack);
   sessionStorage.setItem("roomCode", unpack.roomCode);
   sessionStorage.setItem("clientKey", unpack.clientKey);
   window.dispatchEvent(new CustomEvent("store", { detail: "roomCode" }));
   window.dispatchEvent(new CustomEvent("store", { detail: "clientKey" }));
+  socket.emit("id", clientId());
   window.location.pathname = "frontend/players.html";
   return;
 }

@@ -82,6 +82,7 @@ window.onload = (event) => {
   initFullScreen(document);
   socket.emit("id", clientId());
   updatePlayers();
+  socket.emit("updatePlayers", sessionStorage.getItem("localPlayers"));
 };
 
 window.addEventListener("store", handleStorage);
@@ -135,25 +136,30 @@ function updatePlayers() {
 }
 
 function checkVariables() {
+  console.log({
+    localPlayers,
+    oldLocalPlayers: JSON.parse(sessionStorage.getItem("localPlayers")),
+  });
+  console.log({
+    remotePlayers,
+    oldLocalPlayers: JSON.parse(sessionStorage.getItem("remotePlayers")),
+  });
   localPlayers = JSON.parse(sessionStorage.getItem("localPlayers")) || {};
   remotePlayers = JSON.parse(sessionStorage.getItem("remotePlayers")) || {};
   keyController = JSON.parse(sessionStorage.getItem("keyController")) || {};
-  localKeyCount = sessionStorage.getItem("localKeyCount") || 0;
   playerController = sessionStorage.getItem("playerController");
   playerControllerTwo = sessionStorage.getItem("playerControllerTwo");
 
-  let keys = Object.keys(localPlayers);
-  localKeyCount = Math.max(keys);
-  sessionStorage.setItem("localKeyCount", localKeyCount);
-  window.dispatchEvent(new CustomEvent("store", { detail: "localKeyCount" }));
-  if (!keys.includes(`${playerControllerTwo}`)) {
+  let keys = Object.keys(localPlayers).map((key) => parseInt(key));
+  localKeyCount = keys.length ? Math.max(...keys) : 0;
+  if (!keys.includes(parseInt(playerControllerTwo))) {
     playerControllerTwo = null;
     sessionStorage.removeItem("playerControllerTwo");
     window.dispatchEvent(
       new CustomEvent("store", { detail: "playerControllerTwo" })
     );
   }
-  if (!keys.includes(`${playerController}`)) {
+  if (!keys.includes(parseInt(playerController))) {
     playerController = null;
     sessionStorage.removeItem("playerController");
     window.dispatchEvent(
@@ -172,10 +178,10 @@ function checkVariables() {
       );
     }
   }
-  keys.push("0");
+  keys.push(0);
   keyController = Object.fromEntries(
     Object.entries(keyController).filter(([key, value]) => {
-      return keys.includes(`${value.playerKey}`);
+      return keys.includes(parseInt(value.playerKey));
     })
   );
   Object.entries(defaultKey).forEach(([key, inputCode]) => {
@@ -407,12 +413,8 @@ function editPlayer() {
       down: true,
     };
     if (!Object.keys(localPlayers).length) {
-      controllerPlayer.style.display = "block";
       playerController = setPlayerKey;
     } else {
-      newPlayerButton.display = "none";
-      roomCodeBox.style.display = "none";
-      controllerPlayerTwo.style.display = "block";
       playerControllerTwo = setPlayerKey;
     }
     useController.style.display = "none";
@@ -453,7 +455,7 @@ function saveEdit() {
   for (let inputCode in setPlayerControls) {
     if (!setPlayerControls[inputCode]) {
       errorMapKey.innerText = "No key as been registered for " + inputCode;
-      errorMapKey.style.display = "block";
+      errorMapKey.style.opacity = 1;
       return;
     }
   }
@@ -461,7 +463,6 @@ function saveEdit() {
 
   sessionStorage.setItem("localPlayers", JSON.stringify(localPlayers));
   sessionStorage.setItem("keyController", JSON.stringify(keyController));
-  sessionStorage.setItem("localKeyCount", localKeyCount);
   if (playerController) {
     sessionStorage.setItem("playerController", playerController);
   } else {
@@ -474,7 +475,6 @@ function saveEdit() {
   }
   window.dispatchEvent(new CustomEvent("store", { detail: "localPlayers" }));
   window.dispatchEvent(new CustomEvent("store", { detail: "keyController" }));
-  window.dispatchEvent(new CustomEvent("store", { detail: "localKeyCount" }));
   window.dispatchEvent(
     new CustomEvent("store", { detail: "playerController" })
   );
@@ -497,13 +497,18 @@ function handleUseController() {
   if (playerController == setPlayerKey) {
     playerController = null;
     controllerMap.style.display = "block";
-    controllerPlayer.style.display = "none";
     setPlayerControls = {
       up: false,
       left: false,
       right: false,
       down: false,
     };
+
+    Object.values(keyController).map((value) => {
+      if (value.playerKey == setPlayerKey) {
+        value.playerKey = 0;
+      }
+    });
     initMapKey();
   } else {
     playerController = setPlayerKey;
@@ -514,7 +519,6 @@ function handleUseController() {
       down: true,
     };
     controllerMap.style.display = "none";
-    controllerPlayer.style.display = "block";
   }
   updateUseControllerButton();
 }
@@ -567,7 +571,7 @@ function handleButtonMap(e) {
   if (waitForKey) {
     endMapKey();
   }
-  errorMapKey.style.display = "none";
+  errorMapKey.style.opacity = 0;
   e.target.classList.add("mapping");
   e.target.classList.remove("map");
   waitForKey = e;
@@ -606,7 +610,7 @@ function mapKey(keyCode) {
       } else {
         errorMapKey.innerText = "ERROR: Key used by an none player " + keyUser;
       }
-      errorMapKey.style.display = "block";
+      errorMapKey.style.opacity = 1;
       endMapKey();
       return;
     }

@@ -257,8 +257,8 @@ function updateRoom(roomCode) {
     getPlayers(clientId).forEach((playerKey) => {
       room.players[playerKey].ready = client.ready;
       readys[playerKey] = client.ready;
-      allReady = allReady && client.ready;
     });
+    allReady = allReady && client.ready;
   });
 
   let init = true;
