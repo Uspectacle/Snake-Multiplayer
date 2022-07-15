@@ -32,6 +32,7 @@ const roomCodeInput = document.getElementById("roomCodeInput");
 
 window.onload = (event) => {
   sessionStorage.removeItem("ready");
+  window.dispatchEvent(new CustomEvent("store", { detail: "ready" }));
   initFullScreen(document);
   socket.emit("id", clientId());
   blinkTitle();
@@ -68,6 +69,7 @@ function initRoomCode() {
   let roomCode = new URLSearchParams(window.location.search).get("r");
   if (roomCode) {
     sessionStorage.setItem("roomCode", roomCode);
+    window.dispatchEvent(new CustomEvent("store", { detail: "roomCode" }));
   }
   if (roomCodeInput.value) {
     joinRoom();
@@ -85,6 +87,7 @@ function joinRoom(event) {
   if (event) {
     event.preventDefault();
     sessionStorage.removeItem("roomCode");
+    window.dispatchEvent(new CustomEvent("store", { detail: "roomCode" }));
   }
   removeErrorRoomCode();
   const roomCode = roomCodeInput.value.toUpperCase();

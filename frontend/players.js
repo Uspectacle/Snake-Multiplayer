@@ -78,22 +78,24 @@ const readyButton = document.getElementById("readyButton");
 
 window.onload = (event) => {
   sessionStorage.removeItem("ready");
+  window.dispatchEvent(new CustomEvent("store", { detail: "ready" }));
   initFullScreen(document);
   socket.emit("id", clientId());
   updatePlayers();
 };
 
-window.addEventListener("storage", handleStorage);
+window.addEventListener("store", handleStorage);
 
 function handleStorage(event) {
-  if (event.key == "remotePlayers") {
+  console.log("handleStorage", { event });
+  if (event.detail == "remotePlayers") {
     updatePlayers();
-  } else if (event.key == "clientKey") {
+  } else if (event.detail == "clientKey") {
     if (!sessionStorage.getItem("clientKey")) {
       closeShare();
       updateReadyButton();
     }
-  } else if (event.key == "localPlayers") {
+  } else if (event.detail == "localPlayers") {
     updatePlayers();
   }
 }
@@ -144,18 +146,32 @@ function checkVariables() {
   let keys = Object.keys(localPlayers);
   localKeyCount = Math.max(keys);
   sessionStorage.setItem("localKeyCount", localKeyCount);
+  window.dispatchEvent(new CustomEvent("store", { detail: "localKeyCount" }));
   if (!keys.includes(playerControllerTwo)) {
     playerControllerTwo = null;
-    sessionStorage.setItem("playerControllerTwo", playerControllerTwo);
+    sessionStorage.removeItem("playerControllerTwo");
+    window.dispatchEvent(
+      new CustomEvent("store", { detail: "playerControllerTwo" })
+    );
   }
   if (!keys.includes(playerController)) {
     playerController = null;
+    sessionStorage.removeItem("playerController");
+    window.dispatchEvent(
+      new CustomEvent("store", { detail: "playerController" })
+    );
     if (playerControllerTwo) {
       playerController = playerControllerTwo;
       playerControllerTwo = null;
-      sessionStorage.setItem("playerControllerTwo", playerControllerTwo);
+      sessionStorage.removeItem("playerControllerTwo");
+      window.dispatchEvent(
+        new CustomEvent("store", { detail: "playerControllerTwo" })
+      );
+      sessionStorage.setItem("playerController", playerController);
+      window.dispatchEvent(
+        new CustomEvent("store", { detail: "playerController" })
+      );
     }
-    sessionStorage.setItem("playerController", playerController);
   }
   keys.push(0);
   keyController = Object.fromEntries(
@@ -257,6 +273,7 @@ function updateReadyButton() {
 function handleReadyButton() {
   if (readyButton.innerHTML == "Start") {
     sessionStorage.setItem("ready", true);
+    window.dispatchEvent(new CustomEvent("store", { detail: "ready" }));
     window.location.pathname = "frontend/game.html";
   } else if (readyButton.innerHTML == "Join Room") {
     window.location.pathname = "frontend/index.html";
@@ -298,14 +315,24 @@ function handleRemovePlayer(e) {
 }
 
 function removePlayer(playerKey) {
+  console.log("removePlayer(playerKey) before", {
+    playerKey,
+    localPlayers,
+    localPlayersplayerKey: localPlayers[playerKey],
+  });
   if (!localPlayers[playerKey]) {
     return;
   }
   delete localPlayers[playerKey];
 
-  if (playerControllerTwo === playerKey) {
+  console.log("removePlayer(playerKey) after", {
+    playerKey,
+    localPlayers,
+    localPlayersplayerKey: localPlayers[playerKey],
+  });
+  if (playerControllerTwo == playerKey) {
     playerControllerTwo = null;
-  } else if (playerController === playerKey) {
+  } else if (playerController == playerKey) {
     if (playerControllerTwo) {
       playerController = playerControllerTwo;
       playerControllerTwo = null;
@@ -318,11 +345,42 @@ function removePlayer(playerKey) {
       return value.playerKey !== playerKey;
     })
   );
+
+  console.log("removePlayer ======> ", {
+    localPlayers,
+    json: JSON.stringify(localPlayers),
+    sessionStorage: sessionStorage.getItem("localPlayers"),
+  });
   sessionStorage.setItem("localPlayers", JSON.stringify(localPlayers));
+  window.dispatchEvent(new CustomEvent("store", { detail: "ready" }));
+  console.log("removePlayer < ===== ", {
+    sessionStorage: sessionStorage.getItem("localPlayers"),
+  });
   socket.emit("updatePlayers", JSON.stringify(localPlayers));
   sessionStorage.setItem("keyController", JSON.stringify(keyController));
-  sessionStorage.setItem("playerController", playerController);
-  sessionStorage.setItem("playerControllerTwo", playerControllerTwo);
+  window.dispatchEvent(new CustomEvent("store", { detail: "keyController" }));
+  if (playerController) {
+    sessionStorage.setItem("playerController", playerController);
+    window.dispatchEvent(
+      new CustomEvent("store", { detail: "playerController" })
+    );
+  } else {
+    sessionStorage.removeItem("playerController");
+    window.dispatchEvent(
+      new CustomEvent("store", { detail: "playerController" })
+    );
+  }
+  if (playerControllerTwo) {
+    sessionStorage.setItem("playerControllerTwo", playerControllerTwo);
+    window.dispatchEvent(
+      new CustomEvent("store", { detail: "playerControllerTwo" })
+    );
+  } else {
+    sessionStorage.removeItem("playerControllerTwo");
+    window.dispatchEvent(
+      new CustomEvent("store", { detail: "playerControllerTwo" })
+    );
+  }
 }
 
 // *** Add Players ***
@@ -415,12 +473,43 @@ function saveEdit() {
   }
   localPlayers[setPlayerKey] = { ...setPlayer };
 
+  console.log("saveEdit ======> ", {
+    localPlayers,
+    json: JSON.stringify(localPlayers),
+    sessionStorage: sessionStorage.getItem("localPlayers"),
+  });
   sessionStorage.setItem("localPlayers", JSON.stringify(localPlayers));
+  window.dispatchEvent(new CustomEvent("store", { detail: "localPlayers" }));
+  console.log("saveEdit < ===== ", {
+    sessionStorage: sessionStorage.getItem("localPlayers"),
+  });
   socket.emit("updatePlayers", JSON.stringify(localPlayers));
   sessionStorage.setItem("keyController", JSON.stringify(keyController));
+  window.dispatchEvent(new CustomEvent("store", { detail: "keyController" }));
   sessionStorage.setItem("localKeyCount", localKeyCount);
-  sessionStorage.setItem("playerController", playerController);
-  sessionStorage.setItem("playerControllerTwo", playerControllerTwo);
+  window.dispatchEvent(new CustomEvent("store", { detail: "localKeyCount" }));
+  if (playerController) {
+    sessionStorage.setItem("playerController", playerController);
+    window.dispatchEvent(
+      new CustomEvent("store", { detail: "playerController" })
+    );
+  } else {
+    sessionStorage.removeItem("playerController");
+    window.dispatchEvent(
+      new CustomEvent("store", { detail: "playerController" })
+    );
+  }
+  if (playerControllerTwo) {
+    sessionStorage.setItem("playerControllerTwo", playerControllerTwo);
+    window.dispatchEvent(
+      new CustomEvent("store", { detail: "playerControllerTwo" })
+    );
+  } else {
+    sessionStorage.removeItem("playerControllerTwo");
+    window.dispatchEvent(
+      new CustomEvent("store", { detail: "playerControllerTwo" })
+    );
+  }
   exitEdit();
 }
 

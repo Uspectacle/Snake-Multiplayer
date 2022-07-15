@@ -28,6 +28,7 @@ const socket = buildServer();
 
 window.onload = (event) => {
   sessionStorage.removeItem("ready");
+  window.dispatchEvent(new CustomEvent("store", { detail: "ready" }));
   initFullScreen(document);
   socket.emit("id", clientId());
 };

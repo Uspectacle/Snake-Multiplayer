@@ -67,13 +67,14 @@ window.onload = (event) => {
   updateReadyButton();
 };
 
-window.addEventListener("storage", handleStorage);
+window.addEventListener("store", handleStorage);
+
 function handleStorage(event) {
-  if (event.key == "gameState") {
+  if (event.detail == "gameState") {
     updateGame();
-  } else if (event.key == "ready") {
+  } else if (event.detail == "ready") {
     updateReadyButton();
-  } else if (event.key == "clientKey") {
+  } else if (event.detail == "clientKey") {
     if (!sessionStorage.getItem("clientKey"))
       window.location.pathname = "frontend/index.html";
   }
@@ -136,6 +137,7 @@ function updateGame() {
   if (gameState.time === 0) {
     readyButton.style.display = "none";
     sessionStorage.removeItem("ready");
+    window.dispatchEvent(new CustomEvent("store", { detail: "ready" }));
   }
   if (gameState.event === "after") {
     readyButton.style.opacity = 1;
@@ -149,8 +151,10 @@ function updateGame() {
 function changeReady() {
   if (sessionStorage.getItem("ready")) {
     sessionStorage.removeItem("ready");
+    window.dispatchEvent(new CustomEvent("store", { detail: "ready" }));
   } else {
     sessionStorage.setItem("ready", true);
+    window.dispatchEvent(new CustomEvent("store", { detail: "ready" }));
   }
 }
 

@@ -27,7 +27,9 @@ function buildServer() {
 
 function handleDisconnect() {
   sessionStorage.removeItem("remotePlayers");
+  window.dispatchEvent(new CustomEvent("store", { detail: "remotePlayers" }));
   sessionStorage.removeItem("clientKey");
+  window.dispatchEvent(new CustomEvent("store", { detail: "clientKey" }));
   window.location.pathname = "frontend/index.html";
 }
 
@@ -36,6 +38,8 @@ function handleClientId(pack) {
   let unpack = JSON.parse(pack);
   sessionStorage.setItem("roomCode", unpack.roomCode);
   sessionStorage.setItem("clientKey", unpack.clientKey);
+  window.dispatchEvent(new CustomEvent("store", { detail: "roomCode" }));
+  window.dispatchEvent(new CustomEvent("store", { detail: "clientKey" }));
   window.location.pathname = "frontend/players.html";
   return;
 }
@@ -46,6 +50,7 @@ function handleRoomPackage(roomPackage) {
     !sessionStorage.getItem("roomCode")
   ) {
     sessionStorage.removeItem("clientKey");
+    window.dispatchEvent(new CustomEvent("store", { detail: "clientKey" }));
     socket.emit("disconnect");
     return;
   }
@@ -65,6 +70,7 @@ function handlePlayers(players) {
     remote[playerKey] = player;
   });
   sessionStorage.setItem("remotePlayers", JSON.stringify(remote));
+  window.dispatchEvent(new CustomEvent("store", { detail: "remotePlayers" }));
 }
 
 function handleSettings(settings) {
@@ -73,8 +79,10 @@ function handleSettings(settings) {
 
 function handleOnlyGameState(gameState) {
   sessionStorage.setItem("gameState", gameState);
+  window.dispatchEvent(new CustomEvent("store", { detail: "gameState" }));
 }
 
 function handleGameState(gameState) {
   sessionStorage.setItem("gameState", JSON.stringify(gameState));
+  window.dispatchEvent(new CustomEvent("store", { detail: "gameState" }));
 }

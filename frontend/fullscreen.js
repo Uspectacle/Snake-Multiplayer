@@ -30,7 +30,8 @@ function initFullScreen(document) {
 
 function toggleFullScreen(document) {
   if (document.fullscreenElement) {
-    localStorage.removeItem("fullScreen");
+    sessionStorage.removeItem("fullScreen");
+    window.dispatchEvent(new CustomEvent("store", { detail: "fullScreen" }));
     if (document.exitFullscreen) {
       document.exitFullscreen();
     } else if (document.webkitExitFullscreen) {
@@ -41,7 +42,7 @@ function toggleFullScreen(document) {
       document.msExitFullscreen();
     }
   } else {
-    localStorage.setItem("fullScreen", true);
+    sessionStorage.setItem("fullScreen", true);
     if (document.documentElement.requestFullscreen) {
       document.documentElement.requestFullscreen();
     } else if (document.documentElement.webkitRequestFullscreen) {
