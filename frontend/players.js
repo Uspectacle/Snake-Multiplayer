@@ -87,7 +87,6 @@ window.onload = (event) => {
 window.addEventListener("store", handleStorage);
 
 function handleStorage(event) {
-  console.log("handleStorage", { event });
   if (event.detail == "remotePlayers") {
     updatePlayers();
   } else if (event.detail == "clientKey") {
@@ -138,23 +137,28 @@ function updatePlayers() {
 function checkVariables() {
   localPlayers = JSON.parse(sessionStorage.getItem("localPlayers")) || {};
   remotePlayers = JSON.parse(sessionStorage.getItem("remotePlayers")) || {};
+  console.log("checkVariables", {
+    keyController,
+    sessionStorage: JSON.parse(sessionStorage.getItem("keyController")),
+  });
   keyController = JSON.parse(sessionStorage.getItem("keyController")) || {};
   localKeyCount = sessionStorage.getItem("localKeyCount") || 0;
   playerController = sessionStorage.getItem("playerController");
   playerControllerTwo = sessionStorage.getItem("playerControllerTwo");
 
   let keys = Object.keys(localPlayers);
+  console.log({ keys });
   localKeyCount = Math.max(keys);
   sessionStorage.setItem("localKeyCount", localKeyCount);
   window.dispatchEvent(new CustomEvent("store", { detail: "localKeyCount" }));
-  if (!keys.includes(playerControllerTwo)) {
+  if (!keys.includes(`${playerControllerTwo}`)) {
     playerControllerTwo = null;
     sessionStorage.removeItem("playerControllerTwo");
     window.dispatchEvent(
       new CustomEvent("store", { detail: "playerControllerTwo" })
     );
   }
-  if (!keys.includes(playerController)) {
+  if (!keys.includes(`${playerController}`)) {
     playerController = null;
     sessionStorage.removeItem("playerController");
     window.dispatchEvent(
@@ -173,17 +177,25 @@ function checkVariables() {
       );
     }
   }
-  keys.push(0);
+  keys.push("0");
+  console.log({ keys });
+  console.log("checked 1", keyController);
   keyController = Object.fromEntries(
     Object.entries(keyController).filter(([key, value]) => {
-      return keys.includes(value.playerKey);
+      console.log({
+        bool: keys.includes(`${value.playerKey}`),
+        playerKey: value.playerKey,
+      });
+      return keys.includes(`${value.playerKey}`);
     })
   );
+  console.log("checked 2", keyController);
   Object.entries(defaultKey).forEach(([key, inputCode]) => {
     if (!keyController[key]) {
-      keyController[key] = { playerKey: "0", inputCode: inputCode };
+      keyController[key] = { playerKey: 0, inputCode: inputCode };
     }
   });
+  console.log("checked 3", keyController);
 }
 
 function buildRemotePlayersStack() {
@@ -259,7 +271,6 @@ function localLine(playerKey) {
 function updateReadyButton() {
   readyButton.classList.remove("button-green");
   readyButton.classList.remove("button-red");
-  console.log({ localSize: localSize(), bool: !localSize() });
   if (!localSize()) {
     readyButton.classList.add("button-red");
     readyButton.innerHTML = "No Local Player !";
@@ -316,21 +327,11 @@ function handleRemovePlayer(e) {
 }
 
 function removePlayer(playerKey) {
-  console.log("removePlayer(playerKey) before", {
-    playerKey,
-    localPlayers,
-    localPlayersplayerKey: localPlayers[playerKey],
-  });
   if (!localPlayers[playerKey]) {
     return;
   }
   delete localPlayers[playerKey];
 
-  console.log("removePlayer(playerKey) after", {
-    playerKey,
-    localPlayers,
-    localPlayersplayerKey: localPlayers[playerKey],
-  });
   if (playerControllerTwo == playerKey) {
     playerControllerTwo = null;
   } else if (playerController == playerKey) {
@@ -341,22 +342,16 @@ function removePlayer(playerKey) {
       playerController = null;
     }
   }
+  console.log("removePlayer before", keyController);
   keyController = Object.fromEntries(
     Object.entries(keyController).filter(([key, value]) => {
       return value.playerKey !== playerKey;
     })
   );
+  console.log("removePlayer after", keyController);
 
-  console.log("removePlayer ======> ", {
-    localPlayers,
-    json: JSON.stringify(localPlayers),
-    sessionStorage: sessionStorage.getItem("localPlayers"),
-  });
   sessionStorage.setItem("localPlayers", JSON.stringify(localPlayers));
   window.dispatchEvent(new CustomEvent("store", { detail: "ready" }));
-  console.log("removePlayer < ===== ", {
-    sessionStorage: sessionStorage.getItem("localPlayers"),
-  });
   socket.emit("updatePlayers", JSON.stringify(localPlayers));
   sessionStorage.setItem("keyController", JSON.stringify(keyController));
   window.dispatchEvent(new CustomEvent("store", { detail: "keyController" }));
@@ -414,6 +409,11 @@ function editPlayer() {
     right: false,
     down: false,
   };
+  Object.values(keyController).map((value) => {
+    if (value.playerKey == setPlayerKey) {
+      value.playerKey = 0;
+    }
+  });
   if (mobileCheck()) {
     setPlayerControls = {
       up: true,
@@ -474,43 +474,29 @@ function saveEdit() {
   }
   localPlayers[setPlayerKey] = { ...setPlayer };
 
-  console.log("saveEdit ======> ", {
-    localPlayers,
-    json: JSON.stringify(localPlayers),
-    sessionStorage: sessionStorage.getItem("localPlayers"),
-  });
   sessionStorage.setItem("localPlayers", JSON.stringify(localPlayers));
-  window.dispatchEvent(new CustomEvent("store", { detail: "localPlayers" }));
-  console.log("saveEdit < ===== ", {
-    sessionStorage: sessionStorage.getItem("localPlayers"),
-  });
-  socket.emit("updatePlayers", JSON.stringify(localPlayers));
   sessionStorage.setItem("keyController", JSON.stringify(keyController));
-  window.dispatchEvent(new CustomEvent("store", { detail: "keyController" }));
   sessionStorage.setItem("localKeyCount", localKeyCount);
-  window.dispatchEvent(new CustomEvent("store", { detail: "localKeyCount" }));
   if (playerController) {
     sessionStorage.setItem("playerController", playerController);
-    window.dispatchEvent(
-      new CustomEvent("store", { detail: "playerController" })
-    );
   } else {
     sessionStorage.removeItem("playerController");
-    window.dispatchEvent(
-      new CustomEvent("store", { detail: "playerController" })
-    );
   }
   if (playerControllerTwo) {
     sessionStorage.setItem("playerControllerTwo", playerControllerTwo);
-    window.dispatchEvent(
-      new CustomEvent("store", { detail: "playerControllerTwo" })
-    );
   } else {
     sessionStorage.removeItem("playerControllerTwo");
-    window.dispatchEvent(
-      new CustomEvent("store", { detail: "playerControllerTwo" })
-    );
   }
+  window.dispatchEvent(new CustomEvent("store", { detail: "localPlayers" }));
+  window.dispatchEvent(new CustomEvent("store", { detail: "keyController" }));
+  window.dispatchEvent(new CustomEvent("store", { detail: "localKeyCount" }));
+  window.dispatchEvent(
+    new CustomEvent("store", { detail: "playerController" })
+  );
+  window.dispatchEvent(
+    new CustomEvent("store", { detail: "playerControllerTwo" })
+  );
+  socket.emit("updatePlayers", JSON.stringify(localPlayers));
   exitEdit();
 }
 
@@ -544,11 +530,6 @@ function handleUseController() {
     };
     controllerMap.style.display = "none";
     controllerPlayer.style.display = "block";
-    Object.values(keyController).map((value) => {
-      if (value.playerKey == setPlayerKey) {
-        value.playerKey = 0;
-      }
-    });
   }
   updateUseControllerButton();
 }
@@ -569,23 +550,9 @@ function initMapKey() {
     buttonMap.classList.remove("map");
     buttonMap.classList.add("mapping");
     Object.entries(keyController).forEach(([keyCode, value]) => {
-      if (value.playerKey != setPlayerKey) {
-        return;
-      }
-      if (value.inputCode == buttonMap.inputCode) {
-        buttonMap.classList.add("map");
-        buttonMap.classList.remove("mapping");
-        buttonMap.setAttribute("data-content", stringFromKeyCode(keyCode));
-        setPlayerControls[buttonMap.inputCode] = true;
-      }
-    });
-    if (setPlayerControls[buttonMap.inputCode]) {
-      return;
-    }
-    Object.entries(keyController).forEach(([keyCode, value]) => {
       if (value.playerKey != 0) {
         return;
-      } // playerKey 0 is a default buffer
+      }
       if (setPlayerControls[buttonMap.inputCode]) {
         return;
       }
@@ -597,6 +564,7 @@ function initMapKey() {
         setPlayerControls[buttonMap.inputCode] = true;
       }
     });
+    console.log("initMapKey : keyController", keyController);
   });
 }
 
@@ -632,8 +600,13 @@ function handleClick(e) {
 }
 
 function endMapKey() {
-  waitForKey.target.classList.add("map");
-  waitForKey.target.classList.remove("mapping");
+  if (setPlayerControls[waitForKey.target.inputCode]) {
+    waitForKey.target.classList.add("map");
+    waitForKey.target.classList.remove("mapping");
+  } else {
+    waitForKey.target.classList.add("mapping");
+    waitForKey.target.classList.remove("map");
+  }
   waitForKey = null;
 }
 
@@ -659,8 +632,14 @@ function mapKey(keyCode) {
       value.playerKey == setPlayerKey &&
       value.inputCode == waitForKey.target.inputCode
     ) {
+      console.log("keyController[key]", key);
       delete keyController[key];
     }
+  });
+  console.log("mapKey", {
+    keyCode,
+    setPlayerKey,
+    inputCode: waitForKey.target.inputCode,
   });
   keyController[keyCode] = {
     playerKey: setPlayerKey,
