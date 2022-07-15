@@ -479,10 +479,10 @@ function initMapKey() {
     buttonMap.classList.remove("map");
     buttonMap.classList.add("mapping");
     Object.entries(keyController).forEach(([keyCode, value]) => {
-      if (value.playerKey !== setPlayerKey) {
+      if (value.playerKey != setPlayerKey) {
         return;
       }
-      if (value.inputCode === buttonMap.inputCode) {
+      if (value.inputCode == buttonMap.inputCode) {
         buttonMap.classList.add("map");
         buttonMap.classList.remove("mapping");
         buttonMap.setAttribute("data-content", stringFromKeyCode(keyCode));
@@ -493,13 +493,13 @@ function initMapKey() {
       return;
     }
     Object.entries(keyController).forEach(([keyCode, value]) => {
-      if (value.playerKey) {
+      if (value.playerKey != 0) {
         return;
       } // playerKey 0 is a default buffer
       if (setPlayerControls[buttonMap.inputCode]) {
         return;
       }
-      if (value.inputCode === buttonMap.inputCode) {
+      if (value.inputCode == buttonMap.inputCode) {
         value.playerKey = setPlayerKey;
         buttonMap.classList.add("map");
         buttonMap.classList.remove("mapping");
