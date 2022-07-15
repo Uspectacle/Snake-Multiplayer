@@ -1,4 +1,11 @@
-export { mobileCheck, defaultColor, defaultName, splitKey, clientId };
+export {
+  mobileCheck,
+  defaultColor,
+  defaultName,
+  splitKey,
+  clientId,
+  localSize,
+};
 
 function defaultColor() {
   return (
@@ -7,6 +14,14 @@ function defaultColor() {
       .toString(16)
       .padStart(6, "0")
   );
+}
+
+function localSize() {
+  const localPlayer = sessionStorage.getItem("localPlayers");
+  if (!localPlayer) {
+    return 0;
+  }
+  return Object.keys(localPlayer).length;
 }
 
 function capFirst(string) {
@@ -26,6 +41,7 @@ function isPrime(num) {
   }
   return num > 1;
 }
+
 function clientId() {
   return JSON.stringify({
     roomCode: sessionStorage.getItem("roomCode"),

@@ -6,6 +6,7 @@ import {
   clientId,
   mobileCheck,
   splitKey,
+  localSize,
 } from "/frontend/utils.js";
 
 import {
@@ -63,18 +64,24 @@ window.onload = (event) => {
   initFullScreen(document);
   socket.emit("id", clientId());
   updateGame();
+  updateReadyButton();
 };
 
 window.addEventListener("storage", handleStorage);
 function handleStorage(event) {
   if (event.key == "gameState") {
     updateGame();
+  } else if (event.key == "ready") {
+    updateReadyButton();
+  } else if (event.key == "clientKey") {
+    if (!sessionStorage.getItem("clientKey"))
+      window.location.pathname = "frontend/index.html";
   }
 }
 
 document.addEventListener("keydown", keydown);
 
-readyButton.addEventListener("click", updateReady);
+readyButton.addEventListener("click", changeReady);
 
 upButton.addEventListener("click", handleDirectionButton);
 upButton.inputCode = "up";
@@ -102,10 +109,19 @@ downButtonTwo.playerTwo = true;
 // newPlayerButton.addEventListener("click", handleNewPlayer);
 
 // *** Update Game Screen ***
-
 function updateGame() {
+  if (!sessionStorage.getItem("clientKey")) {
+    window.location.pathname = "frontend/index.html";
+    return;
+  }
+  if (!localSize()) {
+    window.location.pathname = "frontend/players.html";
+    return;
+  }
+
   const gameState = JSON.parse(sessionStorage.getItem("gameState"));
   const paintSettings = JSON.parse(sessionStorage.getItem("paintSettings"));
+
   if (!gameState) {
     return;
   }
@@ -119,8 +135,7 @@ function updateGame() {
   }
   if (gameState.time === 0) {
     readyButton.style.display = "none";
-    ready = false;
-    updateReadyButton();
+    sessionStorage.removeItem("ready");
   }
   if (gameState.event === "after") {
     readyButton.style.opacity = 1;
@@ -131,20 +146,25 @@ function updateGame() {
 
 // *** Game Screen : Ready Button ***
 
-function updateReady() {
-  ready = !ready;
-  updateReadyButton();
-  sendUpdate();
+function changeReady() {
+  if (sessionStorage.getItem("ready")) {
+    sessionStorage.removeItem("ready");
+  } else {
+    sessionStorage.setItem("ready", true);
+  }
 }
 
 function updateReadyButton() {
-  if (ready) {
-    readyButton.classList.add("redbutton");
-    readyButton.innerText = "I'm NOT Ready";
+  readyButton.classList.remove("button-red");
+  readyButton.classList.remove("button-green");
+  if (sessionStorage.getItem("ready")) {
+    readyButton.classList.add("button-red");
+    readyButton.innerText = "Wait!";
   } else {
-    readyButton.classList.remove("redbutton");
-    readyButton.innerText = "I'm Ready";
+    readyButton.classList.add("button-green");
+    readyButton.innerText = "Start";
   }
+  socket.emit("updateReady", sessionStorage.getItem("ready"));
 }
 
 // * Game Screen : Controller *

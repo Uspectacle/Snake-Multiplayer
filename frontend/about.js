@@ -6,6 +6,7 @@ import {
   clientId,
   mobileCheck,
   splitKey,
+  localSize,
 } from "/frontend/utils.js";
 
 import {
@@ -26,6 +27,7 @@ const socket = buildServer();
 // *** Event Listener ***
 
 window.onload = (event) => {
+  sessionStorage.removeItem("ready");
   initFullScreen(document);
   socket.emit("id", clientId());
 };

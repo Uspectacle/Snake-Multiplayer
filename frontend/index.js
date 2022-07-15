@@ -6,6 +6,7 @@ import {
   clientId,
   mobileCheck,
   splitKey,
+  localSize,
 } from "/frontend/utils.js";
 
 import {
@@ -30,6 +31,7 @@ const roomCodeInput = document.getElementById("roomCodeInput");
 // *** Event Listener ***
 
 window.onload = (event) => {
+  sessionStorage.removeItem("ready");
   initFullScreen(document);
   socket.emit("id", clientId());
   blinkTitle();

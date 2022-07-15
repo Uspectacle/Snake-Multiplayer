@@ -6,6 +6,7 @@ import {
   clientId,
   mobileCheck,
   splitKey,
+  localSize,
 } from "/frontend/utils.js";
 
 import {
@@ -32,6 +33,17 @@ let setPlayerKey;
 let setPlayer;
 let setPlayerControls;
 let waitForKey = false;
+
+const defaultKey = {
+  37: "left",
+  38: "up",
+  39: "right",
+  40: "down",
+  81: "left",
+  83: "down",
+  68: "right",
+  90: "up",
+};
 
 // *** Import element from the html document ***
 
@@ -60,17 +72,28 @@ const downButtonMap = document.getElementById("downButtonMap");
 const saveEditButton = document.getElementById("saveEdit");
 const cancelEditButton = document.getElementById("cancelEdit");
 
+const readyButton = document.getElementById("readyButton");
+
 // *** Event Listener ***
 
 window.onload = (event) => {
+  sessionStorage.removeItem("ready");
   initFullScreen(document);
   socket.emit("id", clientId());
   updatePlayers();
 };
 
 window.addEventListener("storage", handleStorage);
+
 function handleStorage(event) {
   if (event.key == "remotePlayers") {
+    updatePlayers();
+  } else if (event.key == "clientKey") {
+    if (!sessionStorage.getItem("clientKey")) {
+      closeShare();
+      updateReadyButton();
+    }
+  } else if (event.key == "localPlayers") {
     updatePlayers();
   }
 }
@@ -99,33 +122,24 @@ rightButtonMap.inputCode = "right";
 downButtonMap.addEventListener("click", handleButtonMap);
 downButtonMap.inputCode = "down";
 
+readyButton.addEventListener("click", handleReadyButton);
+
 // *** Update Players Lists ***
 
 function updatePlayers() {
   checkVariables();
   buildRemotePlayersStack();
   buildLocalPlayersStack();
+  updateReadyButton();
 }
 
 function checkVariables() {
-  localPlayers = JSON.parse(sessionStorage.getItem("localPlayers") || {});
-  remotePlayers = JSON.parse(sessionStorage.getItem("remotePlayers") || {});
-  keyController = JSON.parse(
-    sessionStorage.getItem("keyController") || {
-      37: { playerKey: 0, inputCode: "left" },
-      38: { playerKey: 0, inputCode: "up" },
-      39: { playerKey: 0, inputCode: "right" },
-      40: { playerKey: 0, inputCode: "down" },
-      81: { playerKey: 0, inputCode: "left" },
-      83: { playerKey: 0, inputCode: "down" },
-      68: { playerKey: 0, inputCode: "right" },
-      90: { playerKey: 0, inputCode: "up" },
-    }
-  );
+  localPlayers = JSON.parse(sessionStorage.getItem("localPlayers")) || {};
+  remotePlayers = JSON.parse(sessionStorage.getItem("remotePlayers")) || {};
+  keyController = JSON.parse(sessionStorage.getItem("keyController")) || {};
   localKeyCount = sessionStorage.getItem("localKeyCount") || 0;
   playerController = sessionStorage.getItem("playerController");
   playerControllerTwo = sessionStorage.getItem("playerControllerTwo");
-  socket.emit("isLog");
 
   let keys = Object.keys(localPlayers);
   localKeyCount = Math.max(keys);
@@ -149,6 +163,11 @@ function checkVariables() {
       return keys.includes(value.playerKey);
     })
   );
+  Object.entries(defaultKey).forEach(([key, inputCode]) => {
+    if (!keyController[key]) {
+      keyController[key] = { playerKey: "0", inputCode: inputCode };
+    }
+  });
 }
 
 function buildRemotePlayersStack() {
@@ -219,10 +238,38 @@ function localLine(playerKey) {
   return line;
 }
 
+// *** Ready Button ***
+
+function updateReadyButton() {
+  readyButton.classList.remove("button-green");
+  readyButton.classList.remove("button-red");
+  if (!localSize()) {
+    readyButton.classList.add("button-red");
+    readyButton.innerHTML = "No Local Player !";
+    return;
+  }
+  readyButton.classList.add("button-green");
+  readyButton.innerHTML = sessionStorage.getItem("clientKey")
+    ? "Start"
+    : "Join Room";
+}
+
+function handleReadyButton() {
+  if (readyButton.innerHTML == "Start") {
+    sessionStorage.setItem("ready", true);
+    window.location.pathname = "frontend/game.html";
+  } else if (readyButton.innerHTML == "Join Room") {
+    window.location.pathname = "frontend/index.html";
+  }
+}
+
 // *** Share Screen ***
 
 function newRemote() {
-  if (sessionStorage.getItem("isLog") && sessionStorage.getItem("roomCode")) {
+  if (
+    sessionStorage.getItem("clientKey") &&
+    sessionStorage.getItem("roomCode")
+  ) {
     roomCodeDisplay.innerText = sessionStorage.getItem("roomCode");
     sharePopup.classList.add("active");
     shareOverlay.classList.add("active");
@@ -276,7 +323,6 @@ function removePlayer(playerKey) {
   sessionStorage.setItem("keyController", JSON.stringify(keyController));
   sessionStorage.setItem("playerController", playerController);
   sessionStorage.setItem("playerControllerTwo", playerControllerTwo);
-  updatePlayers();
 }
 
 // *** Add Players ***

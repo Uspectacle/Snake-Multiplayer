@@ -34,6 +34,7 @@ import { makeid, combineKeys, splitKey } from "./utils.js";
 // *** Global Variables Declaration ***
 
 let activeRooms = {};
+let disconnectTimeout = {};
 let clients = {};
 let ids = {};
 
@@ -45,14 +46,29 @@ io.on("connection", (client) => {
   client.on("controllerInput", handleControllerInput);
   client.on("updatePlayers", handleUpdatePlayers);
   client.on("disconnect", handleDisconnect);
-  client.on("isLog", sendLog);
   client.on("id", handleId);
 
   function handleId(clientId) {
+    if (!clientId) {
+      return;
+    }
     clients[clientId] = client;
     ids[client.id] = clientId;
-  }
 
+    const roomCode = JSON.parse(clientId).roomCode;
+    if (roomCode) {
+      let room = activeRooms[roomCode];
+      if (room) {
+        if (room.clients) {
+          if (room.clients[clientId]) {
+            clearTimeout(disconnectTimeout[clientId]);
+            delete disconnectTimeout[clientId];
+          }
+        }
+      }
+    }
+    handleDisconnect();
+  }
   // *** Transition from Title to Game ***
 
   function handleNewRoom() {
@@ -114,28 +130,6 @@ io.on("connection", (client) => {
     client.emit("clientId", clientId);
   }
 
-  function sendLog() {
-    const roomCode = JSON.parse(ids[client.id]).roomCode;
-    if (!roomCode) {
-      client.emit("isLog", false);
-      return;
-    }
-    let room = activeRooms[roomCode];
-    if (!room) {
-      client.emit("isLog", false);
-      return;
-    }
-    if (!room.clients) {
-      client.emit("isLog", false);
-      return;
-    }
-    if (!room.clients[ids[client.id]]) {
-      client.emit("isLog", false);
-      return;
-    }
-    client.emit("isLog", true);
-  }
-
   // *** Update Room ***
 
   function handleUpdatePlayers(updatePlayers) {
@@ -166,52 +160,34 @@ io.on("connection", (client) => {
     updateRoom(roomCode);
   }
 
+  function disconnect() {
+    let clientId = ids[client.id];
+    if (clientId) {
+      const roomCode = JSON.parse(clientId).roomCode;
+      if (roomCode) {
+        let room = activeRooms[roomCode];
+        if (room) {
+          if (room.clients) {
+            if (room.clients[clientId]) {
+              if (clients[clientId] == client.id) {
+                clients[clientId].emit("disconnect");
+                getPlayers(clientId).forEach((playerKey) => {
+                  removePlayer(roomCode, playerKey);
+                });
+                updateRoom(roomCode);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
   function handleDisconnect() {
     let clientId = ids[client.id];
-    if (!clientId) {
-      return;
+    if (clientId) {
+      disconnectTimeout[clientId] = setTimeout(disconnect, 5);
     }
-    const roomCode = JSON.parse(clientId).roomCode;
-    if (!roomCode) {
-      return;
-    }
-    let room = activeRooms[roomCode];
-    if (!room) {
-      return;
-    }
-    if (!room.clients) {
-      return;
-    }
-    if (!room.clients[clientId]) {
-      return;
-    }
-    setTimeout(() => {
-      let clientId = ids[client.id];
-      if (!clientId) {
-        return;
-      }
-      const roomCode = JSON.parse(clientId).roomCode;
-      if (!roomCode) {
-        return;
-      }
-      let room = activeRooms[roomCode];
-      if (!room) {
-        return;
-      }
-      if (!room.clients) {
-        return;
-      }
-      if (!room.clients[clientId]) {
-        return;
-      }
-      if (clients[clientId] != client.id) {
-        return;
-      }
-      getPlayers(clientId).forEach((playerKey) => {
-        removePlayer(roomCode, playerKey);
-      });
-      updateRoom(roomCode);
-    }, 1 * 60);
   }
 
   // *** Game Inputs ***
