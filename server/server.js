@@ -45,6 +45,7 @@ io.on("connection", (client) => {
   client.on("joinRoom", handleJoinRoom);
   client.on("controllerInput", handleControllerInput);
   client.on("updatePlayers", handleUpdatePlayers);
+  client.on("updateReady", handleUpdateReady);
   client.on("disconnect", handleDisconnect);
   client.on("id", handleId);
 
@@ -131,6 +132,27 @@ io.on("connection", (client) => {
   }
 
   // *** Update Room ***
+
+  function handleUpdateReady(ready) {
+    if (!ids[client.id]) {
+      return;
+    }
+    let clientId = JSON.parse(ids[client.id]);
+    const roomCode = clientId.roomCode;
+    let room = activeRooms[roomCode];
+    if (!room) {
+      return;
+    }
+    if (!room.clients) {
+      return;
+    }
+    let thisClient = room.clients[ids[client.id]];
+    if (!thisClient) {
+      return;
+    }
+    thisClient.ready = ready ? true : false;
+    updateRoom(roomCode);
+  }
 
   function handleUpdatePlayers(updatePlayers) {
     let localPlayers = JSON.parse(updatePlayers);
@@ -233,6 +255,7 @@ function updateRoom(roomCode) {
   let allReady = true;
   Object.entries(room.clients).forEach(([clientId, client]) => {
     getPlayers(clientId).forEach((playerKey) => {
+      room.players[playerKey].ready = client.ready;
       readys[playerKey] = client.ready;
       allReady = allReady && client.ready;
     });
@@ -285,9 +308,12 @@ function updateRoom(roomCode) {
         updateRoom(roomCode);
         return;
       }
-      io.sockets
-        .in(roomCode)
-        .emit("onlyGameState", JSON.stringify(room.gameState));
+      Object.keys(room.clients).forEach((clientId) => {
+        if (!clients[clientId]) {
+          return;
+        }
+        clients[clientId].emit("onlyGameState", JSON.stringify(room.gameState));
+      });
     }, 1000 / room.gameState.frameRate);
   }
 

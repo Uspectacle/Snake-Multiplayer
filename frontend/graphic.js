@@ -132,6 +132,9 @@ function initPaint(backCanvas, frontCanvas, state, settings) {
 // *** Paint Main Loop ***
 
 function paintGame(state) {
+  if (!ctx) {
+    return;
+  }
   ctx.clearRect(0, 0, canevasSize, canevasSize);
   paintSnake(state);
   paintFood(state);

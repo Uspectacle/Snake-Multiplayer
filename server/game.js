@@ -29,7 +29,6 @@ function idxToPos(idx, gridSize) {
 
 function createGameState(settings, players) {
   let snakes = JSON.parse(JSON.stringify(players));
-  console.log({ snakes });
   const numSnakes = Object.keys(snakes).length;
   const slice = Math.ceil(numSnakes / 4) + 1;
   const step = Math.floor(settings.gridSize / (slice + 2));
