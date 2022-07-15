@@ -60,11 +60,14 @@ const playersDisplay = document.getElementById("playersDisplay");
 
 // *** Event Listener ***
 
+let keyController;
+
 window.onload = (event) => {
   initFullScreen(document);
   socket.emit("id", clientId());
   updateGame();
   updateReadyButton();
+  keyController = JSON.parse(sessionStorage.getItem("keyController"));
 };
 
 window.addEventListener("store", handleStorage);
@@ -174,10 +177,6 @@ function updateReadyButton() {
 // * Game Screen : Controller *
 
 function keydown(e) {
-  if (waitForKey) {
-    mapKey(e.keyCode);
-    return;
-  }
   let controllerInput = keyController[e.keyCode];
   if (!controllerInput) {
     return;
