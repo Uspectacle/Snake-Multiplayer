@@ -85,15 +85,15 @@ function gameLoop(state) {
   if (!state) {
     return true;
   }
-  if (state.event === "over") {
+  if (state.event == "over") {
     return;
   }
   // Update time
   state.time++;
-  if (state.event === "init") {
+  if (state.event == "init") {
     state.event = "start";
   }
-  if (state.event === "start") {
+  if (state.event == "start") {
     if (state.time < 0) {
       return;
     }
@@ -341,7 +341,7 @@ function scoresToRewards(state) {
   let reward;
   let lastScore;
   return scores.map(([playerKey, score], scoreIndex) => {
-    reward = score === lastScore ? reward : scoreIndex;
+    reward = score == lastScore ? reward : scoreIndex;
     lastScore = score;
     return [playerKey, reward];
   });

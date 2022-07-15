@@ -21,7 +21,7 @@ function localSize() {
   if (!localPlayer) {
     return 0;
   }
-  return Object.keys(localPlayer).length;
+  return Object.keys(JSON.parse(localPlayer)).length;
 }
 
 function capFirst(string) {
@@ -35,7 +35,7 @@ function getRandomInt(min, max) {
 function isPrime(num) {
   const sqrt = Math.sqrt(num);
   for (let divisor = 2; divisor <= sqrt; divisor++) {
-    if (num % divisor === 0) {
+    if (num % divisor == 0) {
       return false;
     }
   }

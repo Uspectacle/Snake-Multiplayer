@@ -13,7 +13,7 @@ function makeid(length) {
 function isPrime(num) {
   const sqrt = Math.sqrt(num);
   for (let divisor = 2; divisor <= sqrt; divisor++) {
-    if (num % divisor === 0) {
+    if (num % divisor == 0) {
       return false;
     }
   }

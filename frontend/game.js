@@ -126,20 +126,20 @@ function updateGame() {
   if (!gameState) {
     return;
   }
-  if (gameState.event === "init") {
+  if (gameState.event == "init") {
     initPaint(backCanvas, frontCanvas, gameState, paintSettings);
     readyButton.style.opacity = 1;
     readyButton.style.display = "block";
   }
-  if (gameState.event === "start") {
+  if (gameState.event == "start") {
     readyButton.style.opacity = -(gameState.time / gameState.frameRate) / 5;
   }
-  if (gameState.time === 0) {
+  if (gameState.time == 0) {
     readyButton.style.display = "none";
     sessionStorage.removeItem("ready");
     window.dispatchEvent(new CustomEvent("store", { detail: "ready" }));
   }
-  if (gameState.event === "after") {
+  if (gameState.event == "after") {
     readyButton.style.opacity = 1;
     readyButton.style.display = "block";
   }
@@ -212,19 +212,19 @@ function handlePlayers(players, readys) {
     let playerDiv = display(
       player.admin,
       readys[playerKey],
-      score === maxScore,
+      score == maxScore,
       player.color,
       player.name
     );
     playersDisplay.append(playerDiv);
 
     let keys = splitKey(playerKey);
-    let localKey = keys[0] === clientKey ? keys[1] : null;
-    if (playerController === localKey) {
+    let localKey = keys[0] == clientKey ? keys[1] : null;
+    if (playerController == localKey) {
       displayPlayer.replaceChildren();
       displayPlayer.append(playerDiv.cloneNode(true));
     }
-    if (playerControllerTwo === localKey) {
+    if (playerControllerTwo == localKey) {
       displayPlayerTwo.replaceChildren();
       displayPlayerTwo.append(playerDiv.cloneNode(true));
     }

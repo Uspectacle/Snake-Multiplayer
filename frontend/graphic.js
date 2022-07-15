@@ -238,7 +238,7 @@ function velToCol(vel) {
 
 function curvToCol(curve, vel) {
   if (curve.x && curve.y) {
-    if (curve.x === curve.y) {
+    if (curve.x == curve.y) {
       // (>^ or v<) : (^> or <v)
       return vel.x > vel.y ? 2 : 4;
     } else {

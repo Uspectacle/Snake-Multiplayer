@@ -259,6 +259,7 @@ function localLine(playerKey) {
 function updateReadyButton() {
   readyButton.classList.remove("button-green");
   readyButton.classList.remove("button-red");
+  console.log({ localSize: localSize(), bool: !localSize() });
   if (!localSize()) {
     readyButton.classList.add("button-red");
     readyButton.innerHTML = "No Local Player !";
@@ -432,7 +433,7 @@ function editPlayer() {
     useController.style.display = "none";
     controllerMap.style.display = "none";
   } else if (playerController) {
-    if (playerController === setPlayerKey) {
+    if (playerController == setPlayerKey) {
       setPlayerControls = {
         up: true,
         left: true,
@@ -522,7 +523,7 @@ function exitEdit() {
 // *** Use Controller ***
 
 function handleUseController() {
-  if (playerController === setPlayerKey) {
+  if (playerController == setPlayerKey) {
     playerController = null;
     controllerMap.style.display = "block";
     controllerPlayer.style.display = "none";
@@ -544,7 +545,7 @@ function handleUseController() {
     controllerMap.style.display = "none";
     controllerPlayer.style.display = "block";
     Object.values(keyController).map((value) => {
-      if (value.playerKey === setPlayerKey) {
+      if (value.playerKey == setPlayerKey) {
         value.playerKey = 0;
       }
     });
@@ -553,7 +554,7 @@ function handleUseController() {
 }
 
 function updateUseControllerButton() {
-  if (playerController === setPlayerKey) {
+  if (playerController == setPlayerKey) {
     useController.innerText = "🎹 Use Keyboard";
   } else {
     useController.innerText = "🖱️ Use Mouse";
@@ -639,8 +640,8 @@ function endMapKey() {
 function mapKey(keyCode) {
   if (keyController[keyCode]) {
     let keyUser = keyController[keyCode].playerKey;
-    if (keyUser) {
-      if (keyUser === setPlayerKey) {
+    if (keyUser != 0) {
+      if (keyUser == setPlayerKey) {
         errorMapKey.innerText = "You already use this key";
       } else if (localPlayers[keyUser]) {
         errorMapKey.innerText =
@@ -655,8 +656,8 @@ function mapKey(keyCode) {
   }
   Object.entries(keyController).forEach(([key, value]) => {
     if (
-      value.playerKey === setPlayerKey &&
-      value.inputCode === waitForKey.target.inputCode
+      value.playerKey == setPlayerKey &&
+      value.inputCode == waitForKey.target.inputCode
     ) {
       delete keyController[key];
     }
@@ -671,16 +672,16 @@ function mapKey(keyCode) {
 }
 
 function stringFromKeyCode(keyCode) {
-  if (parseInt(keyCode) === 37) {
+  if (parseInt(keyCode) == 37) {
     return "🠜";
   }
-  if (parseInt(keyCode) === 38) {
+  if (parseInt(keyCode) == 38) {
     return "🠝";
   }
-  if (parseInt(keyCode) === 39) {
+  if (parseInt(keyCode) == 39) {
     return "🠞";
   }
-  if (parseInt(keyCode) === 40) {
+  if (parseInt(keyCode) == 40) {
     return "🠟";
   }
   return String.fromCharCode(parseInt(keyCode));

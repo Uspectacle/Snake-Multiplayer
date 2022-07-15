@@ -240,13 +240,13 @@ function updateRoom(roomCode) {
 
   let init = true;
   if (room.gameState) {
-    if (allReady || room.gameState.event === "loop") {
+    if (allReady || room.gameState.event == "loop") {
       init = false;
     }
-    if (room.gameState.event === "after") {
+    if (room.gameState.event == "after") {
       init = true;
     }
-    if (room.gameState.event === "over") {
+    if (room.gameState.event == "over") {
       room.gameState.event = "after";
       init = false;
     }
@@ -259,7 +259,7 @@ function updateRoom(roomCode) {
 
   let start = false;
   if (room.gameState) {
-    if (allReady && room.gameState.event === "init") {
+    if (allReady && room.gameState.event == "init") {
       start = true;
     }
   }
@@ -274,12 +274,12 @@ function updateRoom(roomCode) {
         });
       }
       gameLoop(room.gameState);
-      if (room.gameState.time === 0) {
+      if (room.gameState.time == 0) {
         Object.values(room.clients).forEach((client) => {
           client.ready = false;
         });
       }
-      if (room.gameState.event === "over") {
+      if (room.gameState.event == "over") {
         clearInterval(room.gameClock);
         room.gameClock = null;
         updateRoom(roomCode);
