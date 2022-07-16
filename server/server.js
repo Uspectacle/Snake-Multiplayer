@@ -172,13 +172,12 @@ io.on("connection", (client) => {
     getPlayers(ids[client.id]).forEach((playerKey) => {
       removePlayer(roomCode, playerKey);
     });
-    Object.entries(localPlayers).forEach(([localKey, player]) => {
-      let playerKey = combineKeys([clientId.clientKey, localKey]);
-      // player.ready = unpack.ready;
-      room.players[playerKey] = player;
-    });
-    // room.settings = unpack.settings;
-    // thisClient.ready = unpack.ready;
+    if (localPlayers) {
+      Object.entries(localPlayers).forEach(([localKey, player]) => {
+        let playerKey = combineKeys([clientId.clientKey, localKey]);
+        room.players[playerKey] = player;
+      });
+    }
     updateRoom(roomCode);
   }
 
