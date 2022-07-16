@@ -30,6 +30,15 @@ html {
   align-items: center;
 }
 
+iframe {
+  display: block;
+  height: 100%;
+  width: 100%;
+  border: none;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
 * {
   box-sizing: border-box;
   font-family: sans-serif;
@@ -635,8 +644,8 @@ h2 > button {
 .controllerContainer {
   display: flex;
   flex-direction: column;
-  height: calc(2 * (50vmax - min(100vmax - 22rem, 100vmin) / 2));
-  width: calc(50vmax - min(100vmax - 22rem, 100vmin) / 2);
+  height: calc(2 * (50vmax - min(100vmax - 22rem, 99vmin) / 2));
+  width: calc(50vmax - min(100vmax - 22rem, 99vmin) / 2);
   align-items: center;
   justify-content: center;
 }
@@ -648,8 +657,8 @@ h2 > button {
   }
   .controllerContainer {
     flex-direction: row;
-    height: calc(50vmax - min(100vmax - 22rem, 100vmin) / 2);
-    width: calc(2 * (50vmax - min(100vmax - 22rem, 100vmin) / 2));
+    height: calc(50vmax - min(100vmax - 22rem, 99vmin) / 2);
+    width: calc(2 * (50vmax - min(100vmax - 22rem, 99vmin) / 2));
   }
 }
 .displayPlayer {
@@ -662,14 +671,14 @@ h2 > button {
 /* Game Screen */
 .gameContainer {
   display: block;
-  height: min(100vmax - 22rem, 100vmin);
-  width: min(100vmax - 22rem, 100vmin);
+  height: min(100vmax - 22rem, 99vmin);
+  width: min(100vmax - 22rem, 99vmin);
 }
 
 .game {
   position: absolute;
-  height: min(100vmax - 22rem, 100vmin);
-  width: min(100vmax - 22rem, 100vmin);
+  height: min(100vmax - 22rem, 99vmin);
+  width: min(100vmax - 22rem, 99vmin);
   left: 50%;
   top: 50%;
   -webkit-transform: translate(-50%, -50%);

@@ -11,9 +11,9 @@
     <title>Snakes</title>
   </head>
   <body>
-    <div class="container">_
-      <script type="module" src="about.js"></script>
-      
+    <div class="container">
+      <script type="module" src="home.js"></script>
+
       <!-- Navigation -->
       <div id="nav-latteral" class="nav-latteral">
         <button id="nav-close" class="button-icon top-left">X</button>
@@ -28,17 +28,24 @@
       <div id="nav-wrapper"></div>
       <button id="nav-open" class="button-icon top-left">≡</button>
 
-      <!-- Place Holder -->
+      <!-- Title Screen -->
       <div class="title" id="title"></div>
-      <h2>About Screen not written come back in a few months</h2>
-
-      <!-- One day I swear
-        <button type="submit" class="button green" id="exitRoomButton">
-          🎮 Select other Games
-        </button> 
-      -->
+      <button type="submit" id="newRoomButton" class="button-green">
+        Create New Room
+      </button>
+      <form id="joinRoomForm">
+        <p class="alert" id="errorRoomCode"><br></p>
+        <input class="text-input"
+          type="text"
+          placeholder="Enter Room Code"
+          id="roomCodeInput"
+          autocomplete="off"
+          maxlength="5"
+        >
+        <button type="submit" id="joinRoomButton" class="button-green">
+          Join Room
+        </button>
+      </form>
     </div>
   </body>
 </html>
-
-<!-- 😃⚙️❌↺✔️  -->

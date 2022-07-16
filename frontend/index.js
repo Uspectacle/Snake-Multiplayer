@@ -16,103 +16,52 @@ import {
   backgroundColorsDefault,
 } from "/frontend/graphic.js";
 
-import { initFullScreen } from "/frontend/fullscreen.js";
+import { initNavigation } from "/frontend/navigation.js";
 import { buildServer } from "/frontend/handlePackage.js";
 const socket = buildServer();
 
 // *** Import element from the html document ***
 
-const title = document.getElementById("title");
-const newRoomButton = document.getElementById("newRoomButton");
-const joinRoomForm = document.getElementById("joinRoomForm");
-const errorRoomCode = document.getElementById("errorRoomCode");
-const roomCodeInput = document.getElementById("roomCodeInput");
-
 // *** Event Listener ***
 
 window.onload = (event) => {
-  sessionStorage.removeItem("ready");
-  window.dispatchEvent(new CustomEvent("store", { detail: "ready" }));
-  initFullScreen(document);
-  socket.emit("id", clientId());
-  blinkTitle();
-  initRoomCode();
+  initNavigation(document);
 };
 
-newRoomButton.addEventListener("click", newRoom);
-joinRoomForm.addEventListener("submit", joinRoom);
-roomCodeInput.addEventListener("input", removeErrorRoomCode);
+const fullScreen = document.getElementById("fullScreen");
+
+fullScreen.addEventListener("click", haddleFullScreen);
+function haddleFullScreen() {
+  toggleFullScreen(document);
+}
+
+function toggleFullScreen(document) {
+  if (document.fullscreenElement) {
+    sessionStorage.removeItem("fullScreen");
+    window.dispatchEvent(new CustomEvent("store", { detail: "fullScreen" }));
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+      /* Safari */
+      document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) {
+      /* IE11 */
+      document.msExitFullscreen();
+    }
+  } else {
+    sessionStorage.setItem("fullScreen", true);
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen();
+    } else if (document.documentElement.webkitRequestFullscreen) {
+      /* Safari */
+      document.documentElement.webkitRequestFullscreen();
+    } else if (document.documentElement.msRequestFullscreen) {
+      /* IE11 */
+      document.documentElement.msRequestFullscreen();
+    }
+  }
+}
 
 // *** Server Listener ***
 
-socket.on("unknownRoom", handleUnknownRoom);
-socket.on("tooManyPlayers", handleTooManyPlayers);
-socket.on("accessRestricted", handleAccessRestricted);
-
 // *** Initialisation ***
-
-// *** Blink the Title ***
-
-function blinkTitle() {
-  setTimeout(function () {
-    title.classList.add("blink");
-    setTimeout(function () {
-      title.classList.remove("blink");
-      blinkTitle();
-    }, 150);
-  }, 2000 + Math.floor(Math.random() * 8000));
-}
-
-// *** Init RoomCode from storage ***
-
-function initRoomCode() {
-  let roomCode = new URLSearchParams(window.location.search).get("r");
-  if (roomCode) {
-    sessionStorage.setItem("roomCode", roomCode);
-    window.dispatchEvent(new CustomEvent("store", { detail: "roomCode" }));
-  }
-  if (roomCodeInput.value) {
-    joinRoom();
-  }
-  roomCodeInput.value = sessionStorage.getItem("roomCode");
-}
-
-// *** Handle Buttons ***
-
-function newRoom() {
-  socket.emit("newRoom");
-}
-
-function joinRoom(event) {
-  if (event) {
-    event.preventDefault();
-    sessionStorage.removeItem("roomCode");
-    window.dispatchEvent(new CustomEvent("store", { detail: "roomCode" }));
-  }
-  removeErrorRoomCode();
-  const roomCode = roomCodeInput.value.toUpperCase();
-  if (roomCode) {
-    socket.emit("joinRoom", roomCode);
-  }
-}
-
-// *** Handle RoomCode errors ***
-
-function handleUnknownRoom() {
-  errorRoomCode.style.opacity = 1;
-  errorRoomCode.innerText = "Unknown Room Code";
-}
-
-function handleTooManyPlayers() {
-  errorRoomCode.style.opacity = 1;
-  errorRoomCode.innerText = "Too many players in this Room";
-}
-
-function handleAccessRestricted() {
-  errorRoomCode.style.opacity = 1;
-  errorRoomCode.innerText = "Access Restricted to this Room";
-}
-
-function removeErrorRoomCode() {
-  errorRoomCode.style.opacity = 0;
-}

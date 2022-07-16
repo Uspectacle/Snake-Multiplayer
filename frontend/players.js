@@ -16,7 +16,7 @@ import {
   backgroundColorsDefault,
 } from "/frontend/graphic.js";
 
-import { initFullScreen } from "/frontend/fullscreen.js";
+import { initNavigation } from "/frontend/navigation.js";
 import { buildServer } from "/frontend/handlePackage.js";
 const socket = buildServer();
 
@@ -79,7 +79,7 @@ const readyButton = document.getElementById("readyButton");
 window.onload = (event) => {
   sessionStorage.removeItem("ready");
   window.dispatchEvent(new CustomEvent("store", { detail: "ready" }));
-  initFullScreen(document);
+  initNavigation(document);
   socket.emit("id", clientId());
   updatePlayers();
   socket.emit("updatePlayers", sessionStorage.getItem("localPlayers"));
@@ -281,7 +281,7 @@ function handleReadyButton() {
     window.dispatchEvent(new CustomEvent("store", { detail: "ready" }));
     window.location.pathname = "frontend/game.html";
   } else if (readyButton.innerHTML == "Join Room") {
-    window.location.pathname = "frontend/index.html";
+    window.location.pathname = "frontend/home.html";
   }
 }
 
@@ -297,7 +297,7 @@ function newRemote() {
     shareOverlay.classList.add("active");
     return;
   }
-  window.location.pathname = "frontend/index.html";
+  window.location.pathname = "frontend/home.html";
 }
 
 function copyRoomCode() {

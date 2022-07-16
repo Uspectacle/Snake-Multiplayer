@@ -28,6 +28,6 @@ $medium-up: "only screen and (min-width: #{$medium})";
 $medium-down: "only screen and (max-width: #{$medium})";
 
 $quarter-min: 11rem;
-$game-size: min(calc(100vmax - 2*$quarter-min), 100vmin);
+$game-size: min(calc(100vmax - 2*$quarter-min), 99vmin);
 $quarter-size: calc(50vmax - $game-size/2);
 $game-font: calc(min($quarter-size, 50vmin) * 7/100);

@@ -16,7 +16,7 @@ import {
   backgroundColorsDefault,
 } from "/frontend/graphic.js";
 
-import { initFullScreen } from "/frontend/fullscreen.js";
+import { initNavigation } from "/frontend/navigation.js";
 import { buildServer } from "/frontend/handlePackage.js";
 const socket = buildServer();
 
@@ -63,7 +63,7 @@ const playersDisplay = document.getElementById("playersDisplay");
 let keyController;
 
 window.onload = (event) => {
-  initFullScreen(document);
+  initNavigation(document);
   socket.emit("id", clientId());
   updateGame();
   updateReadyButton();
@@ -80,7 +80,7 @@ function handleStorage(event) {
     updateReadyButton();
   } else if (event.detail == "clientKey") {
     if (!sessionStorage.getItem("clientKey")) {
-      window.location.pathname = "frontend/index.html";
+      window.location.pathname = "frontend/home.html";
     }
   } else if (event.detail == "playerController") {
     updateControllers();
@@ -119,7 +119,7 @@ downButtonTwo.playerTwo = true;
 
 function updateGame() {
   if (!sessionStorage.getItem("clientKey")) {
-    window.location.pathname = "frontend/index.html";
+    window.location.pathname = "frontend/home.html";
     return;
   }
   if (!localSize()) {

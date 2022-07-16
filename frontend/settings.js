@@ -16,7 +16,7 @@ import {
   backgroundColorsDefault,
 } from "/frontend/graphic.js";
 
-import { initFullScreen } from "/frontend/fullscreen.js";
+import { initNavigation } from "/frontend/navigation.js";
 import { buildServer } from "/frontend/handlePackage.js";
 const socket = buildServer();
 
@@ -29,7 +29,7 @@ const socket = buildServer();
 window.onload = (event) => {
   sessionStorage.removeItem("ready");
   window.dispatchEvent(new CustomEvent("store", { detail: "ready" }));
-  initFullScreen(document);
+  initNavigation(document);
   socket.emit("id", clientId());
 };
 

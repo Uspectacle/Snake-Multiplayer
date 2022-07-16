@@ -30,7 +30,7 @@ function handleDisconnect() {
   window.dispatchEvent(new CustomEvent("store", { detail: "remotePlayers" }));
   sessionStorage.removeItem("clientKey");
   window.dispatchEvent(new CustomEvent("store", { detail: "clientKey" }));
-  window.location.pathname = "frontend/index.html";
+  window.location.pathname = "frontend/home.html";
 }
 
 function handleClientId(pack) {
