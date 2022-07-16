@@ -27,7 +27,7 @@ $large: 1000px!default;
 $medium-up: "only screen and (min-width: #{$medium})";
 $medium-down: "only screen and (max-width: #{$medium})";
 
-$quarter-min: 10rem;
+$quarter-min: 11rem;
 $game-size: min(calc(100vmax - 2*$quarter-min), 100vmin);
 $quarter-size: calc(50vmax - $game-size/2);
 $game-font: calc(min($quarter-size, 50vmin) * 7/100);

@@ -10,6 +10,7 @@ ul{
 }
 
 a:-webkit-any-link {
+    text-shadow: 1px 1px 3px rgba(0,0,0,.5);
 	color: white;
 	cursor: pointer;
 	text-decoration: none;
@@ -20,6 +21,7 @@ li {
 }
 
 .nav-latteral {
+    text-shadow: 1px 1px 3px rgba(0,0,0,.5);
 	position: absolute;
 	top: 0;
 	left: -100%;
@@ -31,6 +33,7 @@ li {
 }
 
 #nav-wrapper {
+    text-shadow: 1px 1px 3px rgba(0,0,0,.5);
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -52,6 +55,7 @@ li {
 	width: 10em;
 
 	& > a {
+		text-shadow: 1px 1px 3px rgba(0,0,0,.5);
 		text-decoration: none;
 		color: white;
 		font-size: 1.3em;

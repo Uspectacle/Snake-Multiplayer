@@ -1,20 +1,22 @@
 @import "variable";
 
-$main-length: 5em;
+$main-length: 4em;
 $gap-length: calc($main-length / 10);
 $border-length: calc($main-length / 3);
 $test-length: calc($main-length / 6);
 $radius-length: calc($gap-length / 2);
 $width: calc($main-length / 1.4142);
+$full-length: calc(2* ($main-length + $gap-length));
 
 /* Directional-buttons */
 .directional-buttons {
+    flex-shrink: 0;
+    padding: 0 0 0 0;
+    margin: 0;
     font-size: 1em;
-    margin-left: auto;
-    margin-right: auto;
     background-image: none;
-    width: calc(2* ($main-length + $gap-length));
-    height: calc(2* ($main-length + $gap-length));
+    width: $full-length;
+    height: $full-length;
     display: grid;
     grid-gap: $gap-length;
     grid-template-columns: 25fr 50fr 25fr;
@@ -59,9 +61,18 @@ $width: calc($main-length / 1.4142);
     content: "";
 }
 
-.direction-button:hover {color: $darker-green;}
-.direction-button:active {color: $green;}
-.direction-button:active:after {color: rgba(0, 0, 0, 0.6);}
+.direction-button:hover {
+    color: $darker-green;
+}
+.direction-button:active {
+    color: $green;
+}
+.direction-button:active:after {
+    color: rgba(0, 0, 0, 0.6);
+}
+.direction-button:active:after {
+    color: rgba(0, 0, 0, 0.6);
+}
 .up {
     grid-area: up;
     border-radius: $radius-length $radius-length 0 0;

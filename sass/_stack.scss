@@ -25,6 +25,7 @@
 }
 
 h2 {
+    text-shadow: 1px 1px 3px rgba(0,0,0,.5);
     color: $light-green;
     display: flex;
     flex-direction: column;
@@ -56,6 +57,7 @@ h2 {
     }
 
     & > h3 {
+        text-shadow: 1px 1px 3px rgba(0,0,0,.5);
         font-size: 1.5em;
         margin-left: auto;
         margin-right: auto;

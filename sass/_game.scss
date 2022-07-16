@@ -1,45 +1,40 @@
 @import "variable";
 
-/* Game Room: Layers, game, controles & co */
+/* For horizontal browser's viewport */
 
-.quarterContainer {
-    display: none;
-    position: relative;
-    height: 100vh;
-    width: $quarter-size;
+#gameScreen {
+    flex-direction: row;
+    justify-content: space-between;
 }
 
-.quarter {
-    width: 100%;
-    height: 50%;
-    position: relative;
-    display: block;
-    /* margin: auto; */
+.controllerContainer {
+    display: flex;
+    flex-direction: column;
+    height: calc(2*$quarter-size);
+    width: $quarter-size;
+    align-items: center;
+    justify-content: center;
 }
 
 /* For vertical browser's viewport */
 @media (max-width: 100vh) {
-    .gameScreen {display: block;}
+    #gameScreen {
+        flex-direction: column;
+    }
 
-    .quarterContainer {
-        position: relative;
-        display: none;
+    .controllerContainer {
+        flex-direction: row;
         height: $quarter-size;
-        width: 100vw;
-    }
-    .quarter {
-        width: 50%;
-        height: 100%;
+        width: calc(2*$quarter-size);
     }
 }
 
-.quarter img{
-    width: 90%;
-    height: 90%;
+.displayPlayer{
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
 }
-
-
-
 
 /* Game Screen */
 .gameContainer{

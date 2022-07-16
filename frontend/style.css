@@ -21,6 +21,15 @@ html {
   width: 100%;
 }
 
+.container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
 * {
   box-sizing: border-box;
   font-family: sans-serif;
@@ -114,6 +123,7 @@ ul {
 }
 
 a:-webkit-any-link {
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
   color: white;
   cursor: pointer;
   text-decoration: none;
@@ -124,6 +134,7 @@ li {
 }
 
 .nav-latteral {
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
   position: absolute;
   top: 0;
   left: -100%;
@@ -135,6 +146,7 @@ li {
 }
 
 #nav-wrapper {
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
   position: absolute;
   top: 0;
   left: 0;
@@ -158,6 +170,7 @@ li {
   width: 10em;
 }
 .nav-links > a {
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
   text-decoration: none;
   color: white;
   font-size: 1.3em;
@@ -187,14 +200,15 @@ li {
 
 /* Directional-buttons */
 .directional-buttons {
+  flex-shrink: 0;
+  padding: 0 0 0 0;
+  margin: 0;
   font-size: 1em;
-  margin-left: auto;
-  margin-right: auto;
   background-image: none;
-  width: 11em;
-  height: 11em;
+  width: 8.8em;
+  height: 8.8em;
   display: grid;
-  grid-gap: 0.5em;
+  grid-gap: 0.4em;
   grid-template-columns: 25fr 50fr 25fr;
   grid-template-rows: 25fr 50fr 25fr;
   grid-template-areas: "....  up  ....." "left  ..  right" ".... down .....";
@@ -221,15 +235,15 @@ li {
   content: "";
   position: absolute;
   transform: rotate(45deg);
-  width: 3.5355678122em;
-  height: 3.5355678122em;
+  width: 2.8284542498em;
+  height: 2.8284542498em;
   background: currentcolor;
 }
 
 .direction-button:after {
   display: block;
   position: absolute;
-  border: 1.6666666667em solid transparent;
+  border: 1.3333333333em solid transparent;
   color: rgba(255, 250, 250, 0.6);
   content: "";
 }
@@ -246,68 +260,72 @@ li {
   color: rgba(0, 0, 0, 0.6);
 }
 
+.direction-button:active:after {
+  color: rgba(0, 0, 0, 0.6);
+}
+
 .up {
   grid-area: up;
-  border-radius: 0.25em 0.25em 0 0;
+  border-radius: 0.2em 0.2em 0 0;
 }
 
 .up:before {
-  left: calc(50% - 1.7677839061em);
-  top: calc(100% - 1.7677839061em);
+  left: calc(50% - 1.4142271249em);
+  top: calc(100% - 1.4142271249em);
 }
 
 .up:after {
   border-bottom-color: currentcolor;
-  left: calc(50% - 1.6666666667em);
-  top: calc(50% - 2.5em);
+  left: calc(50% - 1.3333333333em);
+  top: calc(50% - 2em);
 }
 
 .left {
   grid-area: left;
-  border-radius: 0.25em 0 0 0.25em;
+  border-radius: 0.2em 0 0 0.2em;
 }
 
 .left:before {
-  left: calc(100% - 1.7677839061em);
-  top: calc(50% - 1.7677839061em);
+  left: calc(100% - 1.4142271249em);
+  top: calc(50% - 1.4142271249em);
 }
 
 .left:after {
   border-right-color: currentcolor;
-  left: calc(50% - 2.5em);
-  top: calc(50% - 1.6666666667em);
+  left: calc(50% - 2em);
+  top: calc(50% - 1.3333333333em);
 }
 
 .right {
   grid-area: right;
-  border-radius: 0 0.25em 0.25em 0;
+  border-radius: 0 0.2em 0.2em 0;
 }
 
 .right:before {
-  right: calc(100% - 1.7677839061em);
-  top: calc(50% - 1.7677839061em);
+  right: calc(100% - 1.4142271249em);
+  top: calc(50% - 1.4142271249em);
 }
 
 .right:after {
   border-left-color: currentcolor;
-  right: calc(50% - 2.5em);
-  top: calc(50% - 1.6666666667em);
+  right: calc(50% - 2em);
+  top: calc(50% - 1.3333333333em);
 }
 
 .down {
   grid-area: down;
-  border-radius: 0 0 0.25em 0.25em;
+  border-radius: 0 0 0.2em 0.2em;
 }
 
 .down:before {
-  left: calc(50% - 1.7677839061em);
-  bottom: calc(100% - 1.7677839061em);
+  left: calc(50% - 1.4142271249em);
+  bottom: calc(100% - 1.4142271249em);
 }
 
 .down:after {
   border-top-color: currentcolor;
-  left: calc(50% - 1.6666666667em);
-  bottom: calc(50% - 2.5em);
+  left: calc(50% - 1.3333333333em);
+  bottom: calc(50% - 2em);
 }
 
 .map:after {
@@ -366,6 +384,7 @@ li {
 }
 
 .roomCode {
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
   padding: 0.2em;
   font-size: 2em;
   text-align: center;
@@ -412,15 +431,6 @@ li {
   font-family: sans-serif;
   margin: 0;
   padding: 0;
-}
-
-.container {
-  height: 100%;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  align-items: center;
 }
 
 /* Title*/
@@ -475,6 +485,7 @@ form > * {
 }
 
 .alert {
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
   font-size: 1em;
   padding: 0;
   color: #ff3300;
@@ -519,6 +530,7 @@ form > * {
 }
 
 h2 {
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
   color: #00ff00;
   display: flex;
   flex-direction: column;
@@ -547,6 +559,7 @@ h2 > button {
   margin: 0 0.25em;
 }
 .stack > li > h3 {
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
   font-size: 1.5em;
   margin-left: auto;
   margin-right: auto;
@@ -555,15 +568,6 @@ h2 > button {
 .stack > .new-player {
   background-color: rgba(0, 0, 0, 0);
   justify-content: center;
-}
-
-.container {
-  height: 100%;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  align-items: center;
 }
 
 .overlay {
@@ -604,6 +608,7 @@ h2 > button {
 }
 
 .qrcode {
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
   background-color: white;
   padding: 1em;
   border-radius: 1em;
@@ -621,54 +626,50 @@ h2 > button {
   padding: 0;
 }
 
-/* Game Room: Layers, game, controles & co */
-.quarterContainer {
-  display: none;
-  position: relative;
-  height: 100vh;
-  width: calc(50vmax - min(100vmax - 20rem, 100vmin) / 2);
+/* For horizontal browser's viewport */
+#gameScreen {
+  flex-direction: row;
+  justify-content: space-between;
 }
 
-.quarter {
-  width: 100%;
-  height: 50%;
-  position: relative;
-  display: block;
-  /* margin: auto; */
+.controllerContainer {
+  display: flex;
+  flex-direction: column;
+  height: calc(2 * (50vmax - min(100vmax - 22rem, 100vmin) / 2));
+  width: calc(50vmax - min(100vmax - 22rem, 100vmin) / 2);
+  align-items: center;
+  justify-content: center;
 }
 
 /* For vertical browser's viewport */
 @media (max-width: 100vh) {
-  .gameScreen {
-    display: block;
+  #gameScreen {
+    flex-direction: column;
   }
-  .quarterContainer {
-    position: relative;
-    display: none;
-    height: calc(50vmax - min(100vmax - 20rem, 100vmin) / 2);
-    width: 100vw;
-  }
-  .quarter {
-    width: 50%;
-    height: 100%;
+  .controllerContainer {
+    flex-direction: row;
+    height: calc(50vmax - min(100vmax - 22rem, 100vmin) / 2);
+    width: calc(2 * (50vmax - min(100vmax - 22rem, 100vmin) / 2));
   }
 }
-.quarter img {
-  width: 90%;
-  height: 90%;
+.displayPlayer {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
 }
 
 /* Game Screen */
 .gameContainer {
   display: block;
-  height: min(100vmax - 20rem, 100vmin);
-  width: min(100vmax - 20rem, 100vmin);
+  height: min(100vmax - 22rem, 100vmin);
+  width: min(100vmax - 22rem, 100vmin);
 }
 
 .game {
   position: absolute;
-  height: min(100vmax - 20rem, 100vmin);
-  width: min(100vmax - 20rem, 100vmin);
+  height: min(100vmax - 22rem, 100vmin);
+  width: min(100vmax - 22rem, 100vmin);
   left: 50%;
   top: 50%;
   -webkit-transform: translate(-50%, -50%);

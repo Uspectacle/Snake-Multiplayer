@@ -11,7 +11,7 @@
     <title>Snakes</title>
   </head>
   <body>
-    <div class="container">
+    <div class="container" id="gameScreen">
       <script type="module" src="game.js"></script>
       
       <!-- Navigation & Full Screen -->
@@ -30,37 +30,41 @@
       <button id="fullScreen" class="button-icon top-right">⛶</button>
 
       <!-- Game Screen -->
-      <div id="Q1Q2" class="quarterContainer">
-        <div id="Q1" class="quarter">
-          <div class="center">
-            <div id="controllerPlayerTwo" style="display: none;">
-              <div id="displayPlayerTwo"><h2>ERROR: displayPlayerTwo not working</h2></div>
-              <div class="directional-buttons">
-                <button id="upButtonTwo" class="direction-button up" role="button"/>
-                <button id="leftButtonTwo" class="direction-button left" role="button"></button>
-                <button id="rightButtonTwo" class="direction-button right" role="button"></button>
-                <button id="downButtonTwo" class="direction-button down" role="button"></button>
-              </div>
-            </div>
-          </div>
-          
-          <div class="center">
-            <div id="roomCodeBox">
-              <h2 class="roomCode">Room code</h2>
-              <button id="copyButton" class="copy"><span id="roomCodeDisplay"></span></button>
-            </div>
+      
+        <!-- <div class="center">
+          <div id="roomCodeBox">
+            <h2 class="roomCode">Room code</h2>
+            <button id="copyButton" class="copy"><span id="roomCodeDisplay"></span></button>
           </div>
         </div>
-
+        
         <div id="Q2" class="quarter">
           <div class="center">
             <div id="playersDisplay" class="playersDisplay">
               <h2>ERROR: players display not working</h2>
             </div>
           </div>
+        </div> -->
+
+        <!-- <div id="Q3" class="quarter">
+          <div class="center">
+            <button id="settingsButton" type="submit" >
+              ⚙️ Settings
+            </button>
+          </div>
+        </div> -->
+
+      <div class="controllerContainer" id="controllerPlayerTwo">
+        <div class="displayPlayer" id="displayPlayerTwo">
+          <h2 class="alert">ERROR: displayPlayer 2</h2>
+        </div>
+        <div class="directional-buttons">
+          <button id="upButtonTwo" class="direction-button up" role="button"/>
+          <button id="leftButtonTwo" class="direction-button left" role="button"></button>
+          <button id="rightButtonTwo" class="direction-button right" role="button"></button>
+          <button id="downButtonTwo" class="direction-button down" role="button"></button>
         </div>
       </div>
-
 
       <div id="gameContainer" class="gameContainer">
         <div id="game" class="game">
@@ -70,28 +74,15 @@
         </div>
       </div>
 
-
-      <div id="Q3Q4" class="quarterContainer">
-        <div id="Q3" class="quarter">
-          <div class="center">
-            <button id="settingsButton" type="submit" >
-              ⚙️ Settings
-            </button>
-          </div>
+      <div class="controllerContainer" id="controllerPlayer">
+        <div class="displayPlayer" id="displayPlayer">
+          <h2 class="alert">ERROR: displayPlayer</h2>
         </div>
-
-        <div id="Q4" class="quarter">
-          <div class="center">
-            <div id="controllerPlayer" style="display: none;">
-              <div id="displayPlayer"><h2 class="alert">ERROR: displayPlayer not working</h2></div>
-              <div class="directional-buttons">
-                <button id="upButton" class="direction-button up" role="button"></button>
-                <button id="leftButton" class="direction-button left" role="button"></button>
-                <button id="rightButton" class="direction-button right" role="button"></button>
-                <button id="downButton" class="direction-button down" role="button"></button>
-              </div>
-            </div>
-          </div>
+        <div class="directional-buttons">
+          <button id="upButton" class="direction-button up" role="button"></button>
+          <button id="leftButton" class="direction-button left" role="button"></button>
+          <button id="rightButton" class="direction-button right" role="button"></button>
+          <button id="downButton" class="direction-button down" role="button"></button>
         </div>
       </div>
     </div>
