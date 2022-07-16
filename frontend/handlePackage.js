@@ -7,7 +7,7 @@ let socket;
 
 function buildServer() {
   let socketCORS = "https://snake-multi-psl.herokuapp.com/";
-  if (window.location.hostname == "127.0.0.1") {
+  if (location.hostname == "127.0.0.1") {
     socketCORS = "http://localhost:3000";
   }
 
@@ -30,7 +30,7 @@ function handleDisconnect() {
   window.dispatchEvent(new CustomEvent("store", { detail: "remotePlayers" }));
   sessionStorage.removeItem("clientKey");
   window.dispatchEvent(new CustomEvent("store", { detail: "clientKey" }));
-  window.location.pathname = "frontend/home.html";
+  location.pathname = "frontend/home.html";
 }
 
 function handleClientId(pack) {
@@ -40,7 +40,7 @@ function handleClientId(pack) {
   window.dispatchEvent(new CustomEvent("store", { detail: "roomCode" }));
   window.dispatchEvent(new CustomEvent("store", { detail: "clientKey" }));
   socket.emit("id", clientId());
-  window.location.pathname = "frontend/players.html";
+  location.pathname = "frontend/players.html";
   return;
 }
 

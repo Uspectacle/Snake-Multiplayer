@@ -80,7 +80,7 @@ function handleStorage(event) {
     updateReadyButton();
   } else if (event.detail == "clientKey") {
     if (!sessionStorage.getItem("clientKey")) {
-      window.location.pathname = "frontend/home.html";
+      location.pathname = "frontend/home.html";
     }
   } else if (event.detail == "playerController") {
     updateControllers();
@@ -119,11 +119,11 @@ downButtonTwo.playerTwo = true;
 
 function updateGame() {
   if (!sessionStorage.getItem("clientKey")) {
-    window.location.pathname = "frontend/home.html";
+    location.pathname = "frontend/home.html";
     return;
   }
   if (!localSize()) {
-    window.location.pathname = "frontend/players.html";
+    location.pathname = "frontend/players.html";
     return;
   }
 

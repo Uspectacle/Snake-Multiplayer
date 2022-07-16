@@ -279,9 +279,9 @@ function handleReadyButton() {
   if (readyButton.innerHTML == "Start") {
     sessionStorage.setItem("ready", true);
     window.dispatchEvent(new CustomEvent("store", { detail: "ready" }));
-    window.location.pathname = "frontend/game.html";
+    location.pathname = "frontend/game.html";
   } else if (readyButton.innerHTML == "Join Room") {
-    window.location.pathname = "frontend/home.html";
+    location.pathname = "frontend/home.html";
   }
 }
 
@@ -297,7 +297,7 @@ function newRemote() {
     shareOverlay.classList.add("active");
     return;
   }
-  window.location.pathname = "frontend/home.html";
+  location.pathname = "frontend/home.html";
 }
 
 function copyRoomCode() {
