@@ -24,6 +24,8 @@ const socket = buildServer();
 
 // *** Import element from the html document ***
 
+const title = document.getElementById("title");
+
 // *** Event Listener ***
 
 window.onload = (event) => {
@@ -31,6 +33,19 @@ window.onload = (event) => {
   window.dispatchEvent(new CustomEvent("store", { detail: "ready" }));
   initNavigation(document);
   socket.emit("id", clientId());
+  blinkTitle();
 };
 
 // *** Server Listener ***
+
+// *** Blink the Title ***
+
+function blinkTitle() {
+  setTimeout(function () {
+    title.classList.add("blink");
+    setTimeout(function () {
+      title.classList.remove("blink");
+      blinkTitle();
+    }, 150);
+  }, 2000 + Math.floor(Math.random() * 8000));
+}

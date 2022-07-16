@@ -1,0 +1,31 @@
+@import "variable";
+
+.text {
+	font-size: 1.2em;
+	color: white;
+	background-color: $very-dark-green;
+	border-radius: 1em;
+	padding: 1em;
+	margin: 1em;
+	text-align: center;
+}
+#github {
+	color: $light-green;
+
+	&:hover {
+		color: $green;
+	}
+}
+#mail {
+	color: $orange;
+
+	&:hover {
+		color: $red;
+	}
+}
+
+em {
+	color: $orange;
+    font-style: normal;
+    font-weight: bold;
+}
