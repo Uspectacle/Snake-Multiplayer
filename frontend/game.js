@@ -67,6 +67,7 @@ window.onload = (event) => {
   socket.emit("id", clientId());
   updateGame();
   updateReadyButton();
+  updateControllers();
   keyController = JSON.parse(sessionStorage.getItem("keyController"));
 };
 
@@ -78,8 +79,13 @@ function handleStorage(event) {
   } else if (event.detail == "ready") {
     updateReadyButton();
   } else if (event.detail == "clientKey") {
-    if (!sessionStorage.getItem("clientKey"))
+    if (!sessionStorage.getItem("clientKey")) {
       window.location.pathname = "frontend/index.html";
+    }
+  } else if (event.detail == "playerController") {
+    updateControllers();
+  } else if (event.detail == "playerControllerTwo") {
+    updateControllers();
   }
 }
 
@@ -97,8 +103,8 @@ downButton.addEventListener("click", handleDirectionButton);
 downButton.inputCode = "down";
 
 upButtonTwo.addEventListener("click", handleDirectionButton);
-upButton.inputCode = "up";
-upButton.playerTwo = true;
+upButtonTwo.inputCode = "up";
+upButtonTwo.playerTwo = true;
 leftButtonTwo.addEventListener("click", handleDirectionButton);
 leftButtonTwo.inputCode = "left";
 leftButtonTwo.playerTwo = true;
@@ -109,10 +115,8 @@ downButtonTwo.addEventListener("click", handleDirectionButton);
 downButtonTwo.inputCode = "down";
 downButtonTwo.playerTwo = true;
 
-// copyButton.addEventListener("click", copyRoomCode);
-// newPlayerButton.addEventListener("click", handleNewPlayer);
-
 // *** Update Game Screen ***
+
 function updateGame() {
   if (!sessionStorage.getItem("clientKey")) {
     window.location.pathname = "frontend/index.html";
@@ -149,7 +153,7 @@ function updateGame() {
   requestAnimationFrame(() => paintGame(gameState));
 }
 
-// *** Game Screen : Ready Button ***
+// *** Ready Button ***
 
 function changeReady() {
   if (sessionStorage.getItem("ready")) {
@@ -174,7 +178,37 @@ function updateReadyButton() {
   socket.emit("updateReady", sessionStorage.getItem("ready"));
 }
 
-// * Game Screen : Controller *
+// *** Controller ***
+
+function updateControllers() {
+  let localPlayers = sessionStorage.getItem("localPlayers");
+  if (!localPlayers) {
+    return;
+  }
+  localPlayers = JSON.parse(localPlayers);
+  let playerController = sessionStorage.getItem("playerController");
+  let playerControllerTwo = sessionStorage.getItem("playerControllerTwo");
+  if (localPlayers[playerControllerTwo]) {
+    displayPlayerTwo.innerHTML = localPlayers[playerControllerTwo].name;
+    controllerPlayerTwo.style.opacity = 1;
+  } else {
+    controllerPlayerTwo.style.opacity = 0;
+  }
+  if (localPlayers[playerController]) {
+    displayPlayer.innerHTML = localPlayers[playerController].name;
+    controllerPlayer.style.opacity = 1;
+  } else {
+    controllerPlayer.style.opacity = 0;
+  }
+}
+
+function handleDirectionButton(e) {
+  let playerKey = e.target.playerTwo
+    ? sessionStorage.getItem("playerControllerTwo")
+    : sessionStorage.getItem("playerController");
+  let controllerInput = { playerKey: playerKey, inputCode: e.target.inputCode };
+  socket.emit("controllerInput", JSON.stringify(controllerInput));
+}
 
 function keydown(e) {
   let controllerInput = keyController[e.keyCode];
@@ -184,13 +218,7 @@ function keydown(e) {
   socket.emit("controllerInput", JSON.stringify(controllerInput));
 }
 
-function handleDirectionButton(e) {
-  let playerKey = e.target.playerTwo ? playerControllerTwo : playerController;
-  let controllerInput = { playerKey: playerKey, inputCode: e.target.inputCode };
-  socket.emit("controllerInput", JSON.stringify(controllerInput));
-}
-
-// *** Game Screen : Players Display ***
+// *** Players Display ***
 
 function handlePlayers(players, readys) {
   let scores = Object.entries(players).map(([playerKey, player]) => {
