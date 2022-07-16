@@ -412,7 +412,7 @@ function editPlayer() {
       right: true,
       down: true,
     };
-    if (!Object.keys(localPlayers).length) {
+    if (!localSize()) {
       playerController = setPlayerKey;
     } else {
       playerControllerTwo = setPlayerKey;
